@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
 export default function SetPasswordPage() {
   const [password, setPassword] = useState('')
@@ -10,11 +10,6 @@ export default function SetPasswordPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -32,6 +27,7 @@ export default function SetPasswordPage() {
 
     setLoading(true)
 
+    const supabase = createClient()
     const { error: updateError } = await supabase.auth.updateUser({
       password,
     })
