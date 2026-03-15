@@ -2,222 +2,141 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { PLANS, type PlanKey } from '@/lib/stripe/config'
-import { formatCurrency } from '@/lib/utils'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { PLANS } from '@/lib/stripe/config'
 import type { Practice } from '@/types/database'
-import { CreditCard, Check, Zap, Crown, Building2 } from 'lucide-react'
-
-const planIcons: Record<PlanKey, typeof Zap> = {
-  starter: Zap,
-  professional: Crown,
-  enterprise: Building2,
-}
+import { CreditCard, Check, Zap } from 'lucide-react'
 
 export default function BillingPage() {
   const supabase = createClient()
   const [practice, setPractice] = useState<Practice | null>(null)
   const [loading, setLoading] = useState(true)
-  const [portalLoading, setPortalLoading] = useState(false)
-  const [checkoutLoading, setCheckoutLoading] = useState<PlanKey | null>(null)
+  const [bookingsThisMonth, setBookingsThisMonth] = useState(0)
 
   useEffect(() => {
     loadData()
   }, [])
 
   async function loadData() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const { data } = await supabase
-      .from('practices')
-      .select('*')
-      .eq('user_id', user.id)
-      .single()
-
+    const { data } = await supabase.from('practices').select('*').eq('user_id', user.id).single()
     setPractice(data)
+
+    if (data) {
+      const now = new Date()
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+      const { count } = await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('practice_id', data.id)
+        .gte('created_at', monthStart)
+
+      setBookingsThisMonth(count ?? 0)
+    }
     setLoading(false)
   }
 
   async function handleManageBilling() {
-    setPortalLoading(true)
-    try {
-      const res = await fetch('/api/stripe/portal', { method: 'POST' })
-      const data = await res.json()
-      if (data.url) {
-        window.location.href = data.url
-      }
-    } catch {
-      // Handle error silently
-    }
-    setPortalLoading(false)
+    const res = await fetch('/api/stripe/portal', { method: 'POST' })
+    const data = await res.json()
+    if (data.url) window.location.href = data.url
   }
 
-  async function handleChangePlan(plan: PlanKey) {
-    setCheckoutLoading(plan)
-    try {
-      const res = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan }),
-      })
-      const data = await res.json()
-      if (data.url) {
-        window.location.href = data.url
-      }
-    } catch {
-      // Handle error silently
-    }
-    setCheckoutLoading(null)
+  async function handleUpgrade(plan: string) {
+    const res = await fetch('/api/stripe/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan }),
+    })
+    const data = await res.json()
+    if (data.url) window.location.href = data.url
   }
 
-  if (loading || !practice) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="mono-label-sm opacity-40">LOADING_BILLING</div>
-      </div>
-    )
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-[400px]"><div className="mono-label-sm opacity-40">LOADING BILLING</div></div>
   }
 
-  const currentPlan = practice.plan as PlanKey
+  const currentPlan = (practice?.plan as string) || 'free'
+  const currentPlanConfig = PLANS[currentPlan as keyof typeof PLANS]
+  const bookingLimit = currentPlanConfig?.bookingLimit ?? 10
 
   return (
-    <div className="space-y-8">
-      {/* Page Header */}
+    <div className="space-y-8 max-w-4xl">
       <div>
-        <span className="mono-label-sm opacity-40 block mb-3">SUBSCRIPTION_MANAGEMENT</span>
+        <span className="mono-label-sm opacity-40 block mb-3">SUBSCRIPTION MANAGEMENT</span>
         <h1 className="font-display font-black uppercase text-3xl tracking-tightest">BILLING</h1>
-        <p className="font-sans text-sm font-light opacity-50 mt-2">
-          Manage your subscription and billing details
-        </p>
       </div>
 
       {/* Current Plan */}
-      <Card className="border-accent/20">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-accent" />
-            Current Plan
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2"><CreditCard className="w-5 h-5 text-accent" />Current Plan</CardTitle>
+          <CardDescription>
+            You are on the <span className="text-accent font-medium">{currentPlanConfig?.name || 'Free'}</span> plan
+          </CardDescription>
         </CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-accent/10">
-              {(() => {
-                const Icon = planIcons[currentPlan]
-                return <Icon className="w-6 h-6 text-accent" />
-              })()}
-            </div>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-background hairline">
             <div>
-              <p className="text-lg font-display text-foreground">
-                {PLANS[currentPlan].name}
-              </p>
-              <p className="text-2xl font-display text-accent">
-                ${PLANS[currentPlan].price}
-                <span className="text-sm font-mono text-muted-foreground">/month</span>
-              </p>
+              <p className="font-mono text-sm">AI Bookings This Month</p>
+              <p className="font-mono text-2xl font-bold text-accent mt-1">{bookingsThisMonth}</p>
+            </div>
+            <div className="text-right">
+              <p className="font-mono text-xs opacity-40">Limit</p>
+              <p className="font-mono text-lg opacity-60">{bookingLimit === Infinity ? 'Unlimited' : bookingLimit}</p>
             </div>
           </div>
-          {practice.stripe_subscription_id && (
-            <Button
-              variant="outline"
-              onClick={handleManageBilling}
-              loading={portalLoading}
-            >
-              Manage Billing
-            </Button>
+          {bookingLimit !== Infinity && (
+            <div className="w-full bg-card hairline h-2 overflow-hidden">
+              <div className="h-full bg-accent transition-all" style={{ width: `${Math.min(100, (bookingsThisMonth / bookingLimit) * 100)}%` }} />
+            </div>
+          )}
+          {practice?.stripe_subscription_id && (
+            <Button variant="outline" onClick={handleManageBilling}>Manage Billing</Button>
           )}
         </div>
       </Card>
 
-      {/* Plan Comparison */}
-      <div>
-        <h2 className="text-xl font-display text-foreground mb-4">All Plans</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {(Object.entries(PLANS) as [PlanKey, (typeof PLANS)[PlanKey]][]).map(
-            ([key, plan]) => {
-              const isCurrentPlan = key === currentPlan
-              const Icon = planIcons[key]
-              const isPopular = 'popular' in plan && plan.popular
-
-              return (
-                <Card
-                  key={key}
-                  className={
-                    isCurrentPlan
-                      ? 'border-accent/50 relative'
-                      : isPopular
-                        ? 'border-accent/20 relative'
-                        : undefined
-                  }
-                >
-                  {isCurrentPlan && (
-                    <div className="absolute -top-3 left-4">
-                      <Badge variant="accent">Current Plan</Badge>
-                    </div>
-                  )}
-                  {isPopular && !isCurrentPlan && (
-                    <div className="absolute -top-3 left-4">
-                      <Badge variant="success">Most Popular</Badge>
-                    </div>
-                  )}
-
-                  <div className="pt-2">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Icon className="w-5 h-5 text-accent" />
-                      <h3 className="text-lg font-display text-foreground">
-                        {plan.name}
-                      </h3>
-                    </div>
-
-                    <p className="text-3xl font-display text-foreground mb-6">
-                      ${plan.price}
-                      <span className="text-sm font-mono text-muted-foreground">
-                        /mo
-                      </span>
-                    </p>
-
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature) => (
-                        <li
-                          key={feature}
-                          className="flex items-start gap-2 text-sm font-mono text-muted-foreground"
-                        >
-                          <Check className="w-4 h-4 text-success mt-0.5 shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    {isCurrentPlan ? (
-                      <Button variant="outline" disabled className="w-full">
-                        Current Plan
-                      </Button>
-                    ) : (
-                      <Button
-                        variant={isPopular ? 'accent' : 'outline'}
-                        className="w-full"
-                        onClick={() => handleChangePlan(key)}
-                        loading={checkoutLoading === key}
-                      >
-                        {key === 'enterprise'
-                          ? 'Contact Sales'
-                          : currentPlan === 'enterprise' ||
-                              (currentPlan === 'professional' && key === 'starter')
-                            ? 'Downgrade'
-                            : 'Upgrade'}
-                      </Button>
-                    )}
-                  </div>
-                </Card>
-              )
-            }
-          )}
-        </div>
+      {/* Plans */}
+      <div className="grid md:grid-cols-3 gap-0">
+        {(Object.entries(PLANS) as [string, typeof PLANS[keyof typeof PLANS]][]).map(([key, plan]) => {
+          const isCurrent = key === currentPlan
+          const isPopular = 'popular' in plan && plan.popular
+          return (
+            <div key={key} className={`p-8 hairline ${isCurrent ? 'bg-accent/5 border-accent/30' : ''}`}>
+              <div className="flex items-center gap-2 mb-4">
+                {isPopular && <Badge variant="accent">POPULAR</Badge>}
+                {isCurrent && <Badge variant="success">CURRENT</Badge>}
+              </div>
+              <h3 className="font-display font-black uppercase text-xl tracking-tightest">{plan.name}</h3>
+              <div className="mt-2 mb-6">
+                <span className="font-display font-black text-3xl">${plan.price}</span>
+                {plan.price > 0 && <span className="font-mono text-xs opacity-40">/MO</span>}
+              </div>
+              <ul className="space-y-3 mb-8">
+                {plan.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                    <span className="font-sans text-sm opacity-70">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              {isCurrent ? (
+                <Button variant="outline" disabled className="w-full">Current Plan</Button>
+              ) : plan.price === 0 ? (
+                <Button variant="outline" disabled className="w-full">Free Tier</Button>
+              ) : (
+                <Button variant={isPopular ? 'accent' : 'outline'} onClick={() => handleUpgrade(key)} className="w-full">
+                  <Zap className="w-4 h-4 mr-1" />Upgrade
+                </Button>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )

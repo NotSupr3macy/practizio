@@ -2,65 +2,79 @@ const steps = [
   {
     number: '01',
     title: 'CONFIGURE',
-    description: 'Enter your practice details, services, providers, and weekly availability schedule.',
-    detail: 'SETUP_TIME: <10_MIN',
+    description: 'Enter your business details, services, availability, and product catalog.',
+    detail: 'SETUP TIME: <10 MIN',
   },
   {
     number: '02',
     title: 'PUBLISH',
-    description: 'We generate your unique MCP endpoint and list your practice in the AI directory.',
-    detail: 'ENDPOINT: /API/MCP/{SLUG}',
+    description: 'We create your AI booking link and list your business in the AI directory.',
+    detail: 'LIVE IN MINUTES',
   },
   {
     number: '03',
     title: 'DISCOVER',
-    description: 'AI agents worldwide can now query your practice, check availability, and book appointments.',
-    detail: 'PROTOCOL: MCP_V1.0',
+    description: 'AI assistants worldwide can now find your business, book appointments, place orders, and more.',
+    detail: 'GLOBAL AI REACH',
   },
 ]
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="hairline-t">
-      {/* Section header */}
-      <div className="px-6 md:px-12 py-16 hairline-b">
-        <span className="mono-label-sm opacity-40 block mb-4">PROCESS_OVERVIEW</span>
-        <h2 className="font-display font-black uppercase text-4xl md:text-6xl tracking-tightest">
-          HOW IT
-          <br />
-          WORKS
-        </h2>
-      </div>
+    <section id="how-it-works" className="py-24 px-6 md:px-10 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="glow-orb glow-orb-green w-[400px] h-[400px] top-[5%] right-[-10%] opacity-20 animate-glow-pulse" />
 
-      {/* Steps */}
-      <div className="grid grid-cols-1 md:grid-cols-3">
-        {steps.map((step, i) => (
-          <div
-            key={step.number}
-            className={`relative p-8 md:p-12 min-h-[350px] flex flex-col justify-between group card-interactive ${
-              i < steps.length - 1 ? 'hairline-r hairline-b md:border-b-0' : ''
-            }`}
-          >
-            {/* Step number - large background element */}
-            <span className="absolute top-6 right-8 font-display font-black text-[120px] leading-none opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500">
-              {step.number}
-            </span>
+      <div className="max-w-6xl mx-auto relative z-10">
+        {/* Section header */}
+        <div className="mb-16">
+          <span className="mono-label-sm text-accent/40 block mb-4">PROCESS OVERVIEW</span>
+          <h2 className="font-display font-extrabold uppercase text-5xl md:text-7xl tracking-tightest text-chrome-3d">
+            HOW IT
+            <br />
+            WORKS
+          </h2>
+        </div>
 
-            <div>
-              <span className="mono-label-sm opacity-40">{`STEP_${step.number}`}</span>
-              <h3 className="font-display font-black uppercase text-3xl tracking-tightest mt-4">
-                {step.title}
-              </h3>
-              <p className="font-sans text-sm font-light leading-relaxed opacity-50 mt-4 max-w-[300px]">
-                {step.description}
-              </p>
+        {/* Steps */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {steps.map((step) => (
+            <div
+              key={step.number}
+              className="group relative card-metal rounded-2xl p-8 md:p-10 min-h-[320px] flex flex-col justify-between card-interactive overflow-hidden"
+            >
+              {/* Giant ghost number */}
+              <span className="absolute -top-4 -right-2 font-display font-extrabold text-[160px] leading-none text-white/[0.02] group-hover:text-white/[0.05] transition-all duration-700 select-none">
+                {step.number}
+              </span>
+
+              {/* Step indicator */}
+              <div className="relative z-10 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full glass-panel flex items-center justify-center">
+                  <span className="font-mono text-[10px] font-bold text-accent">{step.number}</span>
+                </div>
+                <span className="mono-label-sm text-white/20">{`STEP ${step.number}`}</span>
+              </div>
+
+              {/* Content */}
+              <div className="relative z-10 mt-8">
+                <h3 className="font-display font-extrabold uppercase text-2xl tracking-tightest group-hover:text-chrome transition-all duration-500">
+                  {step.title}
+                </h3>
+                <p className="font-sans text-sm font-light leading-relaxed text-white/30 mt-4 max-w-[280px]">
+                  {step.description}
+                </p>
+              </div>
+
+              {/* Detail badge */}
+              <div className="relative z-10 mt-6">
+                <span className="glass-panel inline-block px-3 py-1.5 rounded-full mono-label-sm text-accent/70">
+                  {step.detail}
+                </span>
+              </div>
             </div>
-
-            <div className="mt-8">
-              <span className="mono-label-sm text-accent">{step.detail}</span>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )

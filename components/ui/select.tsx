@@ -15,9 +15,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div>
         {label && (
-          <label htmlFor={id} className="mono-label opacity-60 mb-2 block">
-            {label}
-          </label>
+          <label htmlFor={id} className="mono-label text-white/30 mb-2 block">{label}</label>
         )}
         <div className="relative">
           <select
@@ -28,19 +26,17 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
               className
             )}
             style={{
-              borderBottom: error
-                ? '0.5px solid rgb(239, 68, 68)'
-                : '0.5px solid rgba(255, 255, 255, 0.15)',
+              borderBottom: error ? '1px solid rgb(255, 51, 102)' : '1px solid rgba(255, 255, 255, 0.08)',
             }}
             {...props}
           >
             {options.map((option) => (
-              <option key={option.value} value={option.value} className="bg-black text-white">
+              <option key={option.value} value={option.value} className="bg-[#0c0c0c] text-white">
                 {option.label}
               </option>
             ))}
           </select>
-          <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40 pointer-events-none" />
+          <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none" />
         </div>
         {error && <p className="text-destructive font-mono text-xs mt-2">{error}</p>}
       </div>

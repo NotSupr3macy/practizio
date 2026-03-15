@@ -52,10 +52,11 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    // Redirect authenticated users away from auth pages
-    if (user && (path === '/login' || path === '/signup')) {
+    // Let authenticated users through to /login (page handles sign-out + fresh login)
+    // Redirect authenticated users away from /signup only
+    if (user && path === '/signup') {
       const url = request.nextUrl.clone()
-      url.pathname = '/dashboard'
+      url.pathname = '/api/auth/redirect'
       return NextResponse.redirect(url)
     }
   } catch {

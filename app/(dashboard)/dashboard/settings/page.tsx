@@ -15,6 +15,8 @@ import {
   Link2,
   AlertTriangle,
   Check,
+  Unplug,
+  CreditCard,
 } from 'lucide-react'
 
 const TIMEZONES = [
@@ -28,38 +30,13 @@ const TIMEZONES = [
   { value: 'UTC', label: 'UTC' },
 ]
 
-const INTEGRATIONS = [
-  {
-    name: 'Dentrix',
-    description: 'Dental practice management',
-    icon: '\u{1F9B7}',
-    status: 'coming_soon' as const,
-  },
-  {
-    name: 'Jane App',
-    description: 'Health & wellness practice management',
-    icon: '\u{1F3E5}',
-    status: 'coming_soon' as const,
-  },
-  {
-    name: 'SimplePractice',
-    description: 'Health & wellness EHR',
-    icon: '\u{1F4CB}',
-    status: 'coming_soon' as const,
-  },
-  {
-    name: 'Clio',
-    description: 'Legal practice management',
-    icon: '\u2696\uFE0F',
-    status: 'coming_soon' as const,
-  },
-  {
-    name: 'Google Calendar',
-    description: 'Sync availability',
-    icon: '\u{1F4C5}',
-    status: 'coming_soon' as const,
-  },
-]
+const BOOKING_SYSTEM_LABELS: Record<string, string> = {
+  internal: 'Internal (SpadeChat)',
+  calendly: 'Calendly',
+  acuity: 'Acuity Scheduling',
+  square: 'Square Appointments',
+  other: 'Other',
+}
 
 export default function SettingsPage() {
   const supabase = createClient()
@@ -83,6 +60,15 @@ export default function SettingsPage() {
   const [timezoneSaving, setTimezoneSaving] = useState(false)
   const [timezoneSaved, setTimezoneSaved] = useState(false)
 
+  // Booking system
+  const [disconnecting, setDisconnecting] = useState(false)
+
+  // Payment settings
+  const [paymentUrl, setPaymentUrl] = useState('')
+  const [defaultHoldMinutes, setDefaultHoldMinutes] = useState(30)
+  const [paymentSaving, setPaymentSaving] = useState(false)
+  const [paymentSaved, setPaymentSaved] = useState(false)
+
   // Danger zone
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
@@ -103,7 +89,11 @@ export default function SettingsPage() {
       .single()
 
     setPractice(data)
-    if (data) setTimezone(data.timezone)
+    if (data) {
+      setTimezone(data.timezone)
+      setPaymentUrl(data.payment_url || '')
+      setDefaultHoldMinutes(data.default_hold_minutes ?? 30)
+    }
     setLoading(false)
   }
 
@@ -154,10 +144,53 @@ export default function SettingsPage() {
     setTimezoneSaving(false)
   }
 
+  async function handleDisconnectBooking() {
+    if (!practice) return
+    setDisconnecting(true)
+    await supabase
+      .from('practices')
+      .update({
+        booking_system_type: 'internal',
+        booking_system_connected: false,
+      })
+      .eq('id', practice.id)
+    setPractice({
+      ...practice,
+      booking_system_type: 'internal',
+      booking_system_connected: false,
+    })
+    setDisconnecting(false)
+  }
+
+  async function handlePaymentSettingsSave() {
+    if (!practice) return
+    setPaymentSaving(true)
+    await supabase
+      .from('practices')
+      .update({
+        payment_url: paymentUrl || null,
+        default_hold_minutes: defaultHoldMinutes,
+      })
+      .eq('id', practice.id)
+    setPractice({
+      ...practice,
+      payment_url: paymentUrl || null,
+      default_hold_minutes: defaultHoldMinutes,
+    })
+    setPaymentSaved(true)
+    setTimeout(() => setPaymentSaved(false), 3000)
+    setPaymentSaving(false)
+  }
+
+  const bookingSystemType = practice?.booking_system_type || 'internal'
+  const bookingLabel = BOOKING_SYSTEM_LABELS[bookingSystemType] || 'Internal (SpadeChat)'
+  const isExternalSystem = bookingSystemType !== 'internal' && bookingSystemType !== null
+  const isConnected = practice?.booking_system_connected ?? false
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="mono-label-sm opacity-40">LOADING_SETTINGS</div>
+        <div className="mono-label-sm opacity-40">LOADING SETTINGS</div>
       </div>
     )
   }
@@ -166,10 +199,10 @@ export default function SettingsPage() {
     <div className="space-y-8 max-w-3xl">
       {/* Page Header */}
       <div>
-        <span className="mono-label-sm opacity-40 block mb-3">ACCOUNT_CONFIG</span>
+        <span className="mono-label-sm opacity-40 block mb-3">ACCOUNT CONFIG</span>
         <h1 className="font-display font-black uppercase text-3xl tracking-tightest">SETTINGS</h1>
         <p className="font-sans text-sm font-light opacity-50 mt-2">
-          Manage your account and practice preferences
+          Manage your account and business preferences
         </p>
       </div>
 
@@ -273,7 +306,7 @@ export default function SettingsPage() {
             Timezone
           </CardTitle>
           <CardDescription>
-            Set your practice timezone for accurate availability and booking
+            Set your business timezone for accurate availability and booking
           </CardDescription>
         </CardHeader>
         <div className="flex gap-3">
@@ -284,7 +317,8 @@ export default function SettingsPage() {
                 setTimezone(e.target.value)
                 setTimezoneSaved(false)
               }}
-              className="w-full appearance-none px-4 py-2.5 bg-card hairline text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all duration-200 cursor-pointer"
+              className="w-full appearance-none px-4 py-2.5 bg-transparent text-foreground font-mono text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all duration-200 cursor-pointer rounded-lg"
+              style={{ border: '1px solid rgba(255, 255, 255, 0.08)' }}
             >
               {TIMEZONES.map((tz) => (
                 <option key={tz.value} value={tz.value}>
@@ -310,42 +344,123 @@ export default function SettingsPage() {
         </div>
       </Card>
 
-      {/* Connected Software */}
+      {/* Booking System */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Link2 className="w-5 h-5 text-accent" />
-            Connected Software
+            Booking System
           </CardTitle>
           <CardDescription>
-            Connect your existing practice management software for seamless sync
+            Manage your connected booking system for scheduling and appointments
           </CardDescription>
         </CardHeader>
-        <div className="space-y-3">
-          {INTEGRATIONS.map((integration) => (
-            <div
-              key={integration.name}
-              className="flex items-center justify-between p-4 bg-background hairline"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{integration.icon}</span>
-                <div>
-                  <p className="text-sm font-mono text-foreground font-medium">
-                    {integration.name}
-                  </p>
-                  <p className="text-xs font-mono text-muted-foreground">
-                    {integration.description}
-                  </p>
+        <div className="p-4 bg-white/[0.02] rounded-lg" style={{ border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div>
+                <p className="text-sm font-mono text-foreground font-medium">
+                  {bookingLabel}
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  {isExternalSystem ? (
+                    isConnected ? (
+                      <Badge variant="success">Connected</Badge>
+                    ) : (
+                      <Badge variant="warning">Not Connected</Badge>
+                    )
+                  ) : (
+                    <Badge variant="accent">Built-in</Badge>
+                  )}
                 </div>
               </div>
-              <Badge variant="default">Coming Soon</Badge>
             </div>
-          ))}
+            {isExternalSystem && isConnected && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDisconnectBooking}
+                loading={disconnecting}
+              >
+                <Unplug className="w-4 h-4 mr-1.5" />
+                Disconnect
+              </Button>
+            )}
+          </div>
+          <p className="text-xs font-mono text-white/30 mt-3">
+            To change your booking system, re-run the setup flow from your onboarding settings.
+          </p>
+        </div>
+      </Card>
+
+      {/* Payment Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="w-5 h-5 text-accent" />
+            Payment Settings
+          </CardTitle>
+          <CardDescription>
+            Configure payment links and hold times for deposit-required services
+          </CardDescription>
+        </CardHeader>
+        <div className="space-y-4">
+          <Input
+            id="payment-url"
+            label="Payment URL"
+            type="text"
+            placeholder="https://pay.stripe.com/... or PayPal.me/..."
+            value={paymentUrl}
+            onChange={(e) => {
+              setPaymentUrl(e.target.value)
+              setPaymentSaved(false)
+            }}
+          />
+          <Input
+            id="default-hold-minutes"
+            label="Default Hold Time (minutes)"
+            type="number"
+            placeholder="30"
+            value={defaultHoldMinutes}
+            onChange={(e) => {
+              setDefaultHoldMinutes(parseInt(e.target.value) || 0)
+              setPaymentSaved(false)
+            }}
+          />
+          <div className="p-4 bg-white/[0.02] rounded-lg" style={{ border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-mono text-foreground font-medium">Stripe Connect</p>
+                <p className="text-xs font-mono text-white/30 mt-1">
+                  Coming soon — connect your Stripe account to auto-generate payment links for AI bookings
+                </p>
+              </div>
+              <Button variant="outline" size="sm" disabled>
+                Connect Stripe Account
+              </Button>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <Button
+              onClick={handlePaymentSettingsSave}
+              loading={paymentSaving}
+              disabled={paymentSaved}
+            >
+              {paymentSaved ? (
+                <>
+                  <Check className="w-4 h-4 mr-1.5" />
+                  Saved
+                </>
+              ) : (
+                'Save'
+              )}
+            </Button>
+          </div>
         </div>
       </Card>
 
       {/* Danger Zone */}
-      <Card className="border-destructive/30">
+      <Card className="!border-destructive/30">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
             <AlertTriangle className="w-5 h-5" />
@@ -361,7 +476,7 @@ export default function SettingsPage() {
               Delete Account
             </p>
             <p className="text-xs font-mono text-muted-foreground">
-              Permanently delete your practice, data, and subscription
+              Permanently delete your business, data, and subscription
             </p>
           </div>
           {!showDeleteConfirm ? (
@@ -389,7 +504,7 @@ export default function SettingsPage() {
         </div>
         {showDeleteConfirm && (
           <p className="text-xs font-mono text-muted-foreground mt-3">
-            Account deletion requires contacting support. Please email support@practizio.com to initiate the process.
+            Account deletion requires contacting support. Please email support@spadechat.com to initiate the process.
           </p>
         )}
       </Card>

@@ -2,25 +2,39 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { formatTime } from '@/lib/utils'
+import { findTemplateForIndustry } from '@/lib/service-templates'
 import {
   Building2,
   Clock,
   Plus,
   Rocket,
-  Stethoscope,
+  Briefcase,
   Trash2,
   ArrowRight,
   ArrowLeft,
   Globe,
+  Link2,
+  ShieldCheck,
+  Tag,
+  X,
+  Sparkles,
+  Check,
+  AlertCircle,
+  Settings2,
+  ShoppingCart,
+  CalendarCheck,
+  Package,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
-type PracticeType = 'dental' | 'medical' | 'legal' | 'financial' | 'other' | ''
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 interface ServiceEntry {
   name: string
@@ -28,6 +42,14 @@ interface ServiceEntry {
   price_max: string
   duration_minutes: string
   description: string
+  show_price: boolean
+  price: string
+  priceType: 'fixed' | 'starting_at' | 'varies' | 'free'
+  currency: string
+  paymentTiming: 'at_service' | 'at_booking' | 'deposit_then_remainder' | 'free'
+  depositAmount: string
+  paymentLink: string
+  reservationHoldMinutes: string
 }
 
 interface DayAvailability {
@@ -38,85 +60,84 @@ interface DayAvailability {
   close_time: string
 }
 
-interface FormData {
+interface AdditionalInfoEntry {
+  key: string
+  value: string
+}
+
+interface CatalogEntry {
   name: string
-  practice_type: PracticeType
+  category: string
+  price: string
+  description: string
+  options: string // comma-separated option groups e.g. "Size: S,M,L"
+}
+
+interface FormData {
+  // Step 1: Account (handled by signup page)
+  // Step 2: Business Profile
+  name: string
+  industry: string
+  interaction_type: 'appointment' | 'order' | 'hybrid'
+  tags: string[]
+  tagInput: string
   phone: string
   website: string
   address_street: string
   address_city: string
   address_state: string
   address_zip: string
+  additional_info: AdditionalInfoEntry[]
+  // Step 3: Booking System (appointment/hybrid only)
+  booking_system_type: string
+  integration_request_system: string
+  // Step 4: Services (appointment/hybrid) / Catalog (order/hybrid)
   services: ServiceEntry[]
+  catalog_items: CatalogEntry[]
+  // Step 5: Availability
   availability: DayAvailability[]
+  // Step 6: Business Rules
+  min_advance_hours: string
+  max_advance_days: string
+  buffer_minutes: string
+  additional_rules: string
+  // Step 7: Review
 }
 
-const PRACTICE_TYPE_OPTIONS = [
-  { value: '', label: 'Select practice type...' },
-  { value: 'dental', label: 'Dental Practice' },
-  { value: 'medical', label: 'Medical Practice' },
-  { value: 'legal', label: 'Legal Practice' },
-  { value: 'financial', label: 'Financial Practice' },
-  { value: 'other', label: 'Other' },
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const INDUSTRY_SUGGESTIONS = [
+  'Hair Salon', 'Barbershop', 'Dental Office', 'Medical Practice', 'Yoga Studio',
+  'Dog Grooming', 'Auto Repair', 'Tattoo Parlor', 'Photography Studio',
+  'Tutoring Center', 'Law Firm', 'Financial Advisor', 'Veterinary Clinic',
+  'Spa & Wellness', 'Personal Trainer', 'Music Teacher', 'Therapy Practice',
+  'Consulting', 'Nail Salon', 'Massage Therapy', 'Chiropractic', 'Optometry',
+  'Tax Preparation', 'Real Estate Agent', 'Driving School', 'Dance Studio',
+  'Martial Arts Studio', 'Pet Sitting', 'House Cleaning', 'Landscaping',
+  'Plumbing', 'Electrical', 'HVAC', 'Accounting', 'Insurance Agent',
 ]
 
-const DEFAULT_SERVICES: Record<string, ServiceEntry[]> = {
-  dental: [
-    {
-      name: 'Dental Cleaning',
-      price_min: '100',
-      price_max: '200',
-      duration_minutes: '60',
-      description: 'Professional teeth cleaning and oral exam',
-    },
-  ],
-  medical: [
-    {
-      name: 'General Consultation',
-      price_min: '150',
-      price_max: '300',
-      duration_minutes: '30',
-      description: 'Comprehensive health evaluation and consultation',
-    },
-  ],
-  legal: [
-    {
-      name: 'Initial Consultation',
-      price_min: '200',
-      price_max: '500',
-      duration_minutes: '60',
-      description: 'Review of legal matter and preliminary advice',
-    },
-  ],
-  financial: [
-    {
-      name: 'Financial Planning Session',
-      price_min: '250',
-      price_max: '500',
-      duration_minutes: '60',
-      description: 'Comprehensive review of financial goals and strategy',
-    },
-  ],
-  other: [
-    {
-      name: '',
-      price_min: '',
-      price_max: '',
-      duration_minutes: '30',
-      description: '',
-    },
-  ],
+const BOOKING_SYSTEMS = [
+  { id: 'internal', name: 'SpadeChat Built-in', description: 'Use our simple booking system', icon: '⚡' },
+  { id: 'calendly', name: 'Calendly', description: 'Connect via OAuth', icon: '📅' },
+  { id: 'acuity', name: 'Acuity Scheduling', description: 'Squarespace Scheduling', icon: '🗓️' },
+  { id: 'square', name: 'Square Appointments', description: 'Square booking system', icon: '⬜' },
+]
+
+const ADDITIONAL_INFO_SUGGESTIONS: Record<string, string[]> = {
+  dental: ['Accepted Insurance', 'Emergency Services', 'Parking'],
+  medical: ['Accepted Insurance', 'Telehealth Available', 'Languages Spoken'],
+  'hair salon': ['Parking', 'Walk-ins Welcome', 'Products Used'],
+  'tattoo': ['Age Requirement', 'Deposit Required', 'Bring Reference Photos'],
+  'dog grooming': ['Vaccination Requirement', 'Breed Restrictions', 'Drop-off Available'],
+  'yoga studio': ['What to Bring', 'Difficulty Levels', 'Heated Studio'],
+  'auto repair': ['Loaner Cars Available', 'Warranty', 'Brands Serviced'],
+  default: ['Parking', 'Accessibility', 'Payment Methods', 'Cancellation Policy'],
 }
 
-const DAY_LABELS = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-]
+const DAY_LABELS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 function buildDefaultAvailability(): DayAvailability[] {
   return DAY_LABELS.map((label, index) => ({
@@ -128,41 +149,61 @@ function buildDefaultAvailability(): DayAvailability[] {
   }))
 }
 
-const STEP_LABELS = ['PRACTICE_INFO', 'SERVICES', 'AVAILABILITY', 'LAUNCH']
-const STEP_NUMBERS = ['01', '02', '03', '04']
+function getSteps(interactionType: string) {
+  if (interactionType === 'order') {
+    return ['BUSINESS_PROFILE', 'CATALOG', 'AVAILABILITY', 'VALIDATE', 'LAUNCH']
+  }
+  if (interactionType === 'hybrid') {
+    return ['BUSINESS_PROFILE', 'BOOKING_SYSTEM', 'SERVICES', 'CATALOG', 'AVAILABILITY', 'BUSINESS_RULES', 'VALIDATE', 'LAUNCH']
+  }
+  // appointment (default)
+  return ['BUSINESS_PROFILE', 'BOOKING_SYSTEM', 'SERVICES', 'AVAILABILITY', 'BUSINESS_RULES', 'VALIDATE', 'LAUNCH']
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 export default function OnboardingPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [validationResults, setValidationResults] = useState<{passed: string[]; failed: string[]} | null>(null)
+  const [isValidating, setIsValidating] = useState(false)
+  const [showIndustrySuggestions, setShowIndustrySuggestions] = useState(false)
 
   const [formData, setFormData] = useState<FormData>({
     name: '',
-    practice_type: '' as PracticeType,
+    industry: '',
+    interaction_type: 'appointment',
+    tags: [],
+    tagInput: '',
     phone: '',
     website: '',
     address_street: '',
     address_city: '',
     address_state: '',
     address_zip: '',
-    services: [
-      {
-        name: '',
-        price_min: '',
-        price_max: '',
-        duration_minutes: '30',
-        description: '',
-      },
-    ],
+    additional_info: [],
+    booking_system_type: 'internal',
+    integration_request_system: '',
+    services: [{ name: '', price_min: '', price_max: '', duration_minutes: '30', description: '', show_price: true, price: '', priceType: 'fixed' as const, currency: 'USD', paymentTiming: 'at_service' as const, depositAmount: '', paymentLink: '', reservationHoldMinutes: '15' }],
+    catalog_items: [{ name: '', category: '', price: '', description: '', options: '' }],
     availability: buildDefaultAvailability(),
+    min_advance_hours: '1',
+    max_advance_days: '60',
+    buffer_minutes: '0',
+    additional_rules: '',
   })
+
+  // --- Helpers ---
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setFormData((prev) => ({ ...prev, [key]: value }))
   }
 
-  function updateService(index: number, field: keyof ServiceEntry, value: string) {
+  function updateService(index: number, field: keyof ServiceEntry, value: string | boolean) {
     setFormData((prev) => {
       const updated = [...prev.services]
       updated[index] = { ...updated[index], [field]: value }
@@ -173,31 +214,85 @@ export default function OnboardingPage() {
   function addService() {
     setFormData((prev) => ({
       ...prev,
-      services: [
-        ...prev.services,
-        {
-          name: '',
-          price_min: '',
-          price_max: '',
-          duration_minutes: '30',
-          description: '',
-        },
-      ],
+      services: [...prev.services, { name: '', price_min: '', price_max: '', duration_minutes: '30', description: '', show_price: true, price: '', priceType: 'fixed' as const, currency: 'USD', paymentTiming: 'at_service' as const, depositAmount: '', paymentLink: '', reservationHoldMinutes: '15' }],
     }))
   }
 
   function removeService(index: number) {
+    setFormData((prev) => ({ ...prev, services: prev.services.filter((_, i) => i !== index) }))
+  }
+
+  function loadTemplate() {
+    const templates = findTemplateForIndustry(formData.industry)
+    if (templates) {
+      setFormData((prev) => ({
+        ...prev,
+        services: templates.map((t) => ({
+          name: t.name,
+          price_min: '',
+          price_max: '',
+          duration_minutes: String(t.duration_minutes),
+          description: t.description,
+          show_price: true,
+          price: t.pricing.price != null ? String(t.pricing.price) : '',
+          priceType: t.pricing.priceType,
+          currency: t.pricing.currency,
+          paymentTiming: t.pricing.paymentTiming,
+          depositAmount: t.pricing.depositAmount != null ? String(t.pricing.depositAmount) : '',
+          paymentLink: '',
+          reservationHoldMinutes: '15',
+        })),
+      }))
+    }
+  }
+
+  function updateCatalogItem(index: number, field: keyof CatalogEntry, value: string) {
+    setFormData((prev) => {
+      const updated = [...prev.catalog_items]
+      updated[index] = { ...updated[index], [field]: value }
+      return { ...prev, catalog_items: updated }
+    })
+  }
+
+  function addCatalogItem() {
     setFormData((prev) => ({
       ...prev,
-      services: prev.services.filter((_, i) => i !== index),
+      catalog_items: [...prev.catalog_items, { name: '', category: '', price: '', description: '', options: '' }],
     }))
   }
 
-  function updateAvailability(
-    index: number,
-    field: keyof DayAvailability,
-    value: string | boolean
-  ) {
+  function removeCatalogItem(index: number) {
+    setFormData((prev) => ({ ...prev, catalog_items: prev.catalog_items.filter((_, i) => i !== index) }))
+  }
+
+  function addTag() {
+    const tag = formData.tagInput.trim().toLowerCase()
+    if (tag && !formData.tags.includes(tag)) {
+      setFormData((prev) => ({ ...prev, tags: [...prev.tags, tag], tagInput: '' }))
+    }
+  }
+
+  function removeTag(tag: string) {
+    setFormData((prev) => ({ ...prev, tags: prev.tags.filter((t) => t !== tag) }))
+  }
+
+  function addAdditionalInfo() {
+    setFormData((prev) => ({ ...prev, additional_info: [...prev.additional_info, { key: '', value: '' }] }))
+  }
+
+  function updateAdditionalInfo(index: number, field: 'key' | 'value', value: string) {
+    setFormData((prev) => {
+      const updated = [...prev.additional_info]
+      updated[index] = { ...updated[index], [field]: value }
+      return { ...prev, additional_info: updated }
+    })
+  }
+
+  function removeAdditionalInfo(index: number) {
+    setFormData((prev) => ({ ...prev, additional_info: prev.additional_info.filter((_, i) => i !== index) }))
+  }
+
+  function updateAvailability(index: number, field: keyof DayAvailability, value: string | boolean) {
     setFormData((prev) => {
       const updated = [...prev.availability]
       updated[index] = { ...updated[index], [field]: value }
@@ -205,26 +300,39 @@ export default function OnboardingPage() {
     })
   }
 
-  function handlePracticeTypeChange(value: string) {
-    const practiceType = value as PracticeType
-    updateField('practice_type', practiceType)
-    if (practiceType && DEFAULT_SERVICES[practiceType]) {
-      updateField('services', [...DEFAULT_SERVICES[practiceType]])
+  const filteredSuggestions = formData.industry
+    ? INDUSTRY_SUGGESTIONS.filter((s) => s.toLowerCase().includes(formData.industry.toLowerCase()))
+    : INDUSTRY_SUGGESTIONS.slice(0, 12)
+
+  function getAdditionalInfoSuggestions(): string[] {
+    const industry = formData.industry.toLowerCase()
+    for (const [key, suggestions] of Object.entries(ADDITIONAL_INFO_SUGGESTIONS)) {
+      if (industry.includes(key)) return suggestions
     }
+    return ADDITIONAL_INFO_SUGGESTIONS.default
+  }
+
+  const STEP_LABELS = getSteps(formData.interaction_type)
+  const STEP_NUMBERS = STEP_LABELS.map((_, i) => String(i + 1).padStart(2, '0'))
+
+  function currentStepLabel() {
+    return STEP_LABELS[currentStep] ?? ''
+  }
+
+  function displayLabel(label: string) {
+    return label.replace(/_/g, ' ')
   }
 
   function canAdvance(): boolean {
-    if (currentStep === 0) {
-      return formData.name.trim() !== '' && formData.practice_type !== ''
-    }
-    if (currentStep === 1) {
-      return formData.services.some((s) => s.name.trim() !== '')
-    }
+    const label = currentStepLabel()
+    if (label === 'BUSINESS_PROFILE') return formData.name.trim() !== '' && formData.industry.trim() !== ''
+    if (label === 'SERVICES') return formData.services.some((s) => s.name.trim() !== '')
+    if (label === 'CATALOG') return formData.catalog_items.some((c) => c.name.trim() !== '')
     return true
   }
 
   function nextStep() {
-    if (currentStep < 3 && canAdvance()) {
+    if (currentStep < STEP_LABELS.length - 1 && canAdvance()) {
       setCurrentStep((prev) => prev + 1)
       setError(null)
     }
@@ -237,20 +345,73 @@ export default function OnboardingPage() {
     }
   }
 
+  async function runValidation() {
+    setIsValidating(true)
+    setValidationResults(null)
+    // Simulate validation checks
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
+    const passed: string[] = []
+    const failed: string[] = []
+
+    // Check business info complete
+    if (formData.name && formData.industry) {
+      passed.push('Business profile complete')
+    } else {
+      failed.push('Business profile incomplete')
+    }
+
+    passed.push(`Business type: ${formData.interaction_type}`)
+
+    // Check services configured (appointment/hybrid)
+    if (formData.interaction_type !== 'order') {
+      if (formData.services.some((s) => s.name.trim())) {
+        passed.push('Services configured')
+      } else {
+        failed.push('No services configured')
+      }
+      passed.push(`Booking system: ${formData.booking_system_type === 'internal' ? 'SpadeChat Built-in' : formData.booking_system_type}`)
+    }
+
+    // Check catalog configured (order/hybrid)
+    if (formData.interaction_type !== 'appointment') {
+      if (formData.catalog_items.some((c) => c.name.trim())) {
+        passed.push('Catalog items configured')
+      } else {
+        failed.push('No catalog items configured')
+      }
+    }
+
+    // Check availability set
+    if (formData.availability.some((a) => a.is_open)) {
+      passed.push('Availability schedule set')
+    } else {
+      failed.push('No availability hours set')
+    }
+
+    setValidationResults({ passed, failed })
+    setIsValidating(false)
+  }
+
   async function handleLaunch() {
     setIsSubmitting(true)
     setError(null)
 
     try {
-      const hasAddress =
-        formData.address_street.trim() ||
-        formData.address_city.trim() ||
-        formData.address_state.trim() ||
-        formData.address_zip.trim()
+      const hasAddress = formData.address_street.trim() || formData.address_city.trim()
 
-      const payload = {
+      const additionalInfoObj: Record<string, string> = {}
+      for (const entry of formData.additional_info) {
+        if (entry.key.trim() && entry.value.trim()) {
+          additionalInfoObj[entry.key.trim()] = entry.value.trim()
+        }
+      }
+
+      const payload: Record<string, unknown> = {
         name: formData.name.trim(),
-        practice_type: formData.practice_type,
+        industry: formData.industry.trim(),
+        interaction_type: formData.interaction_type,
+        tags: formData.tags,
         phone: formData.phone.trim() || null,
         website: formData.website.trim() || null,
         address: hasAddress
@@ -261,7 +422,29 @@ export default function OnboardingPage() {
               zip: formData.address_zip.trim(),
             }
           : null,
-        services: formData.services
+        additional_info: additionalInfoObj,
+        availability: formData.availability.map((a) => ({
+          day_of_week: a.day_of_week,
+          open_time: a.open_time,
+          close_time: a.close_time,
+          is_open: a.is_open,
+        })),
+      }
+
+      // Appointment/hybrid: include services, booking system, business rules
+      if (formData.interaction_type !== 'order') {
+        payload.booking_system_type = formData.booking_system_type
+        // Collect payment link from any service that has one (use first found as practice default)
+        const serviceWithPaymentLink = formData.services.find((s) => s.paymentLink.trim())
+        if (serviceWithPaymentLink) {
+          payload.payment_url = serviceWithPaymentLink.paymentLink.trim()
+        }
+        const serviceWithHoldTime = formData.services.find((s) => s.paymentTiming === 'deposit_then_remainder' && s.reservationHoldMinutes)
+        if (serviceWithHoldTime) {
+          payload.default_hold_minutes = Number(serviceWithHoldTime.reservationHoldMinutes) || 15
+        }
+
+        payload.services = formData.services
           .filter((s) => s.name.trim() !== '')
           .map((s) => ({
             name: s.name.trim(),
@@ -269,13 +452,35 @@ export default function OnboardingPage() {
             price_max: s.price_max ? Number(s.price_max) : null,
             duration_minutes: s.duration_minutes ? Number(s.duration_minutes) : null,
             description: s.description.trim() || null,
-          })),
-        availability: formData.availability.map((a) => ({
-          day_of_week: a.day_of_week,
-          open_time: a.open_time,
-          close_time: a.close_time,
-          is_open: a.is_open,
-        })),
+            show_price: s.show_price,
+            pricing: {
+              price: s.price ? Number(s.price) : null,
+              currency: s.currency || 'USD',
+              priceType: s.priceType,
+              depositRequired: s.paymentTiming === 'deposit_then_remainder',
+              depositAmount: s.depositAmount ? Number(s.depositAmount) : null,
+              paymentTiming: s.paymentTiming,
+            },
+          }))
+        payload.business_rules = {
+          min_advance_hours: Number(formData.min_advance_hours) || 1,
+          max_advance_days: Number(formData.max_advance_days) || 60,
+          buffer_minutes: Number(formData.buffer_minutes) || 0,
+          additional_rules: formData.additional_rules.trim(),
+        }
+      }
+
+      // Order/hybrid: include catalog items
+      if (formData.interaction_type !== 'appointment') {
+        payload.catalog_items = formData.catalog_items
+          .filter((c) => c.name.trim() !== '')
+          .map((c) => ({
+            name: c.name.trim(),
+            category: c.category.trim() || null,
+            price: c.price ? Math.round(Number(c.price) * 100) : 0, // convert to cents
+            description: c.description.trim() || null,
+            options: c.options.trim() ? [{ name: c.options.split(':')[0]?.trim() || 'Options', choices: c.options.split(':').slice(1).join(':').split(',').map((s) => s.trim()).filter(Boolean) }] : [],
+          }))
       }
 
       const response = await fetch('/api/practices', {
@@ -286,7 +491,7 @@ export default function OnboardingPage() {
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to create practice')
+        throw new Error(data.error || 'Failed to create business')
       }
 
       router.push('/dashboard')
@@ -298,32 +503,29 @@ export default function OnboardingPage() {
   }
 
   const generatedSlug = formData.name
-    ? formData.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-    : 'your-practice'
+    ? formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    : 'your-business'
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Step progress bar */}
       <div className="hairline-b">
-        <div className="max-w-3xl mx-auto px-6 py-8">
-          <span className="mono-label-sm opacity-40 block mb-3">PRACTICE_SETUP</span>
+        <div className="max-w-5xl mx-auto px-6 py-8">
+          <span className="mono-label-sm opacity-40 block mb-3">BUSINESS SETUP</span>
           <h1 className="font-display font-black uppercase text-2xl tracking-tightest mb-8">
-            INITIALIZE YOUR PRACTICE
+            GET YOUR BUSINESS AI-READY
           </h1>
 
-          <div className="flex items-center">
+          <div className="flex items-center overflow-x-auto pb-2">
             {STEP_LABELS.map((label, index) => {
               const isActive = index === currentStep
               const isCompleted = index < currentStep
 
               return (
-                <div key={label} className="flex items-center flex-1">
-                  <div className="flex items-center gap-3">
+                <div key={label} className="flex items-center flex-1 min-w-0">
+                  <div className="flex items-center gap-2 shrink-0">
                     <div
-                      className={`flex items-center justify-center w-8 h-8 shrink-0 transition-all duration-300 ${
+                      className={`flex items-center justify-center w-7 h-7 shrink-0 transition-all duration-300 ${
                         isCompleted
                           ? 'bg-accent text-background'
                           : isActive
@@ -331,29 +533,21 @@ export default function OnboardingPage() {
                           : 'hairline text-muted-foreground'
                       }`}
                     >
-                      <span className="font-mono text-[10px] font-bold" style={{ letterSpacing: '0.05em' }}>
-                        {STEP_NUMBERS[index]}
+                      <span className="font-mono text-[9px] font-bold" style={{ letterSpacing: '0.05em' }}>
+                        {isCompleted ? '✓' : STEP_NUMBERS[index]}
                       </span>
                     </div>
                     <span
-                      className={`font-mono text-[10px] font-medium hidden sm:block transition-colors duration-300 uppercase ${
-                        isActive
-                          ? 'text-accent'
-                          : isCompleted
-                          ? 'text-foreground'
-                          : 'text-muted-foreground'
+                      className={`font-mono text-[8px] font-medium hidden lg:block transition-colors duration-300 uppercase whitespace-nowrap ${
+                        isActive ? 'text-accent' : isCompleted ? 'text-foreground' : 'text-muted-foreground'
                       }`}
-                      style={{ letterSpacing: '0.15em' }}
+                      style={{ letterSpacing: '0.1em' }}
                     >
-                      {label}
+                      {displayLabel(label)}
                     </span>
                   </div>
                   {index < STEP_LABELS.length - 1 && (
-                    <div
-                      className={`h-px flex-1 mx-3 transition-colors duration-300 ${
-                        index < currentStep ? 'bg-accent' : 'bg-white/10'
-                      }`}
-                    />
+                    <div className={`h-px flex-1 mx-3 min-w-[20px] transition-colors duration-300 ${index < currentStep ? 'bg-accent' : 'bg-white/10'}`} />
                   )}
                 </div>
               )
@@ -363,109 +557,291 @@ export default function OnboardingPage() {
       </div>
 
       <div className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
-        {/* Step 0: Practice Info */}
-        {currentStep === 0 && (
+        {/* ============================================================ */}
+        {/* Step: Business Profile */}
+        {/* ============================================================ */}
+        {currentStepLabel() === 'BUSINESS_PROFILE' && (
           <div className="animate-fade-in space-y-8">
             <div>
-              <span className="mono-label-sm opacity-40 block mb-2">STEP_01</span>
-              <h2 className="font-display font-black uppercase text-xl tracking-tightest">
-                PRACTICE INFORMATION
-              </h2>
-              <p className="font-sans text-sm font-light opacity-50 mt-2">
-                Tell us about your practice so AI agents can find and recommend you.
-              </p>
+              <span className="mono-label-sm opacity-40 block mb-2">STEP 01</span>
+              <h2 className="font-display font-black uppercase text-xl tracking-tightest">BUSINESS PROFILE</h2>
+              <p className="font-sans text-sm font-light opacity-50 mt-2">Tell us about your business so AI agents can find and recommend you.</p>
             </div>
 
             <div className="space-y-5">
-              <Input
-                id="practice-name"
-                label="Practice Name *"
-                placeholder="e.g. Bright Smile Dental"
-                value={formData.name}
-                onChange={(e) => updateField('name', e.target.value)}
-              />
+              <Input id="business-name" label="Business Name *" placeholder="e.g. Joe's Barbershop" value={formData.name} onChange={(e) => updateField('name', e.target.value)} />
 
-              <Select
-                id="practice-type"
-                label="Practice Type *"
-                options={PRACTICE_TYPE_OPTIONS}
-                value={formData.practice_type}
-                onChange={(e) => handlePracticeTypeChange(e.target.value)}
-              />
+              {/* Industry — free text with autocomplete */}
+              <div className="relative">
+                <Input
+                  id="industry"
+                  label="Industry / Category *"
+                  placeholder="e.g. Hair Salon, Dental Office, Yoga Studio..."
+                  value={formData.industry}
+                  onChange={(e) => {
+                    updateField('industry', e.target.value)
+                    setShowIndustrySuggestions(true)
+                  }}
+                  onFocus={() => setShowIndustrySuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowIndustrySuggestions(false), 200)}
+                />
+                {showIndustrySuggestions && filteredSuggestions.length > 0 && (
+                  <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card hairline max-h-48 overflow-y-auto">
+                    {filteredSuggestions.map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        className="w-full text-left px-4 py-2 font-mono text-sm hover:bg-accent/10 hover:text-accent transition-colors"
+                        onMouseDown={() => {
+                          updateField('industry', suggestion)
+                          setShowIndustrySuggestions(false)
+                        }}
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Interaction Type */}
+              <div>
+                <label className="block text-sm text-muted-foreground mb-3">What do customers do with your business?</label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { id: 'appointment' as const, label: 'Book Appointments', desc: 'Salons, dentists, mechanics, consultants', icon: CalendarCheck },
+                    { id: 'order' as const, label: 'Place Orders', desc: 'Restaurants, grocery, retail, delivery', icon: ShoppingCart },
+                    { id: 'hybrid' as const, label: 'Both', desc: 'Book services + order products', icon: Package },
+                  ].map(({ id, label, desc, icon: Icon }) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => {
+                        updateField('interaction_type', id)
+                        // Reset step when changing type to avoid being on a non-existent step
+                        setCurrentStep(0)
+                      }}
+                      className={`p-4 text-left transition-all duration-300 ${
+                        formData.interaction_type === id
+                          ? 'bg-accent/10 border-2 border-accent'
+                          : 'hairline hover:bg-white/[0.02]'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5 mb-2 text-accent" />
+                      <p className="font-mono text-sm font-medium text-foreground">{label}</p>
+                      <p className="font-sans text-xs opacity-50 mt-1">{desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div>
+                <label className="block text-sm text-muted-foreground mb-2">Tags (for discoverability)</label>
+                <div className="flex gap-2 mb-2 flex-wrap">
+                  {formData.tags.map((tag) => (
+                    <Badge key={tag} variant="accent" className="flex items-center gap-1">
+                      {tag}
+                      <button type="button" onClick={() => removeTag(tag)} className="ml-1 hover:text-white">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    id="tag-input"
+                    placeholder="Add a tag (e.g. spa, massage, wellness)"
+                    value={formData.tagInput}
+                    onChange={(e) => updateField('tagInput', e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag() } }}
+                  />
+                  <Button variant="outline" onClick={addTag} className="shrink-0"><Tag className="w-4 h-4" /></Button>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Input
-                  id="phone"
-                  label="Phone Number"
-                  type="tel"
-                  placeholder="(555) 123-4567"
-                  value={formData.phone}
-                  onChange={(e) => updateField('phone', e.target.value)}
-                />
-                <Input
-                  id="website"
-                  label="Website"
-                  type="url"
-                  placeholder="https://yourpractice.com"
-                  value={formData.website}
-                  onChange={(e) => updateField('website', e.target.value)}
-                />
+                <Input id="phone" label="Phone Number" type="tel" placeholder="(555) 123-4567" value={formData.phone} onChange={(e) => updateField('phone', e.target.value)} />
+                <Input id="website" label="Website" type="url" placeholder="https://yourbusiness.com" value={formData.website} onChange={(e) => updateField('website', e.target.value)} />
               </div>
 
               <div className="hairline-t pt-5">
                 <span className="mono-label-sm opacity-40 block mb-4">ADDRESS</span>
                 <div className="space-y-4">
-                  <Input
-                    id="street"
-                    label="Street Address"
-                    placeholder="123 Main Street, Suite 100"
-                    value={formData.address_street}
-                    onChange={(e) => updateField('address_street', e.target.value)}
-                  />
+                  <Input id="street" label="Street Address" placeholder="123 Main Street, Suite 100" value={formData.address_street} onChange={(e) => updateField('address_street', e.target.value)} />
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div className="col-span-2 sm:col-span-2">
-                      <Input
-                        id="city"
-                        label="City"
-                        placeholder="New York"
-                        value={formData.address_city}
-                        onChange={(e) => updateField('address_city', e.target.value)}
-                      />
+                    <div className="col-span-2">
+                      <Input id="city" label="City" placeholder="Portland" value={formData.address_city} onChange={(e) => updateField('address_city', e.target.value)} />
                     </div>
-                    <Input
-                      id="state"
-                      label="State"
-                      placeholder="NY"
-                      value={formData.address_state}
-                      onChange={(e) => updateField('address_state', e.target.value)}
-                    />
-                    <Input
-                      id="zip"
-                      label="ZIP Code"
-                      placeholder="10001"
-                      value={formData.address_zip}
-                      onChange={(e) => updateField('address_zip', e.target.value)}
-                    />
+                    <Input id="state" label="State" placeholder="OR" value={formData.address_state} onChange={(e) => updateField('address_state', e.target.value)} />
+                    <Input id="zip" label="ZIP" placeholder="97201" value={formData.address_zip} onChange={(e) => updateField('address_zip', e.target.value)} />
                   </div>
+                </div>
+              </div>
+
+              {/* Additional Info */}
+              <div className="hairline-t pt-5">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="mono-label-sm opacity-40">ADDITIONAL INFO</span>
+                  <Button variant="ghost" size="sm" onClick={addAdditionalInfo}><Plus className="w-3 h-3 mr-1" />ADD FIELD</Button>
+                </div>
+                <p className="font-sans text-xs opacity-40 mb-4">Add any relevant details for your customers (e.g. parking info, insurance accepted, requirements).</p>
+
+                {formData.additional_info.length === 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {getAdditionalInfoSuggestions().map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        className="px-3 py-1 hairline font-mono text-[10px] uppercase text-muted-foreground hover:text-accent hover:border-accent/30 transition-colors"
+                        style={{ letterSpacing: '0.1em' }}
+                        onClick={() => setFormData((prev) => ({ ...prev, additional_info: [...prev.additional_info, { key: suggestion, value: '' }] }))}
+                      >
+                        + {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  {formData.additional_info.map((entry, i) => (
+                    <div key={i} className="flex gap-3 items-start">
+                      <div className="flex-1">
+                        <Input id={`info-key-${i}`} placeholder="Label (e.g. Parking)" value={entry.key} onChange={(e) => updateAdditionalInfo(i, 'key', e.target.value)} />
+                      </div>
+                      <div className="flex-[2]">
+                        <Input id={`info-value-${i}`} placeholder="Value (e.g. Free parking in rear lot)" value={entry.value} onChange={(e) => updateAdditionalInfo(i, 'value', e.target.value)} />
+                      </div>
+                      <button type="button" onClick={() => removeAdditionalInfo(i)} className="mt-2 p-1 text-muted-foreground hover:text-destructive"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Step 1: Services */}
-        {currentStep === 1 && (
+        {/* ============================================================ */}
+        {/* Step: Booking System (appointment/hybrid only) */}
+        {/* ============================================================ */}
+        {currentStepLabel() === 'BOOKING_SYSTEM' && (
           <div className="animate-fade-in space-y-8">
             <div>
-              <span className="mono-label-sm opacity-40 block mb-2">STEP_02</span>
-              <h2 className="font-display font-black uppercase text-xl tracking-tightest">
-                SERVICES
-              </h2>
-              <p className="font-sans text-sm font-light opacity-50 mt-2">
-                Add the services AI agents can book for your clients. You can always
-                edit these later.
-              </p>
+              <span className="mono-label-sm opacity-40 block mb-2">STEP 02</span>
+              <h2 className="font-display font-black uppercase text-xl tracking-tightest">BOOKING SYSTEM</h2>
+              <p className="font-sans text-sm font-light opacity-50 mt-2">Choose how you manage appointments. We will connect to your system.</p>
             </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {BOOKING_SYSTEMS.map((system) => (
+                <button
+                  key={system.id}
+                  type="button"
+                  onClick={() => updateField('booking_system_type', system.id)}
+                  className={`p-6 text-left transition-all duration-300 ${
+                    formData.booking_system_type === system.id
+                      ? 'bg-accent/10 border-2 border-accent'
+                      : 'hairline hover:bg-white/[0.02]'
+                  }`}
+                >
+                  <span className="text-2xl mb-3 block">{system.icon}</span>
+                  <p className="font-mono text-sm font-medium text-foreground">{system.name}</p>
+                  <p className="font-sans text-xs opacity-50 mt-1">{system.description}</p>
+                </button>
+              ))}
+            </div>
+
+            {/* Other option */}
+            <button
+              type="button"
+              onClick={() => updateField('booking_system_type', 'other')}
+              className={`w-full p-6 text-left transition-all duration-300 ${
+                formData.booking_system_type === 'other'
+                  ? 'bg-accent/10 border-2 border-accent'
+                  : 'hairline hover:bg-white/[0.02]'
+              }`}
+            >
+              <p className="font-mono text-sm font-medium text-foreground">Other / I don't see mine</p>
+              <p className="font-sans text-xs opacity-50 mt-1">Request an integration for your booking system</p>
+            </button>
+
+            {formData.booking_system_type === 'other' && (
+              <Card className="p-6">
+                <p className="font-mono text-sm mb-4 opacity-70">Tell us what booking system you use and we will notify you when it is supported.</p>
+                <Input
+                  id="integration-request"
+                  label="Booking System Name"
+                  placeholder="e.g. Vagaro, Mindbody, Booksy..."
+                  value={formData.integration_request_system}
+                  onChange={(e) => updateField('integration_request_system', e.target.value)}
+                />
+                <p className="font-sans text-xs opacity-40 mt-3">
+                  In the meantime, you can use SpadeChat's built-in booking system.
+                </p>
+                <Button variant="outline" size="sm" className="mt-3" onClick={() => updateField('booking_system_type', 'internal')}>
+                  Use Built-in System Instead
+                </Button>
+              </Card>
+            )}
+
+            {formData.booking_system_type === 'calendly' && (
+              <Card className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Link2 className="w-5 h-5 text-accent" />
+                  <p className="font-mono text-sm font-medium">Connect Calendly</p>
+                </div>
+                <p className="font-sans text-xs opacity-50 mb-4">OAuth integration coming soon. For now, using SpadeChat built-in booking.</p>
+                <Button variant="accent" disabled>Connect with Calendly (Coming Soon)</Button>
+              </Card>
+            )}
+
+            {formData.booking_system_type === 'acuity' && (
+              <Card className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Link2 className="w-5 h-5 text-accent" />
+                  <p className="font-mono text-sm font-medium">Connect Acuity Scheduling</p>
+                </div>
+                <p className="font-sans text-xs opacity-50 mb-4">OAuth integration coming soon. For now, using SpadeChat built-in booking.</p>
+                <Button variant="accent" disabled>Connect with Acuity (Coming Soon)</Button>
+              </Card>
+            )}
+
+            {formData.booking_system_type === 'square' && (
+              <Card className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Link2 className="w-5 h-5 text-accent" />
+                  <p className="font-mono text-sm font-medium">Connect Square Appointments</p>
+                </div>
+                <p className="font-sans text-xs opacity-50 mb-4">OAuth integration coming soon. For now, using SpadeChat built-in booking.</p>
+                <Button variant="accent" disabled>Connect with Square (Coming Soon)</Button>
+              </Card>
+            )}
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* Step: Services (appointment/hybrid only) */}
+        {/* ============================================================ */}
+        {currentStepLabel() === 'SERVICES' && (
+          <div className="animate-fade-in space-y-8">
+            <div>
+              <span className="mono-label-sm opacity-40 block mb-2">STEP 03</span>
+              <h2 className="font-display font-black uppercase text-xl tracking-tightest">SERVICES</h2>
+              <p className="font-sans text-sm font-light opacity-50 mt-2">Add the services AI agents can book for your customers.</p>
+            </div>
+
+            {/* Template suggestion */}
+            {findTemplateForIndustry(formData.industry) && (
+              <div className="flex items-center justify-between p-4 bg-accent/5 hairline">
+                <div className="flex items-center gap-3">
+                  <Sparkles className="w-4 h-4 text-accent" />
+                  <p className="font-mono text-xs opacity-70">
+                    We have suggested services for <span className="text-accent">{formData.industry}</span> businesses.
+                  </p>
+                </div>
+                <Button variant="outline" size="sm" onClick={loadTemplate}>Load Template</Button>
+              </div>
+            )}
 
             <div className="space-y-4">
               {formData.services.map((service, index) => (
@@ -473,145 +849,114 @@ export default function OnboardingPage() {
                   <div className="space-y-4">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <Input
-                          id={`service-name-${index}`}
-                          label="Service Name *"
-                          placeholder="e.g. Teeth Cleaning"
-                          value={service.name}
-                          onChange={(e) =>
-                            updateService(index, 'name', e.target.value)
-                          }
-                        />
+                        <Input id={`svc-name-${index}`} label="Service Name *" placeholder="e.g. Haircut, Oil Change, Consultation..." value={service.name} onChange={(e) => updateService(index, 'name', e.target.value)} />
                       </div>
                       {formData.services.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeService(index)}
-                          className="mt-7 p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <button type="button" onClick={() => removeService(index)} className="mt-7 p-2 text-muted-foreground hover:text-destructive"><Trash2 className="w-4 h-4" /></button>
                       )}
                     </div>
-
-                    <div className="grid grid-cols-3 gap-4">
-                      <Input
-                        id={`service-price-min-${index}`}
-                        label="Min Price ($)"
-                        type="number"
-                        placeholder="100"
-                        value={service.price_min}
-                        onChange={(e) =>
-                          updateService(index, 'price_min', e.target.value)
-                        }
-                      />
-                      <Input
-                        id={`service-price-max-${index}`}
-                        label="Max Price ($)"
-                        type="number"
-                        placeholder="200"
-                        value={service.price_max}
-                        onChange={(e) =>
-                          updateService(index, 'price_max', e.target.value)
-                        }
-                      />
-                      <Input
-                        id={`service-duration-${index}`}
-                        label="Duration (min)"
-                        type="number"
-                        placeholder="60"
-                        value={service.duration_minutes}
-                        onChange={(e) =>
-                          updateService(index, 'duration_minutes', e.target.value)
-                        }
-                      />
+                    <div className="grid grid-cols-2 gap-4">
+                      <Input id={`svc-duration-${index}`} label="Duration (min)" type="number" placeholder="30" value={service.duration_minutes} onChange={(e) => updateService(index, 'duration_minutes', e.target.value)} />
+                      <Input id={`svc-price-${index}`} label="Price ($)" type="number" placeholder="45.00" value={service.price} onChange={(e) => updateService(index, 'price', e.target.value)} />
                     </div>
-
-                    <Input
-                      id={`service-description-${index}`}
-                      label="Description"
-                      placeholder="Brief description of this service..."
-                      value={service.description}
-                      onChange={(e) =>
-                        updateService(index, 'description', e.target.value)
-                      }
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm text-muted-foreground mb-2">Price Type</label>
+                        <select value={service.priceType} onChange={(e) => updateService(index, 'priceType', e.target.value)} className="w-full appearance-none px-4 py-2.5 bg-card hairline text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200 cursor-pointer">
+                          <option value="fixed">Fixed price</option>
+                          <option value="starting_at">Starting at</option>
+                          <option value="varies">Varies / quote required</option>
+                          <option value="free">Free</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm text-muted-foreground mb-2">Payment Timing</label>
+                        <select value={service.paymentTiming} onChange={(e) => updateService(index, 'paymentTiming', e.target.value)} className="w-full appearance-none px-4 py-2.5 bg-card hairline text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200 cursor-pointer">
+                          <option value="at_service">Pay at time of service</option>
+                          <option value="at_booking">Pay when booking</option>
+                          <option value="deposit_then_remainder">Deposit required, remainder at service</option>
+                          <option value="free">Free / no payment</option>
+                        </select>
+                      </div>
+                    </div>
+                    {service.paymentTiming === 'deposit_then_remainder' && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <Input id={`svc-deposit-${index}`} label="Deposit Amount ($)" type="number" placeholder="50" value={service.depositAmount} onChange={(e) => updateService(index, 'depositAmount', e.target.value)} />
+                        <Input id={`svc-hold-${index}`} label="Reservation Hold (min)" type="number" placeholder="15" value={service.reservationHoldMinutes} onChange={(e) => updateService(index, 'reservationHoldMinutes', e.target.value)} />
+                      </div>
+                    )}
+                    {(service.paymentTiming === 'at_booking' || service.paymentTiming === 'deposit_then_remainder') && (
+                      <Input id={`svc-payment-link-${index}`} label="Payment Link (optional)" placeholder="https://pay.stripe.com/... or PayPal.me/..." value={service.paymentLink} onChange={(e) => updateService(index, 'paymentLink', e.target.value)} />
+                    )}
+                    <Input id={`svc-desc-${index}`} label="Description" placeholder="Brief description..." value={service.description} onChange={(e) => updateService(index, 'description', e.target.value)} />
                   </div>
                 </Card>
               ))}
-
-              <Button
-                variant="outline"
-                onClick={addService}
-                className="w-full"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                ADD_SERVICE
-              </Button>
+              <Button variant="outline" onClick={addService} className="w-full"><Plus className="w-4 h-4 mr-2" />ADD SERVICE</Button>
             </div>
           </div>
         )}
 
-        {/* Step 2: Availability */}
-        {currentStep === 2 && (
+        {/* ============================================================ */}
+        {/* Step: Catalog (order/hybrid only) */}
+        {/* ============================================================ */}
+        {currentStepLabel() === 'CATALOG' && (
           <div className="animate-fade-in space-y-8">
             <div>
-              <span className="mono-label-sm opacity-40 block mb-2">STEP_03</span>
-              <h2 className="font-display font-black uppercase text-xl tracking-tightest">
-                AVAILABILITY
-              </h2>
-              <p className="font-sans text-sm font-light opacity-50 mt-2">
-                Set your weekly availability so AI agents know when to schedule
-                appointments.
-              </p>
+              <span className="mono-label-sm opacity-40 block mb-2">STEP {STEP_NUMBERS[currentStep]}</span>
+              <h2 className="font-display font-black uppercase text-xl tracking-tightest">CATALOG / MENU</h2>
+              <p className="font-sans text-sm font-light opacity-50 mt-2">Add items that AI agents can order for your customers.</p>
             </div>
 
+            <div className="space-y-4">
+              {formData.catalog_items.map((item, index) => (
+                <Card key={index} className="relative p-6">
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <Input id={`cat-name-${index}`} label="Item Name *" placeholder="e.g. Margherita Pizza, Organic Apples..." value={item.name} onChange={(e) => updateCatalogItem(index, 'name', e.target.value)} />
+                      </div>
+                      {formData.catalog_items.length > 1 && (
+                        <button type="button" onClick={() => removeCatalogItem(index)} className="mt-7 p-2 text-muted-foreground hover:text-destructive"><Trash2 className="w-4 h-4" /></button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <Input id={`cat-category-${index}`} label="Category" placeholder="e.g. Pizza, Produce, Drinks..." value={item.category} onChange={(e) => updateCatalogItem(index, 'category', e.target.value)} />
+                      <Input id={`cat-price-${index}`} label="Price ($)" type="number" placeholder="12.99" value={item.price} onChange={(e) => updateCatalogItem(index, 'price', e.target.value)} />
+                    </div>
+                    <Input id={`cat-desc-${index}`} label="Description" placeholder="Brief description..." value={item.description} onChange={(e) => updateCatalogItem(index, 'description', e.target.value)} />
+                    <Input id={`cat-options-${index}`} label="Options (optional)" placeholder="e.g. Size: Small, Medium, Large" value={item.options} onChange={(e) => updateCatalogItem(index, 'options', e.target.value)} />
+                  </div>
+                </Card>
+              ))}
+              <Button variant="outline" onClick={addCatalogItem} className="w-full"><Plus className="w-4 h-4 mr-2" />ADD ITEM</Button>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* Step: Availability */}
+        {/* ============================================================ */}
+        {currentStepLabel() === 'AVAILABILITY' && (
+          <div className="animate-fade-in space-y-8">
+            <div>
+              <span className="mono-label-sm opacity-40 block mb-2">STEP 04</span>
+              <h2 className="font-display font-black uppercase text-xl tracking-tightest">AVAILABILITY</h2>
+              <p className="font-sans text-sm font-light opacity-50 mt-2">Set your weekly hours so AI agents know when to schedule.</p>
+            </div>
             <div className="space-y-0">
               {formData.availability.map((day, index) => (
-                <div
-                  key={day.day_of_week}
-                  className={`flex items-center gap-4 px-4 py-4 hairline-b transition-all duration-200 ${
-                    day.is_open ? '' : 'opacity-50'
-                  }`}
-                >
-                  <Switch
-                    checked={day.is_open}
-                    onCheckedChange={(checked) =>
-                      updateAvailability(index, 'is_open', checked)
-                    }
-                  />
-
-                  <span
-                    className="font-mono text-[10px] font-medium w-28 uppercase"
-                    style={{ letterSpacing: '0.2em' }}
-                  >
-                    {day.label.toUpperCase()}
-                  </span>
-
+                <div key={day.day_of_week} className={`flex items-center gap-4 px-4 py-4 hairline-b transition-all duration-200 ${day.is_open ? '' : 'opacity-50'}`}>
+                  <Switch checked={day.is_open} onCheckedChange={(checked) => updateAvailability(index, 'is_open', checked)} />
+                  <span className="font-mono text-[10px] font-medium w-28 uppercase" style={{ letterSpacing: '0.2em' }}>{day.label.toUpperCase()}</span>
                   {day.is_open ? (
                     <div className="flex items-center gap-2 flex-1">
-                      <input
-                        type="time"
-                        value={day.open_time}
-                        onChange={(e) =>
-                          updateAvailability(index, 'open_time', e.target.value)
-                        }
-                        className="bg-transparent hairline-b px-3 py-2 text-sm font-mono text-foreground focus:outline-none focus:border-accent transition-all"
-                      />
+                      <input type="time" value={day.open_time} onChange={(e) => updateAvailability(index, 'open_time', e.target.value)} className="bg-transparent hairline-b px-3 py-2 text-sm font-mono text-foreground focus:outline-none focus:border-accent transition-all" />
                       <span className="text-muted-foreground text-xs font-mono uppercase" style={{ letterSpacing: '0.15em' }}>to</span>
-                      <input
-                        type="time"
-                        value={day.close_time}
-                        onChange={(e) =>
-                          updateAvailability(index, 'close_time', e.target.value)
-                        }
-                        className="bg-transparent hairline-b px-3 py-2 text-sm font-mono text-foreground focus:outline-none focus:border-accent transition-all"
-                      />
+                      <input type="time" value={day.close_time} onChange={(e) => updateAvailability(index, 'close_time', e.target.value)} className="bg-transparent hairline-b px-3 py-2 text-sm font-mono text-foreground focus:outline-none focus:border-accent transition-all" />
                     </div>
                   ) : (
-                    <span className="font-mono text-[10px] opacity-30 uppercase" style={{ letterSpacing: '0.2em' }}>
-                      CLOSED
-                    </span>
+                    <span className="font-mono text-[10px] opacity-30 uppercase" style={{ letterSpacing: '0.2em' }}>CLOSED</span>
                   )}
                 </div>
               ))}
@@ -619,152 +964,184 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Step 3: Review & Launch */}
-        {currentStep === 3 && (
+        {/* ============================================================ */}
+        {/* Step: Business Rules (appointment/hybrid only) */}
+        {/* ============================================================ */}
+        {currentStepLabel() === 'BUSINESS_RULES' && (
           <div className="animate-fade-in space-y-8">
             <div>
-              <span className="mono-label-sm opacity-40 block mb-2">STEP_04</span>
-              <h2 className="font-display font-black uppercase text-xl tracking-tightest">
-                REVIEW & LAUNCH
-              </h2>
-              <p className="font-sans text-sm font-light opacity-50 mt-2">
-                Everything looks great. Review your setup and go live.
-              </p>
+              <span className="mono-label-sm opacity-40 block mb-2">STEP 05</span>
+              <h2 className="font-display font-black uppercase text-xl tracking-tightest">BUSINESS RULES</h2>
+              <p className="font-sans text-sm font-light opacity-50 mt-2">Configure booking rules to control how AI agents schedule appointments.</p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Input id="min-advance" label="Min Advance Booking (hours)" type="number" placeholder="1" value={formData.min_advance_hours} onChange={(e) => updateField('min_advance_hours', e.target.value)} />
+                <Input id="max-advance" label="Max Advance Booking (days)" type="number" placeholder="60" value={formData.max_advance_days} onChange={(e) => updateField('max_advance_days', e.target.value)} />
+                <Input id="buffer" label="Buffer Between Appts (min)" type="number" placeholder="0" value={formData.buffer_minutes} onChange={(e) => updateField('buffer_minutes', e.target.value)} />
+              </div>
+
+              <div>
+                <label htmlFor="additional-rules" className="block text-sm text-muted-foreground mb-2">Additional Rules (free text)</label>
+                <textarea
+                  id="additional-rules"
+                  rows={4}
+                  placeholder="Any special rules for your business (e.g. 'Dogs must be leashed', 'Deposit required for tattoos over 2 hours', 'New clients require 15 min extra')..."
+                  className="w-full px-4 py-2.5 bg-card hairline text-foreground font-mono text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200 resize-none"
+                  value={formData.additional_rules}
+                  onChange={(e) => updateField('additional_rules', e.target.value)}
+                />
+                <p className="font-sans text-xs opacity-30 mt-2">These rules are displayed on your profile. Structured rules above are enforced automatically by the booking engine.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* Step: Validation */}
+        {/* ============================================================ */}
+        {currentStepLabel() === 'VALIDATE' && (
+          <div className="animate-fade-in space-y-8">
+            <div>
+              <span className="mono-label-sm opacity-40 block mb-2">STEP 06</span>
+              <h2 className="font-display font-black uppercase text-xl tracking-tightest">VALIDATE SETUP</h2>
+              <p className="font-sans text-sm font-light opacity-50 mt-2">Run automated checks to make sure everything is configured correctly.</p>
+            </div>
+
+            {!validationResults && !isValidating && (
+              <div className="text-center py-12">
+                <ShieldCheck className="w-12 h-12 text-accent mx-auto mb-4 opacity-50" />
+                <p className="font-mono text-sm opacity-50 mb-6">Click below to validate your configuration</p>
+                <Button variant="accent" onClick={runValidation}><ShieldCheck className="w-4 h-4 mr-2" />RUN VALIDATION</Button>
+              </div>
+            )}
+
+            {isValidating && (
+              <div className="text-center py-12">
+                <div className="w-12 h-12 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                <p className="font-mono text-sm text-accent">VALIDATING CONFIGURATION...</p>
+              </div>
+            )}
+
+            {validationResults && (
+              <div className="space-y-4">
+                {validationResults.passed.map((msg, i) => (
+                  <div key={i} className="flex items-center gap-3 p-4 bg-green-500/5 hairline">
+                    <Check className="w-5 h-5 text-green-500 shrink-0" />
+                    <span className="font-mono text-sm">{msg}</span>
+                  </div>
+                ))}
+                {validationResults.failed.map((msg, i) => (
+                  <div key={i} className="flex items-center gap-3 p-4 bg-destructive/5 hairline">
+                    <AlertCircle className="w-5 h-5 text-destructive shrink-0" />
+                    <span className="font-mono text-sm">{msg}</span>
+                  </div>
+                ))}
+                {validationResults.failed.length === 0 && (
+                  <div className="text-center pt-4">
+                    <p className="font-mono text-sm text-green-500">ALL CHECKS PASSED — Ready to launch!</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* Step: Review & Launch */}
+        {/* ============================================================ */}
+        {currentStepLabel() === 'LAUNCH' && (
+          <div className="animate-fade-in space-y-8">
+            <div>
+              <span className="mono-label-sm opacity-40 block mb-2">STEP {STEP_NUMBERS[currentStep]}</span>
+              <h2 className="font-display font-black uppercase text-xl tracking-tightest">REVIEW & LAUNCH</h2>
+              <p className="font-sans text-sm font-light opacity-50 mt-2">Everything looks great. Review and go live.</p>
             </div>
 
             <div className="space-y-0">
-              {/* Practice Details Review */}
+              {/* Business Details */}
               <div className="py-6 hairline-b">
-                <div className="flex items-center gap-3 mb-4">
-                  <Building2 className="w-4 h-4 text-accent" />
-                  <span className="mono-label-sm opacity-60">PRACTICE_DETAILS</span>
-                </div>
+                <div className="flex items-center gap-3 mb-4"><Building2 className="w-4 h-4 text-accent" /><span className="mono-label-sm opacity-60">BUSINESS DETAILS</span></div>
                 <div className="grid grid-cols-2 gap-y-4 gap-x-8">
-                  <div>
-                    <span className="mono-label-sm opacity-30 block mb-1">NAME</span>
-                    <p className="text-foreground font-mono text-sm">{formData.name}</p>
-                  </div>
-                  <div>
-                    <span className="mono-label-sm opacity-30 block mb-1">TYPE</span>
-                    <p className="text-foreground font-mono text-sm uppercase">
-                      {formData.practice_type}
-                    </p>
-                  </div>
-                  {formData.phone && (
-                    <div>
-                      <span className="mono-label-sm opacity-30 block mb-1">PHONE</span>
-                      <p className="text-foreground font-mono text-sm">{formData.phone}</p>
-                    </div>
+                  <div><span className="mono-label-sm opacity-30 block mb-1">NAME</span><p className="text-foreground font-mono text-sm">{formData.name}</p></div>
+                  <div><span className="mono-label-sm opacity-30 block mb-1">INDUSTRY</span><p className="text-foreground font-mono text-sm">{formData.industry}</p></div>
+                  {formData.tags.length > 0 && (
+                    <div className="col-span-2"><span className="mono-label-sm opacity-30 block mb-1">TAGS</span><div className="flex gap-2 flex-wrap">{formData.tags.map((t) => <Badge key={t} variant="accent">{t}</Badge>)}</div></div>
                   )}
-                  {formData.website && (
-                    <div>
-                      <span className="mono-label-sm opacity-30 block mb-1">WEBSITE</span>
-                      <p className="text-foreground font-mono text-sm">{formData.website}</p>
-                    </div>
-                  )}
-                  {formData.address_street && (
-                    <div className="col-span-2">
-                      <span className="mono-label-sm opacity-30 block mb-1">ADDRESS</span>
-                      <p className="text-foreground font-mono text-sm">
-                        {formData.address_street}
-                        {formData.address_city && `, ${formData.address_city}`}
-                        {formData.address_state && `, ${formData.address_state}`}
-                        {formData.address_zip && ` ${formData.address_zip}`}
-                      </p>
-                    </div>
-                  )}
+                  {formData.phone && <div><span className="mono-label-sm opacity-30 block mb-1">PHONE</span><p className="text-foreground font-mono text-sm">{formData.phone}</p></div>}
+                  {formData.website && <div><span className="mono-label-sm opacity-30 block mb-1">WEBSITE</span><p className="text-foreground font-mono text-sm">{formData.website}</p></div>}
                 </div>
               </div>
 
-              {/* Services Review */}
-              <div className="py-6 hairline-b">
-                <div className="flex items-center gap-3 mb-4">
-                  <Stethoscope className="w-4 h-4 text-accent" />
-                  <span className="mono-label-sm opacity-60">
-                    SERVICES ({formData.services.filter((s) => s.name.trim()).length})
-                  </span>
-                </div>
-                <div className="space-y-0">
-                  {formData.services
-                    .filter((s) => s.name.trim())
-                    .map((service, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between py-3 hairline-b last:border-b-0"
-                      >
-                        <div>
-                          <p className="text-foreground font-mono text-sm">
-                            {service.name}
-                          </p>
-                          {service.description && (
-                            <p className="font-sans text-xs opacity-40 mt-0.5">
-                              {service.description}
-                            </p>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          {(service.price_min || service.price_max) && (
-                            <p className="text-accent font-mono text-sm">
-                              {service.price_min && service.price_max
-                                ? `$${service.price_min}–$${service.price_max}`
-                                : service.price_min
-                                ? `FROM_$${service.price_min}`
-                                : `UP_TO_$${service.price_max}`}
-                            </p>
-                          )}
-                          {service.duration_minutes && (
-                            <p className="font-mono text-[10px] opacity-30 uppercase" style={{ letterSpacing: '0.15em' }}>
-                              {service.duration_minutes}_MIN
-                            </p>
-                          )}
-                        </div>
+              {/* Services (appointment/hybrid) */}
+              {formData.interaction_type !== 'order' && (
+                <div className="py-6 hairline-b">
+                  <div className="flex items-center gap-3 mb-4"><Briefcase className="w-4 h-4 text-accent" /><span className="mono-label-sm opacity-60">SERVICES ({formData.services.filter((s) => s.name.trim()).length})</span></div>
+                  {formData.services.filter((s) => s.name.trim()).map((service, index) => (
+                    <div key={index} className="flex items-center justify-between py-3 hairline-b last:border-b-0">
+                      <div>
+                        <p className="text-foreground font-mono text-sm">{service.name}</p>
+                        {service.description && <p className="font-sans text-xs opacity-40 mt-0.5">{service.description}</p>}
                       </div>
-                    ))}
+                      <div className="text-right">
+                        {service.duration_minutes && <p className="font-mono text-[10px] opacity-30 uppercase" style={{ letterSpacing: '0.15em' }}>{service.duration_minutes}_MIN</p>}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
+              )}
 
-              {/* Availability Review */}
-              <div className="py-6 hairline-b">
-                <div className="flex items-center gap-3 mb-4">
-                  <Clock className="w-4 h-4 text-accent" />
-                  <span className="mono-label-sm opacity-60">BUSINESS_HOURS</span>
+              {/* Catalog (order/hybrid) */}
+              {formData.interaction_type !== 'appointment' && (
+                <div className="py-6 hairline-b">
+                  <div className="flex items-center gap-3 mb-4"><ShoppingCart className="w-4 h-4 text-accent" /><span className="mono-label-sm opacity-60">CATALOG ({formData.catalog_items.filter((c) => c.name.trim()).length})</span></div>
+                  {formData.catalog_items.filter((c) => c.name.trim()).map((item, index) => (
+                    <div key={index} className="flex items-center justify-between py-3 hairline-b last:border-b-0">
+                      <div>
+                        <p className="text-foreground font-mono text-sm">{item.name}</p>
+                        {item.category && <p className="font-sans text-xs opacity-40 mt-0.5">{item.category}</p>}
+                      </div>
+                      <div className="text-right">
+                        {item.price && <p className="font-mono text-sm text-accent">${item.price}</p>}
+                      </div>
+                    </div>
+                  ))}
                 </div>
+              )}
+
+              {/* Hours */}
+              <div className="py-6 hairline-b">
+                <div className="flex items-center gap-3 mb-4"><Clock className="w-4 h-4 text-accent" /><span className="mono-label-sm opacity-60">BUSINESS HOURS</span></div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {formData.availability.map((day) => (
-                    <div
-                      key={day.day_of_week}
-                      className={`px-3 py-2 text-center font-mono text-[10px] ${
-                        day.is_open
-                          ? 'bg-accent/10 text-accent hairline'
-                          : 'bg-card hairline text-muted-foreground/50'
-                      }`}
-                      style={{ letterSpacing: '0.1em' }}
-                    >
+                    <div key={day.day_of_week} className={`px-3 py-2 text-center font-mono text-[10px] ${day.is_open ? 'bg-accent/10 text-accent hairline' : 'bg-card hairline text-muted-foreground/50'}`} style={{ letterSpacing: '0.1em' }}>
                       <p className="font-bold">{day.label.slice(0, 3).toUpperCase()}</p>
-                      {day.is_open ? (
-                        <p className="mt-0.5">
-                          {formatTime(day.open_time)}–{formatTime(day.close_time)}
-                        </p>
-                      ) : (
-                        <p className="mt-0.5">CLOSED</p>
-                      )}
+                      {day.is_open ? <p className="mt-0.5">{formatTime(day.open_time)}–{formatTime(day.close_time)}</p> : <p className="mt-0.5">CLOSED</p>}
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* MCP Endpoint Preview */}
-              <div className="py-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Globe className="w-4 h-4 text-accent" />
-                  <span className="mono-label-sm opacity-60">MCP_ENDPOINT</span>
+              {/* Rules (appointment/hybrid only) */}
+              {formData.interaction_type !== 'order' && (
+                <div className="py-6 hairline-b">
+                  <div className="flex items-center gap-3 mb-4"><Settings2 className="w-4 h-4 text-accent" /><span className="mono-label-sm opacity-60">BOOKING RULES</span></div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div><span className="mono-label-sm opacity-30 block mb-1">MIN ADVANCE</span><p className="font-mono text-sm">{formData.min_advance_hours}h</p></div>
+                    <div><span className="mono-label-sm opacity-30 block mb-1">MAX ADVANCE</span><p className="font-mono text-sm">{formData.max_advance_days}d</p></div>
+                    <div><span className="mono-label-sm opacity-30 block mb-1">BUFFER</span><p className="font-mono text-sm">{formData.buffer_minutes}min</p></div>
+                  </div>
                 </div>
-                <p className="font-sans text-sm font-light opacity-50 mb-3">
-                  AI agents will connect to your practice through this endpoint.
-                </p>
+              )}
+
+              {/* AI Booking Link */}
+              <div className="py-6">
+                <div className="flex items-center gap-3 mb-4"><Globe className="w-4 h-4 text-accent" /><span className="mono-label-sm opacity-60">YOUR AI BOOKING LINK</span></div>
+                <p className="font-sans text-sm font-light opacity-50 mb-3">AI assistants will use this link to book for your customers.</p>
                 <div className="bg-background hairline px-4 py-3">
                   <code className="text-accent font-mono text-sm break-all">
-                    https://mcp.practizio.com/p/{generatedSlug}
+                    {typeof window !== 'undefined' ? window.location.origin : 'https://spadechat.com'}/api/mcp/{generatedSlug}
                   </code>
                 </div>
               </div>
@@ -781,32 +1158,15 @@ export default function OnboardingPage() {
         {/* Navigation */}
         <div className="flex items-center justify-between mt-10 pt-6 hairline-t">
           {currentStep > 0 ? (
-            <Button variant="ghost" onClick={prevStep}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              BACK
-            </Button>
+            <Button variant="ghost" onClick={prevStep}><ArrowLeft className="w-4 h-4 mr-2" />BACK</Button>
           ) : (
             <div />
           )}
 
-          {currentStep < 3 ? (
-            <Button
-              onClick={nextStep}
-              disabled={!canAdvance()}
-            >
-              NEXT
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+          {currentStep < STEP_LABELS.length - 1 ? (
+            <Button onClick={nextStep} disabled={!canAdvance()}>NEXT<ArrowRight className="w-4 h-4 ml-2" /></Button>
           ) : (
-            <Button
-              onClick={handleLaunch}
-              loading={isSubmitting}
-              size="lg"
-              variant="accent"
-            >
-              <Rocket className="w-5 h-5 mr-2" />
-              LAUNCH_PRACTICE
-            </Button>
+            <Button onClick={handleLaunch} loading={isSubmitting} size="lg" variant="accent"><Rocket className="w-5 h-5 mr-2" />LAUNCH BUSINESS</Button>
           )}
         </div>
       </div>

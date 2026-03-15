@@ -6,14 +6,8 @@ import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import type { Practice } from '@/types/database'
 import {
-  LayoutDashboard,
-  FileText,
-  Briefcase,
-  Calendar,
-  BarChart3,
-  CreditCard,
-  Settings,
-  LogOut,
+  LayoutDashboard, FileText, Briefcase, Calendar, BarChart3,
+  CreditCard, Settings, LogOut, CalendarCheck, ShoppingCart,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -21,15 +15,26 @@ interface SidebarProps {
   userEmail: string
 }
 
-const navItems = [
-  { href: '/dashboard', label: 'OVERVIEW', icon: LayoutDashboard },
-  { href: '/dashboard/listing', label: 'LISTING', icon: FileText },
-  { href: '/dashboard/services', label: 'SERVICES', icon: Briefcase },
-  { href: '/dashboard/availability', label: 'AVAILABILITY', icon: Calendar },
-  { href: '/dashboard/analytics', label: 'ANALYTICS', icon: BarChart3 },
-  { href: '/dashboard/billing', label: 'BILLING', icon: CreditCard },
-  { href: '/dashboard/settings', label: 'SETTINGS', icon: Settings },
-]
+function getNavItems(interactionType: string) {
+  const items = [
+    { href: '/dashboard', label: 'OVERVIEW', icon: LayoutDashboard },
+    { href: '/dashboard/listing', label: 'LISTING', icon: FileText },
+  ]
+  if (interactionType !== 'order') {
+    items.push({ href: '/dashboard/appointments', label: 'APPOINTMENTS', icon: CalendarCheck })
+    items.push({ href: '/dashboard/services', label: 'SERVICES', icon: Briefcase })
+  }
+  if (interactionType !== 'appointment') {
+    items.push({ href: '/dashboard/orders', label: 'ORDERS', icon: ShoppingCart })
+  }
+  items.push(
+    { href: '/dashboard/availability', label: 'AVAILABILITY', icon: Calendar },
+    { href: '/dashboard/analytics', label: 'ANALYTICS', icon: BarChart3 },
+    { href: '/dashboard/billing', label: 'BILLING', icon: CreditCard },
+    { href: '/dashboard/settings', label: 'SETTINGS', icon: Settings },
+  )
+  return items
+}
 
 export function Sidebar({ practice, userEmail }: SidebarProps) {
   const pathname = usePathname()
@@ -42,69 +47,80 @@ export function Sidebar({ practice, userEmail }: SidebarProps) {
   }
 
   const isActive = (href: string) => {
-    if (href === '/dashboard') {
-      return pathname === '/dashboard'
-    }
+    if (href === '/dashboard') return pathname === '/dashboard'
     return pathname.startsWith(href)
   }
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-[260px] bg-background hairline-r flex flex-col z-40">
+    <aside className="fixed left-0 top-0 h-screen w-[260px] bg-[#080808] flex flex-col z-40" style={{ borderRight: '1px solid rgba(255, 255, 255, 0.04)' }}>
       {/* Logo */}
-      <div className="px-6 py-6 hairline-b">
-        <Link href="/dashboard" className="block">
-          <span className="font-display font-black uppercase tracking-tightest text-lg text-white">
-            PRACTIZIO
+      <div className="px-6 py-6" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
+        <Link href="/dashboard" className="flex items-center gap-2.5">
+          <img src="/logo.png" alt="SpadeChat" className="w-7 h-7 object-contain" />
+          <span className="font-display font-extrabold uppercase tracking-tightest text-base text-chrome">
+            SPADECHAT
           </span>
         </Link>
-        <p className="mt-2 mono-label-sm opacity-40 truncate">
-          {practice.name?.toUpperCase().replace(/ /g, '_') || 'UNNAMED_PRACTICE'}
+        <p className="mt-2.5 mono-label-sm text-white/15 truncate">
+          {practice.name?.toUpperCase() || 'UNNAMED BUSINESS'}
         </p>
+        {practice.industry && (
+          <p className="mono-label-sm text-white/10 truncate mt-0.5" style={{ fontSize: '8px' }}>
+            {(practice.industry as string).toUpperCase()}
+          </p>
+        )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-4 overflow-y-auto">
-        {navItems.map((item) => {
+      <nav className="flex-1 py-3 overflow-y-auto">
+        {getNavItems(practice.interaction_type || 'appointment').map((item) => {
           const active = isActive(item.href)
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 px-6 py-3 font-mono text-[11px] font-medium uppercase transition-all duration-300',
+                'flex items-center gap-3 px-6 py-2.5 font-mono text-[11px] font-medium uppercase transition-all duration-300 mx-2 rounded-lg',
                 active
-                  ? 'text-white bg-white/[0.05] border-l-[2px] border-accent'
-                  : 'text-white/40 hover:text-white hover:bg-white/[0.02] border-l-[2px] border-transparent'
+                  ? 'text-accent bg-accent/[0.06]'
+                  : 'text-white/25 hover:text-white/50 hover:bg-white/[0.02]'
               )}
-              style={{ letterSpacing: '0.2em' }}
+              style={{ letterSpacing: '0.15em' }}
             >
-              <item.icon className={cn('w-4 h-4', active ? 'text-accent' : 'opacity-40')} />
+              <item.icon className={cn('w-4 h-4', active ? 'text-accent' : 'opacity-30')} />
               {item.label}
             </Link>
           )
         })}
       </nav>
 
-      {/* Status indicator */}
-      <div className="px-6 py-3 hairline-t">
+      {/* Status */}
+      <div className="px-6 py-3" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.04)' }}>
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-          <span className="mono-label-sm opacity-40">MCP_ENDPOINT_ACTIVE</span>
+          <span className={`w-1.5 h-1.5 rounded-full ${practice.is_active ? 'bg-accent animate-glow-pulse' : 'bg-neon-pink'}`} />
+          <span className="mono-label-sm text-white/20">
+            {practice.is_active ? 'AI BOOKING ACTIVE' : 'AI BOOKING INACTIVE'}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 mt-1">
+          <span className="mono-label-sm text-white/10" style={{ fontSize: '8px' }}>
+            PLAN: {((practice.plan as string) || 'free').toUpperCase()}
+          </span>
         </div>
       </div>
 
-      {/* User section */}
-      <div className="px-6 py-4 hairline-t">
-        <p className="mono-label-sm opacity-30 truncate mb-3">
-          {userEmail.toUpperCase().replace(/@/g, '_AT_').replace(/\./g, '_')}
+      {/* User */}
+      <div className="px-6 py-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.04)' }}>
+        <p className="mono-label-sm text-white/15 truncate mb-3">
+          {userEmail}
         </p>
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-2 w-full py-2 font-mono text-[10px] font-medium uppercase text-white/30 hover:text-white transition-all duration-300"
+          className="flex items-center gap-2 w-full py-2 font-mono text-[10px] font-medium uppercase text-white/15 hover:text-accent transition-all duration-300"
           style={{ letterSpacing: '0.3em' }}
         >
           <LogOut className="w-3.5 h-3.5" />
-          SIGN_OUT
+          SIGN OUT
         </button>
       </div>
     </aside>

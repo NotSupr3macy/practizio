@@ -1,0 +1,88 @@
+Based on the MCP tools configured in your app, an AI agent hitting your endpoint (e.g. https://spadechat.com/api/mcp/fred-meyer) could:
+
+Get Business Info — retrieve Fred Meyer's name, industry, address, phone, website, timezone, and any additional info
+List Services — see all services you added (with names, prices, durations, descriptions)
+List Providers — see staff/providers, their titles, specialties, and if they're accepting new customers
+Check Availability — query open time slots for a specific date, factoring in your business rules (min advance, max advance, buffer time)
+Book an Appointment — create a booking with customer name, email, phone, service, date/time, and provider — with race condition protection so two agents can't double-book the same slot
+Cancel an Appointment — cancel by confirmation number
+So a real conversation could look like:
+
+User to AI: "Book me a grocery pickup at Fred Meyer for tomorrow at 2pm"
+
+AI agent: calls getServices → finds "Grocery Pickup", calls checkAvailability for tomorrow → confirms 2pm is open, calls bookAppointment with the user's details → returns confirmation number
+
+The directory search API (/api/directory/search) also lets AI agents discover businesses — so an agent could search "grocery store in Portland" and find Fred Meyer's MCP endpoint automatically.
+
+
+
+The Strategic Insight
+Here's the thing most people building in this space are missing: the businesses that get on platforms like SpadeChat early — during the "check and book" phase — will have a massive advantage when the payment phase arrives. They'll already have their MCP servers running, their services configured, their availability exposed to AI agents, and a track record of AI-booked appointments. When payment rails turn on, they just flip a switch. Businesses that wait until payments are ready will be starting from zero.
+That's your sales pitch to business owners today: "You're not just getting AI bookings now. You're getting in line for AI-driven revenue when the payment infrastructure catches up. The businesses on this platform first will capture the most AI-driven customers."
+
+
+
+This is still early days, but here's the current landscape:
+
+MCP Server Registries (where AI agents discover tools):
+
+Smithery — largest MCP server directory right now
+mcp.run — hosted MCP registry
+Glama — another MCP directory
+OpenAI/Anthropic built-in — both are building native MCP server discovery into ChatGPT and Claude
+Companies that have published MCP servers:
+
+GitHub, Slack, Stripe, Google (Drive, Maps), Brave Search, Cloudflare, Shopify, Sentry, Linear, Notion, and many more — but these are mostly developer/productivity tools, not local businesses
+The gap SpadeChat fills:
+Right now there's no major directory where a local business like Kay Jewelers can list an MCP endpoint and have AI agents automatically find it. The registries above are mostly for software tools (GitHub, Slack, etc.), not for "I want to order a ring from a jewelry store in Springfield, OR."
+
+That's exactly what your /directory page could become — a discoverable registry of real-world business MCP endpoints. If you got that indexed by the major registries (Smithery, mcp.run) or submitted your businesses' endpoints to them, AI agents using those registries could find and interact with your businesses automatically.
+
+
+The Cold Start Problem
+You're building a marketplace. Businesses won't join unless AI agents are using the directory. AI agents won't use the directory unless businesses are listed. This is the classic chicken-and-egg problem, and every marketplace (Uber, Airbnb, DoorDash) had to solve it the same way: you subsidize one side to attract the other.
+In your case, you subsidize the business side. You make it free and effortless to join, and you do the work to bring AI agent traffic to the directory.
+Don't Charge Businesses to Get Listed — Charge for Value After They See It
+Here's the pricing strategy that actually works for marketplaces at your stage:
+Free forever to list and get an MCP endpoint. Every business gets a live MCP endpoint, directory listing, and public profile page at zero cost. No credit card required. No trial period. No feature gating on the core product. This needs to feel like "why wouldn't I do this?" to a business owner. The moment you put a paywall in front of onboarding, your signup rate drops by 80% or more. You have zero leverage right now — no traffic, no proof it works, no case studies. Free is the only move.
+Charge later for premium features and volume. Once a business is getting AI-booked appointments and can see the value on their dashboard, THEN you introduce paid tiers. The free tier stays free but with a cap (10 AI bookings per month). Most small businesses won't hit that cap for a while, which is fine — they're still adding to your directory and making the network more valuable. The ones who do hit it are the ones getting real value, and they'll gladly pay $49 or $149 a month because you're literally sending them customers.
+The per-booking model is your best friend early on. Instead of asking businesses to pay a flat monthly fee before they've seen results, charge $2-3 per successful AI-booked appointment. The pitch is "you pay nothing until AI actually books you a customer." This is risk-free for them and aligns your incentive with theirs. You only make money when they make money.
+
+How to Actually Get Businesses to Sign Up
+Phase 1: Eugene First (Your Backyard)
+You're in Eugene. Start there. Don't try to go national on day one. Here's the playbook:
+Door-to-door with a demo. Walk into businesses — hair salons, barbershops, auto shops, yoga studios, dental offices, whatever — with your laptop or phone. Show them a live demo: "Hey, watch this. I'm going to ask Claude to find a hair salon in Eugene and book an appointment. Right now, your business doesn't show up. I can change that in 10 minutes, for free." That's a powerful demo because it makes the problem tangible and the solution immediate.
+Free setup, you do everything. For the first 20-50 businesses, don't make them go through the self-service wizard. YOU set them up. Ask them what booking system they use, get their credentials, configure their services, and hand them a working dashboard. This doesn't scale, but it gets you your initial supply of businesses AND teaches you where the onboarding wizard needs improvement. Every friction point you hit manually is a friction point that would have killed a self-service signup.
+Target businesses that already use Calendly or Acuity. These are your easiest wins because you have adapters for them. A hair salon using Acuity can be live in minutes. Don't waste time early on trying to integrate with obscure booking systems — go where the adapters already work.
+Local business groups and chambers of commerce. Eugene has the Eugene Area Chamber of Commerce, RAIN Eugene, and various small business networking groups. Offer to do a free 15-minute presentation: "How to make your business bookable by AI." You're not selling — you're educating. The businesses that are interested will come to you after.
+UO connections. You're at the University of Oregon. There are thousands of students who use local businesses. Frame SpadeChat to business owners as "the students all use AI assistants now — if they can't book you through AI, they'll book your competitor who they can." That's a real fear you can leverage.
+Phase 2: Expand by Category
+Once you have 30-50 businesses in Eugene, pick a category that's working well (say hair salons) and expand it to Portland, then other Oregon cities, then regionally. Going deep in one category in one geography is better than going shallow everywhere. When you can say "we have 200 salons in Oregon on SpadeChat," that's a compelling story for the 201st salon.
+Phase 3: Inbound and Partnerships
+As the directory grows and AI platforms start routing traffic through it, businesses will come to you. But that takes time. In the meantime, build inbound channels through the public profile pages (SEO — "Joe's Barbershop Eugene AI booking" should rank), content marketing ("Is your business ready for AI customers?"), and partnerships with booking system companies. If you can get Calendly or Acuity to mention SpadeChat in their marketplace or integration directory, that's massive distribution.
+The Real Revenue Model
+Here's how the money actually flows at each stage:
+Year 1: $0 revenue, and that's okay. You're building the directory. Every business you onboard for free makes the network more valuable. Your job this year is to get 100-500 businesses listed, prove that AI agents actually use the directory to make bookings, and collect data on conversion rates (availability checks → bookings).
+Year 2: Per-booking fees kick in. Businesses that are getting booked start paying $2-3 per AI booking. You introduce paid tiers for businesses that want premium directory placement, analytics, and higher volume caps. Revenue is small but growing and directly tied to the value you deliver.
+Year 3+: The network effect takes over. AI platforms start treating SpadeChat like a default integration. The directory is big enough that it's the obvious place for AI agents to search. You can increase per-booking fees slightly, introduce advertising/promoted listings in the directory, and potentially charge AI platforms for API access to the directory at scale.
+The long game is the transaction layer. When AI payment protocols mature and create_payment_intent goes live, you take a small percentage of every AI-processed payment flowing through SpadeChat. That's the Stripe model — you become infrastructure that sits in the payment flow and takes a cut. At scale, that's enormous.
+What to Actually Say to a Business Owner
+When you walk into a business, don't talk about MCP, protocols, or technical architecture. Nobody cares. Here's the pitch:
+"Hey, I'm Jackson. I'm building a free service that makes your business bookable through AI assistants like ChatGPT and Claude. Right now, when someone asks their AI to book a haircut in Eugene, your shop doesn't come up. I can fix that in about 10 minutes, and it costs you nothing. You'll get a dashboard that shows you every time someone books through AI. Want me to set it up?"
+That's it. Free, fast, tangible, no risk. Every other detail comes later.
+One More Thing About Timing
+You asked earlier when the world will be ready for full AI-driven commerce. The honest answer is you're two to three years early on the payment side but right on time for the discovery and booking side. And being early on payments is fine because you're building the directory and the business relationships NOW. When payments turn on, you'll have the network and the trust already established. The businesses that joined for free in 2026 become your paying customers in 2028. That's how marketplaces work — you invest in supply today and monetize it later.
+The worst thing you could do is wait until payments are ready and then try to build the directory from scratch. By then someone else will have done what you're doing now.
+
+
+Yes, exactly. The flow is:
+
+1. Lead comes in via `/get-setup` form → appears on **LEADS** page
+2. You update their status to "setup_in_progress" on the leads page
+3. Go to **SETUP** and fill in their business details (name, industry, services, hours, address, etc.)
+4. Submit → it creates their Supabase auth account + practice + sends them an invite email to set their password
+5. Update the lead status to "setup_complete"
+
+The owner then gets an email with a link to set their password and access their dashboard — they don't have to do any setup themselves.
+
+That's the concierge model: they just fill out the simple `/get-setup` form, and you do all the heavy lifting on this admin page.

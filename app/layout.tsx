@@ -1,41 +1,34 @@
 import type { Metadata } from 'next'
-import { Inter, Inter_Tight, JetBrains_Mono } from 'next/font/google'
+import { Syne, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({
+const syne = Syne({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-inter',
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-syne',
   display: 'swap',
 })
 
-const interTight = Inter_Tight({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  weight: ['400', '500', '700', '800', '900'],
-  variable: '--font-inter-tight',
-  display: 'swap',
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-jetbrains-mono',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-space-grotesk',
   display: 'swap',
 })
 
 export const metadata: Metadata = {
   title: {
-    default: 'Practizio — Make Your Practice Discoverable by AI Agents',
-    template: '%s | Practizio',
+    default: 'SpadeChat — Make Your Business Discoverable by AI Agents',
+    template: '%s | SpadeChat',
   },
   description:
-    'Practizio makes professional practices discoverable and bookable by AI agents like Claude, ChatGPT, and Gemini via MCP. The subscription that makes you visible to the agentic era.',
+    'SpadeChat makes any business discoverable and bookable by AI assistants like Claude, ChatGPT, and Gemini. Appointments, orders, products, and more — the platform that makes you visible to the AI era.',
   openGraph: {
-    title: 'Practizio — AI-Accessible Practice Management',
+    title: 'SpadeChat — AI-Accessible for Any Business',
     description:
-      'Make your dental, medical, legal, or financial practice discoverable by every AI agent on Earth.',
-    url: 'https://practizio.com',
-    siteName: 'Practizio',
+      'Make your business discoverable by every AI agent on Earth. Hair salons, restaurants, yoga studios, retail shops — appointments, orders, and more.',
+    url: 'https://spadechat.com',
+    siteName: 'SpadeChat',
     type: 'website',
   },
 }
@@ -46,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${interTight.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${syne.variable} ${spaceGrotesk.variable}`}>
       <body className="min-h-screen noise-bg">
         {children}
       </body>

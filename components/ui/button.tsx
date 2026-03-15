@@ -16,20 +16,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          'inline-flex items-center justify-center font-mono font-medium uppercase tracking-[0.3em] transition-all duration-300 rounded-none focus:outline-none',
-          // Loading / disabled state
-          (loading || disabled) && 'opacity-50 cursor-not-allowed',
-          // Variants
+          'inline-flex items-center justify-center font-mono font-medium uppercase tracking-[0.2em] transition-all duration-400 rounded-lg focus:outline-none',
+          (loading || disabled) && 'opacity-40 cursor-not-allowed',
           {
-            'bg-white text-black hover:bg-accent hover:text-white': variant === 'solid',
-            'bg-accent text-white hover:bg-accent-hover': variant === 'accent',
-            'text-white hover:bg-white hover:text-black': variant === 'outline',
-            'bg-transparent text-white hover:bg-white/5': variant === 'ghost',
-            'bg-destructive text-white hover:bg-destructive/80': variant === 'destructive',
+            'bg-accent text-black hover:shadow-[0_0_30px_rgba(40,105,169,0.4)] hover:translate-y-[-1px]': variant === 'solid',
+            'bg-gradient-to-r from-accent to-neon-cyan text-black hover:shadow-[0_0_30px_rgba(40,105,169,0.3)]': variant === 'accent',
+            'text-white/60 hover:text-white hover:bg-white/5': variant === 'outline',
+            'bg-transparent text-white/40 hover:text-white hover:bg-white/[0.03]': variant === 'ghost',
+            'bg-destructive text-white hover:bg-destructive/80 hover:shadow-[0_0_20px_rgba(255,51,102,0.3)]': variant === 'destructive',
           },
-          // Outline variant gets hairline border via style, but add base for layout
-          variant === 'outline' && 'bg-transparent',
-          // Sizes
           {
             'px-4 py-2 text-[10px]': size === 'sm',
             'px-6 py-3 text-[10px]': size === 'md',
@@ -37,7 +32,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           },
           className
         )}
-        style={variant === 'outline' ? { border: '0.5px solid rgba(255, 255, 255, 0.15)' } : undefined}
+        style={variant === 'outline' ? { border: '1px solid rgba(255, 255, 255, 0.08)' } : undefined}
         {...props}
       >
         {children}

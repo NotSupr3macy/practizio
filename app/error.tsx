@@ -20,7 +20,7 @@ export default function Error({
           ERR
         </span>
         <div className="-mt-24 relative">
-          <span className="mono-label-sm opacity-40 block mb-4">SYSTEM_ERROR</span>
+          <span className="mono-label-sm opacity-40 block mb-4">SYSTEM ERROR</span>
           <h1 className="font-display font-black uppercase text-3xl tracking-tightest">
             SOMETHING WENT WRONG
           </h1>
@@ -28,7 +28,7 @@ export default function Error({
             An unexpected error occurred. Please try again.
           </p>
           <button onClick={() => reset()} className="mt-8 btn-solid">
-            RETRY_OPERATION
+            RETRY OPERATION
           </button>
         </div>
       </div>

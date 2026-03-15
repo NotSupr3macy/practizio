@@ -1,91 +1,74 @@
 const cards = [
   {
-    tag: 'SYSTEM_01',
-    title: 'MCP ENDPOINT',
-    sub: 'Every practice gets a live API endpoint accessible by any AI agent in real-time',
-    shape: 'circle' as const,
+    tag: 'SYSTEM 01',
+    title: 'AI BOOKING LINK',
+    sub: 'Every business gets a live AI connection accessible by any AI assistant in real-time',
+    gradient: 'from-[#2869A9]/20 to-transparent',
+    orbColor: 'rgba(40, 105, 169, 0.3)',
   },
   {
-    tag: 'SYSTEM_02',
+    tag: 'SYSTEM 02',
     title: 'AI DISCOVERY',
-    sub: 'Automatically listed in the AI practice directory, found by Claude, ChatGPT, Gemini',
-    shape: 'diamond' as const,
+    sub: 'Automatically listed in the AI business directory, found by Claude, ChatGPT, Gemini',
+    gradient: 'from-[#00F0FF]/20 to-transparent',
+    orbColor: 'rgba(0, 240, 255, 0.3)',
   },
   {
-    tag: 'SYSTEM_03',
-    title: 'INSTANT BOOKING',
-    sub: 'AI agents check availability and book appointments without human intervention',
-    shape: 'square' as const,
+    tag: 'SYSTEM 03',
+    title: 'INSTANT ACTION',
+    sub: 'AI agents book appointments, place orders, and interact with your business without human intervention',
+    gradient: 'from-[#FF2D87]/20 to-transparent',
+    orbColor: 'rgba(255, 45, 135, 0.3)',
   },
 ] as const
 
-function Shape({ type }: { type: 'circle' | 'diamond' | 'square' }) {
-  const base = 'w-32 h-32 border border-white/20 transition-all duration-300'
-
-  switch (type) {
-    case 'circle':
-      return <div className={`${base} rounded-full`} />
-    case 'diamond':
-      return <div className={`${base} rotate-45`} />
-    case 'square':
-      return <div className={base} />
-  }
-}
-
 export function BentoGrid() {
   return (
-    <section className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-3">
-        {cards.map((card, index) => {
-          const isLast = index === cards.length - 1
-
-          return (
+    <section className="w-full py-20 px-6 md:px-10">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {cards.map((card) => (
             <div
               key={card.tag}
-              className="group relative min-h-[400px] flex flex-col justify-between p-8 hover:bg-white/[0.02] transition-all duration-300"
+              className="group relative card-metal rounded-2xl p-8 md:p-10 min-h-[380px] flex flex-col justify-between card-interactive overflow-hidden"
             >
-              {/* Mobile bottom divider (hidden on desktop) */}
-              {!isLast && (
-                <span
-                  className="absolute bottom-0 left-0 w-full md:hidden"
-                  style={{ borderBottom: '0.5px solid rgba(255, 255, 255, 0.15)' }}
-                  aria-hidden="true"
-                />
-              )}
+              {/* Blob glow on hover */}
+              <div
+                className="absolute -bottom-20 -right-20 w-[200px] h-[200px] rounded-full blur-[80px] opacity-0 group-hover:opacity-60 transition-opacity duration-700"
+                style={{ background: card.orbColor }}
+              />
 
-              {/* Desktop right divider (hidden on mobile) */}
-              {!isLast && (
-                <span
-                  className="absolute top-0 right-0 h-full hidden md:block"
-                  style={{ borderRight: '0.5px solid rgba(255, 255, 255, 0.15)' }}
-                  aria-hidden="true"
-                />
-              )}
+              {/* Metallic accent line at top */}
+              <div className="absolute top-0 left-8 right-8 h-[1px]" style={{ background: `linear-gradient(90deg, transparent, ${card.orbColor}, transparent)` }} />
 
-              {/* Top-left: Tag */}
-              <div>
-                <span className="mono-label-sm opacity-40">{card.tag}</span>
+              {/* Tag */}
+              <div className="relative z-10">
+                <span className="mono-label-sm text-white/20">{card.tag}</span>
               </div>
 
-              {/* Center: Geometric shape */}
-              <div className="flex items-center justify-center flex-1">
-                <div className="opacity-20 group-hover:opacity-100 transition-all duration-300">
-                  <Shape type={card.shape} />
-                </div>
+              {/* Center: Floating metallic sphere */}
+              <div className="flex items-center justify-center flex-1 relative z-10 py-8">
+                <div
+                  className="w-20 h-20 rounded-full opacity-30 group-hover:opacity-70 transition-all duration-700 animate-float group-hover:scale-110"
+                  style={{
+                    background: `radial-gradient(circle at 35% 35%, rgba(255,255,255,0.6), rgba(255,255,255,0.1) 40%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.6))`,
+                    boxShadow: `0 0 40px ${card.orbColor}`,
+                  }}
+                />
               </div>
 
-              {/* Bottom-left: Title and subtext */}
-              <div>
-                <h3 className="font-display font-black uppercase text-2xl tracking-tightest text-foreground">
+              {/* Bottom: Title and description */}
+              <div className="relative z-10">
+                <h3 className="font-display font-extrabold uppercase text-xl tracking-tightest text-white group-hover:text-chrome transition-all duration-500">
                   {card.title}
                 </h3>
-                <p className="font-sans text-sm font-light opacity-40 mt-2">
+                <p className="font-sans text-sm font-light text-white/30 mt-3 leading-relaxed">
                   {card.sub}
                 </p>
               </div>
             </div>
-          )
-        })}
+          ))}
+        </div>
       </div>
     </section>
   )

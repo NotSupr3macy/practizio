@@ -1,56 +1,60 @@
 const testimonials = [
   {
     quote:
-      'The MCP integration changed everything. Our practice went from invisible to AI agents to fully booked in weeks.',
-    name: 'DR. SARAH CHEN',
-    role: 'DENTAL_PRACTICE_OWNER',
+      'AI agents now handle 40% of our appointment bookings. Setup took under 10 minutes.',
+    name: 'MARIA SANTOS',
+    role: 'HAIR SALON OWNER',
   },
   {
     quote:
-      'Finally, a platform that understands where healthcare is heading. AI agents now handle 40% of our bookings.',
-    name: 'JAMES RODRIGUEZ',
-    role: 'MEDICAL_DIRECTOR',
+      'Our yoga studio is fully discoverable by AI assistants. New student signups tripled in the first month.',
+    name: 'ALEX KUMAR',
+    role: 'YOGA STUDIO FOUNDER',
   },
   {
     quote:
-      'We saw a 3x increase in new patient inquiries within the first month of listing on Practizio.',
-    name: 'EMILY WATSON',
-    role: 'PRACTICE_MANAGER',
+      'We get catering orders through AI assistants now. Customers describe what they want and the agent handles the rest. Revenue is up 25%.',
+    name: 'PRIYA NAIR',
+    role: 'RESTAURANT OWNER',
   },
 ]
 
 export function Testimonials() {
   return (
-    <section className="hairline-t py-24 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-24 px-6 md:px-10 relative overflow-hidden">
+      <div className="glow-orb glow-orb-pink w-[400px] h-[400px] top-[5%] right-[5%] opacity-10" />
+
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="mb-16">
-          <span className="mono-label-sm opacity-40 mb-4 block">CLIENT_FEEDBACK</span>
-          <h2 className="font-display font-black uppercase text-5xl tracking-tightest">
-            WHAT THEY SAY
+          <span className="mono-label-sm text-white/20 mb-4 block">CLIENT FEEDBACK</span>
+          <h2 className="font-display font-extrabold uppercase text-5xl md:text-7xl tracking-tightest text-chrome-3d">
+            WHAT THEY
+            <br />
+            SAY
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3">
-          {testimonials.map((t, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {testimonials.map((t) => (
             <div
               key={t.name}
-              className={`p-8 md:p-12 ${
-                index < testimonials.length - 1 ? 'hairline-r' : ''
-              }`}
+              className="card-metal rounded-2xl p-8 md:p-10 flex flex-col card-interactive relative overflow-hidden"
             >
-              <span className="font-display text-6xl opacity-10 leading-none block">
+              {/* Quote mark */}
+              <span className="font-display text-7xl text-white/[0.04] leading-none select-none">
                 &ldquo;
               </span>
 
-              <p className="font-sans text-base font-light leading-relaxed opacity-70 mt-4">
+              <p className="font-sans text-base font-light leading-relaxed text-white/50 mt-2 flex-1">
                 {t.quote}
               </p>
 
-              <div className="mt-8">
-                <span className="font-mono text-sm font-medium uppercase tracking-wide block">
+              <div className="mt-8 pt-6 relative">
+                <div className="divider-chrome absolute top-0 left-0 right-0" />
+                <span className="font-mono text-sm font-medium uppercase tracking-wide block text-chrome">
                   {t.name}
                 </span>
-                <span className="mono-label-sm opacity-40 mt-1 block">{t.role}</span>
+                <span className="mono-label-sm text-white/20 mt-1 block">{t.role}</span>
               </div>
             </div>
           ))}

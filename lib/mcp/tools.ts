@@ -1,17 +1,19 @@
 import { z } from 'zod'
 import { SupabaseClient } from '@supabase/supabase-js'
-import { generateConfirmationNumber, formatTime } from '@/lib/utils'
-import { sendEmail, appointmentConfirmationEmail } from '@/lib/email/resend'
+import { createAdapter } from '@/lib/adapters'
+import type { BusinessRules } from '@/types/database'
 
 // ---------------------------------------------------------------------------
 // Shared types
 // ---------------------------------------------------------------------------
 
+type ToolResult = { content: Array<{ type: 'text'; text: string }> }
+
 type ToolDefinition = {
   name: string
   description: string
   inputSchema?: z.ZodObject<z.ZodRawShape>
-  handler: (params: Record<string, unknown>) => Promise<{ content: Array<{ type: 'text'; text: string }> }>
+  handler: (params: Record<string, unknown>) => Promise<ToolResult>
 }
 
 // ---------------------------------------------------------------------------
@@ -35,39 +37,60 @@ async function logQuery(
   })
 }
 
+function textResult(data: unknown): ToolResult {
+  return { content: [{ type: 'text' as const, text: JSON.stringify(data) }] }
+}
+
 // ---------------------------------------------------------------------------
-// 1. get_practice_info
+// 1. get_business_info — industry-agnostic
 // ---------------------------------------------------------------------------
 
-export function getPracticeInfoTool(supabase: SupabaseClient, practiceId: string): ToolDefinition {
+export function getBusinessInfoTool(supabase: SupabaseClient, practiceId: string): ToolDefinition {
   return {
-    name: 'get_practice_info',
+    name: 'get_business_info',
     description:
-      'Returns general information about this practice including name, address, phone number, website, practice type, and accepted insurance plans.',
+      'Get business details including name, industry, location, hours, contact info, and any additional information the business has configured.',
     handler: async () => {
-      const { data, error } = await supabase
-        .from('practices')
-        .select('name, address, phone, website, practice_type, accepted_insurance')
-        .eq('id', practiceId)
-        .single()
+      const [{ data: practice }, { data: availability }] = await Promise.all([
+        supabase
+          .from('practices')
+          .select('name, industry, tags, address, phone, website, additional_info, timezone')
+          .eq('id', practiceId)
+          .single(),
+        supabase
+          .from('availability')
+          .select('day_of_week, open_time, close_time, is_open')
+          .eq('practice_id', practiceId)
+          .order('day_of_week'),
+      ])
 
-      if (error) {
-        const result = { error: 'Failed to retrieve practice information.' }
-        await logQuery(supabase, practiceId, 'get_practice_info', {}, result)
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
+      if (!practice) {
+        const result = { error: 'Failed to retrieve business information.' }
+        await logQuery(supabase, practiceId, 'get_business_info', {}, result)
+        return textResult(result)
+      }
+
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+      const hours: Record<string, string> = {}
+      for (const a of availability ?? []) {
+        const day = dayNames[a.day_of_week] ?? `Day ${a.day_of_week}`
+        hours[day] = a.is_open ? `${a.open_time} - ${a.close_time}` : 'Closed'
       }
 
       const result = {
-        name: data.name,
-        address: data.address,
-        phone: data.phone,
-        website: data.website,
-        practice_type: data.practice_type,
-        accepted_insurance: data.accepted_insurance ?? [],
+        name: practice.name,
+        industry: practice.industry,
+        tags: practice.tags ?? [],
+        address: practice.address,
+        phone: practice.phone,
+        website: practice.website,
+        hours,
+        timezone: practice.timezone,
+        additional_info: practice.additional_info ?? {},
       }
 
-      await logQuery(supabase, practiceId, 'get_practice_info', {}, result)
-      return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
+      await logQuery(supabase, practiceId, 'get_business_info', {}, result)
+      return textResult(result)
     },
   }
 }
@@ -80,22 +103,56 @@ export function getServicesTool(supabase: SupabaseClient, practiceId: string): T
   return {
     name: 'get_services',
     description:
-      'Returns the list of services offered by this practice, including name, price range, duration in minutes, and description.',
+      'List all services offered by this business with durations, descriptions, pricing, and payment requirements.',
     handler: async () => {
       const { data, error } = await supabase
         .from('services')
-        .select('name, price_min, price_max, duration_minutes, description')
+        .select('id, name, price_min, price_max, duration_minutes, description, show_price, pricing')
         .eq('practice_id', practiceId)
 
       if (error) {
         const result = { error: 'Failed to retrieve services.' }
         await logQuery(supabase, practiceId, 'get_services', {}, result)
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
+        return textResult(result)
       }
 
-      const result = { services: data ?? [] }
+      const services = (data ?? []).map((s) => {
+        const pricing = s.pricing as {
+          price: number | null
+          currency: string
+          priceType: string
+          depositRequired: boolean
+          depositAmount: number | null
+          paymentTiming: string
+        } | null
+
+        return {
+          service_id: s.id,
+          name: s.name,
+          description: s.description,
+          duration_minutes: s.duration_minutes,
+          pricing: pricing ? {
+            price: pricing.price,
+            currency: pricing.currency || 'USD',
+            priceType: pricing.priceType || 'fixed',
+            depositRequired: pricing.depositRequired || false,
+            depositAmount: pricing.depositAmount,
+            paymentTiming: pricing.paymentTiming || 'at_service',
+          } : null,
+          // Legacy price_range for backwards compatibility
+          price_range: s.show_price && (s.price_min || s.price_max)
+            ? {
+                min: s.price_min ? s.price_min / 100 : null,
+                max: s.price_max ? s.price_max / 100 : null,
+                currency: 'USD',
+              }
+            : null,
+        }
+      })
+
+      const result = { services }
       await logQuery(supabase, practiceId, 'get_services', {}, result)
-      return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
+      return textResult(result)
     },
   }
 }
@@ -108,272 +165,219 @@ export function getProvidersTool(supabase: SupabaseClient, practiceId: string): 
   return {
     name: 'get_providers',
     description:
-      'Returns the list of providers (doctors, dentists, lawyers, etc.) at this practice, including name, title, specialties, bio, and whether they are accepting new patients.',
+      'Returns the list of staff/providers at this business, including name, title, specialties, and whether they are accepting new clients.',
     handler: async () => {
       const { data, error } = await supabase
         .from('providers')
-        .select('name, title, specialties, bio, accepting_new_patients')
+        .select('name, title, specialties, bio, accepting_new_clients')
         .eq('practice_id', practiceId)
 
       if (error) {
         const result = { error: 'Failed to retrieve providers.' }
         await logQuery(supabase, practiceId, 'get_providers', {}, result)
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
+        return textResult(result)
       }
 
       const result = { providers: data ?? [] }
       await logQuery(supabase, practiceId, 'get_providers', {}, result)
-      return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
+      return textResult(result)
     },
   }
 }
 
 // ---------------------------------------------------------------------------
-// 4. check_availability
+// 4. check_availability — uses adapter layer
 // ---------------------------------------------------------------------------
 
-export function checkAvailabilityTool(supabase: SupabaseClient, practiceId: string): ToolDefinition {
+export function checkAvailabilityTool(
+  supabase: SupabaseClient,
+  practiceId: string,
+  bookingSystemType: string | null,
+  rules: BusinessRules | null
+): ToolDefinition {
   return {
     name: 'check_availability',
     description:
-      'Checks available appointment time slots for a given date. Returns a list of open 30-minute slots after excluding already-booked appointments.',
+      'Check available appointment slots for a given date range and optional service type or provider.',
     inputSchema: z.object({
-      date: z
-        .string()
-        .describe('The date to check availability for, in ISO format (e.g. 2024-01-15).'),
+      start_date: z.string().describe('Start date in YYYY-MM-DD format'),
+      end_date: z.string().describe('End date in YYYY-MM-DD format'),
+      service_type: z.string().optional().describe('Optional service name to filter by'),
+      provider: z.string().optional().describe('Optional provider/staff name to filter by'),
     }),
     handler: async (params) => {
-      const { date } = params as { date: string }
-
-      // Determine day of week (0 = Sunday, 6 = Saturday)
-      const dateObj = new Date(date + 'T00:00:00')
-      const dayOfWeek = dateObj.getUTCDay()
-
-      // Get availability schedule for this day
-      const { data: availData, error: availError } = await supabase
-        .from('availability')
-        .select('open_time, close_time, is_open')
-        .eq('practice_id', practiceId)
-        .eq('day_of_week', dayOfWeek)
-
-      if (availError) {
-        const result = { error: 'Failed to retrieve availability.' }
-        await logQuery(supabase, practiceId, 'check_availability', { date }, result)
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
+      const { start_date, end_date, service_type, provider } = params as {
+        start_date: string
+        end_date: string
+        service_type?: string
+        provider?: string
       }
 
-      // Find the first open schedule entry (there may be none)
-      const schedule = availData?.find((a) => a.is_open)
+      try {
+        const adapter = createAdapter({
+          bookingSystemType,
+          supabase,
+          practiceId,
+          rules,
+        })
 
-      if (!schedule) {
-        const result = { date, available_slots: [], message: 'The practice is closed on this day.' }
-        await logQuery(supabase, practiceId, 'check_availability', { date }, result)
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
-      }
+        const slots = await adapter.getAvailableSlots({
+          startDate: start_date,
+          endDate: end_date,
+          serviceType: service_type,
+          provider,
+        })
 
-      // Get existing appointments for this date
-      const { data: existingAppts } = await supabase
-        .from('appointments')
-        .select('appointment_time')
-        .eq('practice_id', practiceId)
-        .eq('appointment_date', date)
-
-      const bookedTimes = new Set(
-        (existingAppts ?? []).map((a) => a.appointment_time.substring(0, 5)) // "HH:MM"
-      )
-
-      // Generate 30-minute slots between open_time and close_time
-      const slots: string[] = []
-      const [openH, openM] = schedule.open_time.split(':').map(Number)
-      const [closeH, closeM] = schedule.close_time.split(':').map(Number)
-      const openMinutes = openH * 60 + openM
-      const closeMinutes = closeH * 60 + closeM
-
-      for (let m = openMinutes; m + 30 <= closeMinutes; m += 30) {
-        const hh = String(Math.floor(m / 60)).padStart(2, '0')
-        const mm = String(m % 60).padStart(2, '0')
-        const slot = `${hh}:${mm}`
-        if (!bookedTimes.has(slot)) {
-          slots.push(slot)
+        const result = {
+          start_date,
+          end_date,
+          total_slots: slots.length,
+          available_slots: slots,
         }
-      }
 
-      const result = {
-        date,
-        day_of_week: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayOfWeek],
-        open_time: schedule.open_time,
-        close_time: schedule.close_time,
-        available_slots: slots.map((s) => ({
-          time: s,
-          formatted: formatTime(s),
-        })),
+        await logQuery(supabase, practiceId, 'check_availability', params, result)
+        return textResult(result)
+      } catch (err) {
+        const result = { error: err instanceof Error ? err.message : 'Failed to check availability' }
+        await logQuery(supabase, practiceId, 'check_availability', params, result)
+        return textResult(result)
       }
-
-      await logQuery(supabase, practiceId, 'check_availability', { date }, result)
-      return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
     },
   }
 }
 
 // ---------------------------------------------------------------------------
-// 5. book_appointment
+// 5. book_appointment — uses adapter layer
 // ---------------------------------------------------------------------------
 
 export function bookAppointmentTool(
   supabase: SupabaseClient,
   practiceId: string,
-  practiceName: string
+  practiceName: string,
+  bookingSystemType: string | null,
+  rules: BusinessRules | null
 ): ToolDefinition {
   return {
     name: 'book_appointment',
     description:
-      'Books an appointment at this practice. Validates the requested slot is available, creates the appointment, and sends a confirmation email to the patient. Returns the confirmation number and appointment details.',
+      'Book an appointment at an available time slot. Requires customer name, phone, slot_id from check_availability, and service type.',
     inputSchema: z.object({
-      date: z.string().describe('Appointment date in ISO format (e.g. 2024-01-15).'),
-      time: z.string().describe('Appointment time in HH:MM 24-hour format (e.g. 14:30).'),
-      patient_name: z.string().describe('Full name of the patient.'),
-      patient_email: z.string().email().describe('Email address of the patient.'),
-      patient_phone: z.string().describe('Phone number of the patient.'),
-      service: z.string().describe('Name of the service to book.'),
-      notes: z.string().optional().describe('Optional notes for the appointment.'),
+      customer_name: z.string().describe('Full name of the customer'),
+      customer_phone: z.string().describe('Phone number of the customer'),
+      customer_email: z.string().optional().describe('Email address of the customer'),
+      slot_id: z.string().describe('The slot_id returned from check_availability'),
+      service_type: z.string().describe('Name of the service to book'),
+      notes: z.string().optional().describe('Any special requests or notes'),
     }),
     handler: async (params) => {
       const {
-        date,
-        time,
-        patient_name,
-        patient_email,
-        patient_phone,
-        service,
+        customer_name,
+        customer_phone,
+        customer_email,
+        slot_id,
+        service_type,
         notes,
       } = params as {
-        date: string
-        time: string
-        patient_name: string
-        patient_email: string
-        patient_phone: string
-        service: string
+        customer_name: string
+        customer_phone: string
+        customer_email?: string
+        slot_id: string
+        service_type: string
         notes?: string
       }
 
-      // ---- Validate the slot is open ----
+      try {
+        const adapter = createAdapter({
+          bookingSystemType,
+          supabase,
+          practiceId,
+          rules,
+        })
 
-      const dateObj = new Date(date + 'T00:00:00')
-      const dayOfWeek = dateObj.getUTCDay()
+        const confirmation = await adapter.createAppointment({
+          customer: { name: customer_name, phone: customer_phone, email: customer_email },
+          slotId: slot_id,
+          serviceType: service_type,
+          notes,
+        })
 
-      const { data: availData } = await supabase
-        .from('availability')
-        .select('open_time, close_time, is_open')
-        .eq('practice_id', practiceId)
-        .eq('day_of_week', dayOfWeek)
-
-      const schedule = availData?.find((a) => a.is_open)
-
-      if (!schedule) {
-        const result = { error: 'The practice is closed on the requested day.' }
-        await logQuery(supabase, practiceId, 'book_appointment', params, result)
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
-      }
-
-      // Check that the requested time falls within operating hours
-      const requestedMinutes = parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1])
-      const [openH, openM] = schedule.open_time.split(':').map(Number)
-      const [closeH, closeM] = schedule.close_time.split(':').map(Number)
-      const openMinutes = openH * 60 + openM
-      const closeMinutes = closeH * 60 + closeM
-
-      if (requestedMinutes < openMinutes || requestedMinutes + 30 > closeMinutes) {
         const result = {
-          error: `The requested time is outside operating hours (${formatTime(schedule.open_time)} - ${formatTime(schedule.close_time)}).`,
+          confirmation_id: confirmation.confirmation_id,
+          datetime: confirmation.datetime,
+          provider: confirmation.provider,
+          service_type: confirmation.service_type,
+          customer_name,
+          message: confirmation.message,
+          payment_required: confirmation.payment_required,
+          payment_amount: confirmation.payment_amount,
+          payment_type: confirmation.payment_type,
+          payment_url: confirmation.payment_url,
+          payment_deadline: confirmation.payment_deadline,
+          booking_status: confirmation.booking_status,
+        }
+
+        await logQuery(supabase, practiceId, 'book_appointment', params, result)
+        return textResult(result)
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to book appointment'
+        const isSlotUnavailable = message.includes('slot_unavailable')
+        const result = {
+          error: isSlotUnavailable ? 'slot_unavailable' : 'booking_failed',
+          message: isSlotUnavailable
+            ? 'This slot was booked by someone else. Please check availability again for updated options.'
+            : message,
         }
         await logQuery(supabase, practiceId, 'book_appointment', params, result)
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
+        return textResult(result)
+      }
+    },
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 6. cancel_appointment — uses adapter layer
+// ---------------------------------------------------------------------------
+
+export function cancelAppointmentTool(
+  supabase: SupabaseClient,
+  practiceId: string,
+  bookingSystemType: string | null,
+  rules: BusinessRules | null
+): ToolDefinition {
+  return {
+    name: 'cancel_appointment',
+    description:
+      'Cancel an existing appointment. Requires the confirmation ID and customer phone number for verification.',
+    inputSchema: z.object({
+      confirmation_id: z.string().describe('The booking confirmation ID'),
+      customer_phone: z.string().describe('Customer phone number for verification'),
+    }),
+    handler: async (params) => {
+      const { confirmation_id, customer_phone } = params as {
+        confirmation_id: string
+        customer_phone: string
       }
 
-      // Check the slot is not already booked
-      const { data: existingAppts } = await supabase
-        .from('appointments')
-        .select('id')
-        .eq('practice_id', practiceId)
-        .eq('appointment_date', date)
-        .eq('appointment_time', time)
-
-      if (existingAppts && existingAppts.length > 0) {
-        const result = { error: 'This time slot is already booked. Please choose a different time.' }
-        await logQuery(supabase, practiceId, 'book_appointment', params, result)
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
-      }
-
-      // ---- Create the appointment ----
-
-      const confirmationNumber = generateConfirmationNumber()
-
-      const { error: insertError } = await supabase
-        .from('appointments')
-        .insert({
-          practice_id: practiceId,
-          confirmation_number: confirmationNumber,
-          patient_name,
-          patient_email,
-          patient_phone,
-          service,
-          appointment_date: date,
-          appointment_time: time,
-          notes: notes ?? null,
-          booked_by: 'ai_agent',
+      try {
+        const adapter = createAdapter({
+          bookingSystemType,
+          supabase,
+          practiceId,
+          rules,
         })
-        .select()
-        .single()
 
-      if (insertError) {
-        const result = { error: 'Failed to book the appointment. Please try again.' }
-        await logQuery(supabase, practiceId, 'book_appointment', params, result)
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
+        const result = await adapter.cancelAppointment({
+          confirmationId: confirmation_id,
+          customerPhone: customer_phone,
+        })
+
+        await logQuery(supabase, practiceId, 'cancel_appointment', params, result)
+        return textResult(result)
+      } catch (err) {
+        const result = { error: err instanceof Error ? err.message : 'Failed to cancel appointment' }
+        await logQuery(supabase, practiceId, 'cancel_appointment', params, result)
+        return textResult(result)
       }
-
-      // ---- Send confirmation email ----
-
-      const formattedDate = new Intl.DateTimeFormat('en-US', {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      }).format(dateObj)
-
-      const formattedTime = formatTime(time)
-
-      const emailHtml = appointmentConfirmationEmail({
-        patientName: patient_name,
-        practiceName,
-        service,
-        date: formattedDate,
-        time: formattedTime,
-        confirmationNumber,
-      })
-
-      await sendEmail({
-        to: patient_email,
-        subject: `Appointment Confirmed — ${confirmationNumber}`,
-        html: emailHtml,
-      })
-
-      // ---- Log & return ----
-
-      const result = {
-        confirmation_number: confirmationNumber,
-        appointment_details: {
-          date: formattedDate,
-          time: formattedTime,
-          patient_name,
-          patient_email,
-          patient_phone,
-          service,
-          notes: notes ?? null,
-        },
-      }
-
-      await logQuery(supabase, practiceId, 'book_appointment', params, result)
-      return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] }
     },
   }
 }

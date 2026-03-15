@@ -50,14 +50,16 @@ export function getProfileCompleteness(practice: {
   phone?: string | null
   website?: string | null
   address?: unknown
-  accepted_insurance?: string[] | null
+  industry?: string | null
+  tags?: string[] | null
 }): number {
   const fields = [
     !!practice.name,
     !!practice.phone,
     !!practice.website,
     !!practice.address,
-    !!(practice.accepted_insurance && practice.accepted_insurance.length > 0),
+    !!(practice.industry && practice.industry.trim()),
+    !!(practice.tags && practice.tags.length > 0),
   ]
   return Math.round((fields.filter(Boolean).length / fields.length) * 100)
 }

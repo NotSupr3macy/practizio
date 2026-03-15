@@ -137,7 +137,7 @@ export default function AvailabilityPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="mono-label-sm opacity-40">LOADING_AVAILABILITY</div>
+        <div className="mono-label-sm opacity-40">LOADING AVAILABILITY</div>
       </div>
     )
   }
@@ -147,7 +147,7 @@ export default function AvailabilityPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <span className="mono-label-sm opacity-40 block mb-3">SCHEDULE_CONFIG</span>
+          <span className="mono-label-sm opacity-40 block mb-3">SCHEDULE CONFIG</span>
           <h1 className="font-display font-black uppercase text-3xl tracking-tightest">AVAILABILITY</h1>
           <p className="font-sans text-sm font-light opacity-50 mt-2">
             Set your weekly hours so AI agents can book appointments

@@ -1,255 +1,116 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import {
-  Globe,
-  Phone,
-  MapPin,
-  Shield,
-  Copy,
-  ExternalLink,
-  Code,
-} from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Bot, Globe, MapPin, Phone, Tag, Info } from 'lucide-react'
 import { CopyButton } from './copy-button'
 
-export const metadata = {
-  title: 'My Listing',
-}
-
 export default async function ListingPage() {
-  const supabase = createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: practice } = await supabase
-    .from('practices')
-    .select('*')
-    .eq('user_id', user.id)
-    .single()
-
+  const { data: practice } = await supabase.from('practices').select('*').eq('user_id', user.id).single()
   if (!practice) redirect('/onboarding')
 
-  // Fetch related data for the JSON preview
-  const [{ data: services }, { data: providers }, { data: availability }] =
-    await Promise.all([
-      supabase
-        .from('services')
-        .select('name, price_min, price_max, duration_minutes, description')
-        .eq('practice_id', practice.id),
-      supabase
-        .from('providers')
-        .select('name, title, specialties, accepting_new_patients')
-        .eq('practice_id', practice.id),
-      supabase
-        .from('availability')
-        .select('day_of_week, open_time, close_time, is_open')
-        .eq('practice_id', practice.id)
-        .order('day_of_week'),
-    ])
+  const [{ data: services }, { data: availability }, { data: providers }] = await Promise.all([
+    supabase.from('services').select('*').eq('practice_id', practice.id).order('name'),
+    supabase.from('availability').select('*').eq('practice_id', practice.id).order('day_of_week'),
+    supabase.from('providers').select('*').eq('practice_id', practice.id),
+  ])
 
-  const mcpEndpoint = `${process.env.NEXT_PUBLIC_APP_URL || 'https://practizio.com'}/api/mcp/${practice.slug}`
-
-  const practiceJson = {
-    name: practice.name,
-    type: practice.practice_type,
-    address: practice.address,
-    phone: practice.phone,
-    website: practice.website,
-    accepted_insurance: practice.accepted_insurance,
-    timezone: practice.timezone,
-    services: services || [],
-    providers: providers || [],
-    availability: availability || [],
-  }
+  const mcpEndpoint = `${process.env.NEXT_PUBLIC_APP_URL}/api/mcp/${practice.slug}`
+  const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL}/directory/${practice.slug}`
+  const address = practice.address as { street?: string; city?: string; state?: string; zip?: string } | null
+  const tags = (practice.tags as string[]) ?? []
+  const additionalInfo = (practice.additional_info as Record<string, string>) ?? {}
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <span className="mono-label-sm opacity-40 block mb-3">PRACTICE_LISTING</span>
-          <h1 className="font-display font-black uppercase text-3xl tracking-tightest">MY LISTING</h1>
-          <p className="font-sans text-sm font-light opacity-50 mt-2">
-            How AI agents see your practice
-          </p>
-        </div>
-        <Badge variant={practice.is_active ? 'success' : 'warning'}>
-          {practice.is_active ? 'Active' : 'Inactive'}
-        </Badge>
+      <div>
+        <span className="mono-label-sm opacity-40 block mb-3">PUBLIC LISTING</span>
+        <h1 className="font-display font-black uppercase text-3xl tracking-tightest">LISTING</h1>
+        <p className="font-sans text-sm font-light opacity-50 mt-2">How your business appears to AI assistants and in the directory</p>
       </div>
 
-      {/* MCP Endpoint */}
-      <Card className="border-accent/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Code className="w-5 h-5 text-accent" />
-            MCP Endpoint
-          </CardTitle>
-          <CardDescription>
-            AI agents use this endpoint to discover and interact with your practice
-          </CardDescription>
-        </CardHeader>
-        <div className="flex items-center gap-3 bg-background p-4 hairline">
-          <code className="flex-1 text-sm font-mono text-accent break-all">
-            {mcpEndpoint}
-          </code>
-          <CopyButton text={mcpEndpoint} />
-        </div>
-      </Card>
-
-      {/* Practice Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Basic Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Practice Information</CardTitle>
-          </CardHeader>
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-                PRACTICE_NAME
-              </label>
-              <p className="text-sm font-mono text-foreground mt-1">{practice.name}</p>
-            </div>
-            <div>
-              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-                TYPE
-              </label>
-              <p className="text-sm font-mono text-foreground mt-1 capitalize">
-                {practice.practice_type}
-              </p>
-            </div>
-            <div>
-              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-                SLUG
-              </label>
-              <p className="text-sm font-mono text-muted-foreground mt-1">{practice.slug}</p>
-            </div>
-            <div>
-              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-                PLAN
-              </label>
-              <div className="mt-1">
-                <Badge variant="accent">{practice.plan}</Badge>
-              </div>
-            </div>
-            <div>
-              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-                TIMEZONE
-              </label>
-              <p className="text-sm font-mono text-foreground mt-1">{practice.timezone}</p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Contact Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Contact Details</CardTitle>
-          </CardHeader>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <Phone className="w-4 h-4 text-accent mt-0.5" />
-              <div>
-                <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-                  PHONE
-                </label>
-                <p className="text-sm font-mono text-foreground mt-1">
-                  {practice.phone || 'Not set'}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Globe className="w-4 h-4 text-accent mt-0.5" />
-              <div>
-                <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-                  WEBSITE
-                </label>
-                <p className="text-sm font-mono text-foreground mt-1">
-                  {practice.website ? (
-                    <a
-                      href={practice.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent hover:underline inline-flex items-center gap-1"
-                    >
-                      {practice.website}
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  ) : (
-                    'Not set'
-                  )}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <MapPin className="w-4 h-4 text-accent mt-0.5" />
-              <div>
-                <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-                  ADDRESS
-                </label>
-                {practice.address ? (
-                  <p className="text-sm font-mono text-foreground mt-1">
-                    {practice.address.street}
-                    <br />
-                    {practice.address.city}, {practice.address.state}{' '}
-                    {practice.address.zip}
-                  </p>
-                ) : (
-                  <p className="text-sm font-mono text-muted-foreground mt-1">Not set</p>
-                )}
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Shield className="w-4 h-4 text-accent mt-0.5" />
-              <div>
-                <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-                  ACCEPTED_INSURANCE
-                </label>
-                {practice.accepted_insurance && practice.accepted_insurance.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5 mt-2">
-                    {practice.accepted_insurance.map((ins: string) => (
-                      <Badge key={ins} variant="default">
-                        {ins}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm font-mono text-muted-foreground mt-1">
-                    None listed
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* JSON Preview */}
+      {/* AI Booking Link */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Code className="w-5 h-5 text-accent" />
-            AI Agent View
-          </CardTitle>
-          <CardDescription>
-            This is the JSON representation AI agents receive when querying your practice
-          </CardDescription>
-        </CardHeader>
-        <div className="relative">
-          <pre className="bg-background p-4 hairline overflow-x-auto text-xs font-mono text-muted-foreground leading-relaxed max-h-[500px] overflow-y-auto">
-            {JSON.stringify(practiceJson, null, 2)}
-          </pre>
-          <div className="absolute top-2 right-2">
-            <CopyButton text={JSON.stringify(practiceJson, null, 2)} />
+        <div className="flex items-center justify-between p-6 hairline-b">
+          <div className="flex items-center gap-3">
+            <Bot className="w-5 h-5 text-accent" />
+            <span className="mono-label-sm opacity-60">YOUR AI BOOKING LINK</span>
+            <Badge variant="success">ACTIVE</Badge>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="flex items-center gap-3 bg-background hairline px-4 py-3">
+            <code className="text-accent font-mono text-sm break-all flex-1">{mcpEndpoint}</code>
+            <CopyButton text={mcpEndpoint} />
+          </div>
+          <div className="flex items-center gap-3 bg-background hairline px-4 py-3 mt-3">
+            <Globe className="w-4 h-4 opacity-40" />
+            <code className="font-mono text-sm break-all flex-1 opacity-60">{profileUrl}</code>
+            <CopyButton text={profileUrl} />
           </div>
         </div>
       </Card>
+
+      {/* Business Info */}
+      <Card>
+        <div className="p-6 hairline-b">
+          <span className="mono-label-sm opacity-40">BUSINESS INFO</span>
+        </div>
+        <div className="p-6 grid grid-cols-2 gap-y-4 gap-x-8">
+          <div><span className="mono-label-sm opacity-30 block mb-1">NAME</span><p className="font-mono text-sm">{practice.name}</p></div>
+          <div><span className="mono-label-sm opacity-30 block mb-1">INDUSTRY</span><p className="font-mono text-sm">{practice.industry}</p></div>
+          <div><span className="mono-label-sm opacity-30 block mb-1">SLUG</span><p className="font-mono text-sm text-accent">{practice.slug}</p></div>
+          <div><span className="mono-label-sm opacity-30 block mb-1">PLAN</span><Badge variant="accent">{((practice.plan as string) || 'free').toUpperCase()}</Badge></div>
+          {tags.length > 0 && (
+            <div className="col-span-2">
+              <span className="mono-label-sm opacity-30 block mb-1">TAGS</span>
+              <div className="flex gap-2 flex-wrap">{tags.map((t) => <Badge key={t} variant="accent">{t}</Badge>)}</div>
+            </div>
+          )}
+          {address && (
+            <div className="col-span-2">
+              <span className="mono-label-sm opacity-30 block mb-1">ADDRESS</span>
+              <p className="font-mono text-sm">{[address.street, address.city, address.state, address.zip].filter(Boolean).join(', ')}</p>
+            </div>
+          )}
+          {practice.phone && <div><span className="mono-label-sm opacity-30 block mb-1">PHONE</span><p className="font-mono text-sm">{practice.phone}</p></div>}
+          {practice.website && <div><span className="mono-label-sm opacity-30 block mb-1">WEBSITE</span><p className="font-mono text-sm">{practice.website}</p></div>}
+        </div>
+
+        {Object.keys(additionalInfo).length > 0 && (
+          <div className="p-6 hairline-t">
+            <div className="flex items-center gap-2 mb-4"><Info className="w-4 h-4 text-accent" /><span className="mono-label-sm opacity-40">ADDITIONAL INFO</span></div>
+            {Object.entries(additionalInfo).map(([key, value]) => (
+              <div key={key} className="flex gap-4 py-2 hairline-b last:border-b-0">
+                <span className="mono-label-sm opacity-40 w-40 shrink-0">{key.toUpperCase()}</span>
+                <span className="font-mono text-sm opacity-70">{value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      {/* Services */}
+      {services && services.length > 0 && (
+        <Card>
+          <div className="p-6 hairline-b"><span className="mono-label-sm opacity-40">SERVICES ({services.length})</span></div>
+          {services.map((s) => (
+            <div key={s.id} className="flex items-center justify-between px-6 py-3 hairline-b last:border-b-0">
+              <div>
+                <p className="font-mono text-sm">{s.name}</p>
+                {s.description && <p className="font-sans text-xs opacity-40">{s.description}</p>}
+              </div>
+              <div className="text-right">
+                {s.duration_minutes && <p className="font-mono text-xs opacity-40">{s.duration_minutes} min</p>}
+              </div>
+            </div>
+          ))}
+        </Card>
+      )}
     </div>
   )
 }

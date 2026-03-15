@@ -19,7 +19,7 @@ export const metadata = {
 }
 
 export default async function AnalyticsPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const {
     data: { user },
@@ -106,7 +106,7 @@ export default async function AnalyticsPage() {
     <div className="space-y-8">
       {/* Page Header */}
       <div>
-        <span className="mono-label-sm opacity-40 block mb-3">PERFORMANCE_DATA</span>
+        <span className="mono-label-sm opacity-40 block mb-3">PERFORMANCE DATA</span>
         <h1 className="font-display font-black uppercase text-3xl tracking-tightest">ANALYTICS</h1>
         <p className="font-sans text-sm font-light opacity-50 mt-2">
           Track how AI agents interact with your practice
@@ -149,7 +149,7 @@ export default async function AnalyticsPage() {
             Tool Usage Distribution
           </CardTitle>
           <CardDescription>
-            Which MCP tools AI agents call most frequently
+            Which actions AI assistants perform most frequently
           </CardDescription>
         </CardHeader>
 

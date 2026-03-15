@@ -1,61 +1,90 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
-const metrics = [
-  { value: 2847, label: 'PRACTICES_LISTED', suffix: '+' },
-  { value: 200, label: 'RESPONSE_TIME_MS', suffix: 'ms' },
-  { value: 40, label: 'AI_BOOKED_APPOINTMENTS', suffix: '%' },
-  { value: 99.9, label: 'UPTIME_GUARANTEE', suffix: '%' },
+const aiBrands = [
+  {
+    name: 'ChatGPT',
+    company: 'OpenAI',
+    color: '#10A37F',
+    image: '/ai-logos/chatgpt.webp',
+  },
+  {
+    name: 'Claude',
+    company: 'Anthropic',
+    color: '#D4956A',
+    image: '/ai-logos/claude.png',
+  },
+  {
+    name: 'Gemini',
+    company: 'Google',
+    color: '#4285F4',
+    image: '/ai-logos/gemini.png',
+  },
+  {
+    name: 'Perplexity',
+    company: 'Perplexity AI',
+    color: '#20B8CD',
+    image: '/ai-logos/perplexity.png',
+  },
 ]
-
-function AnimatedNumber({ target, suffix }: { target: number; suffix: string }) {
-  const [current, setCurrent] = useState(0)
-
-  useEffect(() => {
-    const duration = 2000
-    const steps = 60
-    const increment = target / steps
-    let step = 0
-
-    const timer = setInterval(() => {
-      step++
-      if (step >= steps) {
-        setCurrent(target)
-        clearInterval(timer)
-      } else {
-        setCurrent(Number((increment * step).toFixed(1)))
-      }
-    }, duration / steps)
-
-    return () => clearInterval(timer)
-  }, [target])
-
-  return (
-    <span className="font-display font-black text-4xl md:text-5xl tracking-tightest">
-      {target % 1 !== 0 ? current.toFixed(1) : Math.floor(current)}
-      <span className="text-accent">{suffix}</span>
-    </span>
-  )
-}
 
 export function ProblemSolution() {
   return (
-    <section id="features" className="hairline-t hairline-b">
-      <div className="grid grid-cols-2 md:grid-cols-4">
-        {metrics.map((metric, i) => (
-          <div
-            key={metric.label}
-            className={`p-8 md:p-12 flex flex-col justify-between min-h-[200px] ${
-              i < metrics.length - 1 ? 'hairline-r' : ''
-            } ${i < 2 ? 'hairline-b md:border-b-0' : ''}`}
-          >
-            <span className="mono-label-sm opacity-40">{metric.label}</span>
-            <div className="mt-6">
-              <AnimatedNumber target={metric.value} suffix={metric.suffix} />
+    <section id="features" className="py-20 px-6 md:px-10">
+      <div className="max-w-5xl mx-auto">
+        {/* Section header */}
+        <div className="text-center mb-14">
+          <span className="mono-label-sm text-accent/60 block mb-4">COMPATIBLE AI AGENTS</span>
+          <h2 className="font-display font-extrabold uppercase text-3xl md:text-5xl tracking-tightest text-chrome-3d">
+            EVERY AI FINDS YOU
+          </h2>
+          <p className="font-sans text-sm md:text-base font-light text-white/35 mt-4 max-w-lg mx-auto">
+            Your business becomes instantly discoverable and bookable by all major AI assistants through a single AI booking link.
+          </p>
+        </div>
+
+        {/* AI brand grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {aiBrands.map((brand) => (
+            <div
+              key={brand.name}
+              className="card-metal rounded-2xl p-6 md:p-8 flex flex-col items-center text-center group card-interactive relative overflow-hidden"
+            >
+              {/* Hover glow */}
+              <div
+                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ boxShadow: `inset 0 0 60px ${brand.color}12, 0 0 30px ${brand.color}08` }}
+              />
+
+              {/* Logo container */}
+              <div
+                className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center relative z-10 mb-5 overflow-hidden"
+                style={{
+                  background: '#0D0D0D',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={brand.image}
+                  alt={`${brand.name} logo`}
+                  className="w-full h-full object-cover rounded-2xl"
+                />
+              </div>
+
+              {/* Name */}
+              <h3 className="font-display font-extrabold uppercase text-lg md:text-xl tracking-tightest relative z-10 group-hover:text-chrome transition-all duration-300">
+                {brand.name}
+              </h3>
+              <span className="mono-label-sm text-white/20 mt-1.5 relative z-10">{brand.company.toUpperCase()}</span>
+
+              {/* Status indicator */}
+              <div className="flex items-center gap-2 mt-4 relative z-10">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-glow-pulse" />
+                <span className="mono-label-sm text-accent/60">AI READY</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )

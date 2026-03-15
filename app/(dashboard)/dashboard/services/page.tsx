@@ -116,7 +116,7 @@ export default function ServicesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="mono-label-sm opacity-40">LOADING_SERVICES</div>
+        <div className="mono-label-sm opacity-40">LOADING SERVICES</div>
       </div>
     )
   }
@@ -126,7 +126,7 @@ export default function ServicesPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <span className="mono-label-sm opacity-40 block mb-3">SERVICE_MANAGEMENT</span>
+          <span className="mono-label-sm opacity-40 block mb-3">SERVICE MANAGEMENT</span>
           <h1 className="font-display font-black uppercase text-3xl tracking-tightest">SERVICES</h1>
           <p className="font-sans text-sm font-light opacity-50 mt-2">
             Manage the services AI agents can see and book
