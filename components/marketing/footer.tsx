@@ -59,7 +59,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div>
-            <span className="font-display font-extrabold uppercase tracking-tightest text-xl block mb-4 text-chrome">
+            <span className="font-display font-extrabold uppercase tracking-tightest text-xl block mb-4 text-white">
               SPADECHAT
             </span>
             <p className="font-sans text-xs text-white/20 leading-relaxed">
