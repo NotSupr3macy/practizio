@@ -19,7 +19,7 @@ export function Navbar() {
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-3">
             <img src="/logo.png" alt="SpadeChat" className="w-12 h-12 object-contain" />
-            <span className="font-display font-extrabold uppercase tracking-tightest text-lg text-chrome">
+            <span className="font-display font-extrabold uppercase tracking-tightest text-lg text-white">
               SPADECHAT
             </span>
           </Link>
