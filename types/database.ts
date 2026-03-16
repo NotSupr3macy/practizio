@@ -18,8 +18,9 @@ export interface Practice {
   phone: string | null
   website: string | null
   additional_info: Record<string, string> // Flexible key-value pairs
-  booking_system_type: 'internal' | 'calendly' | 'acuity' | 'square' | 'other' | null
+  booking_system_type: string | null
   booking_system_connected: boolean
+  booking_url: string | null
   interaction_type: 'appointment' | 'order' | 'hybrid'
   is_active: boolean
   stripe_customer_id: string | null

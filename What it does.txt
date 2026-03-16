@@ -86,3 +86,8 @@ Yes, exactly. The flow is:
 The owner then gets an email with a link to set their password and access their dashboard — they don't have to do any setup themselves.
 
 That's the concierge model: they just fill out the simple `/get-setup` form, and you do all the heavy lifting on this admin page.
+
+
+Path 1 (Self-service): Customer finds SpadeChat → clicks "Get Started" → signs up → goes through onboarding → sets up their own business → dashboard
+
+Path 2 (Admin concierge): You meet someone → go to /admin → create their business → they get a password reset email → set password → dashboard

@@ -5,6 +5,7 @@ import { StatCard } from '@/components/ui/stat-card'
 import { Badge } from '@/components/ui/badge'
 import { Bot, CalendarCheck, Activity, Briefcase, Clock, Cpu, CreditCard, CheckCircle, Share2, Star, ExternalLink, Copy, Eye } from 'lucide-react'
 import Link from 'next/link'
+import { BookingIntegrations } from '@/components/dashboard/booking-integrations'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -168,6 +169,13 @@ export default async function DashboardPage() {
               )}
             </div>
           </div>
+
+          {/* Booking integration */}
+          <BookingIntegrations
+            currentPlatform={(practice as any).booking_system_type}
+            currentBookingUrl={(practice as any).booking_url}
+            practiceId={practice.id}
+          />
         </div>
       ) : (
         /* ========== ACTIVE BUSINESS DASHBOARD ========== */
@@ -229,6 +237,13 @@ export default async function DashboardPage() {
               </div>
             )}
           </div>
+
+          {/* Booking integration */}
+          <BookingIntegrations
+            currentPlatform={(practice as any).booking_system_type}
+            currentBookingUrl={(practice as any).booking_url}
+            practiceId={practice.id}
+          />
         </>
       )}
     </div>
