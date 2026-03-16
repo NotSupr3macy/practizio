@@ -29,9 +29,12 @@ import {
   ChevronUp,
   ExternalLink,
   HelpCircle,
+  CheckCircle,
+  XCircle,
+  Loader2,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -143,6 +146,10 @@ interface BookingPlatform {
   urlPlaceholder: string
   instructions: string[]
   exampleUrl: string
+  /** Regex pattern the URL must match to be considered correct for this platform */
+  urlPattern: RegExp
+  /** Human-readable error when the URL doesn't match the pattern */
+  urlError: string
 }
 
 interface BookingPlatformCategory {
@@ -158,6 +165,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'calendly', name: 'Calendly', emoji: '📅',
         urlPlaceholder: 'https://calendly.com/your-name',
         exampleUrl: 'https://calendly.com/jane-doe',
+        urlPattern: /^https?:\/\/(www\.)?calendly\.com\/.+/i,
+        urlError: 'This doesn\'t look like a Calendly link. It should look like: calendly.com/your-name',
         instructions: [
           'Log in to Calendly at calendly.com',
           'Click your profile icon (top-right) → "Share Your Link"',
@@ -169,6 +178,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'acuity', name: 'Acuity / Squarespace', emoji: '🗓',
         urlPlaceholder: 'https://acuityscheduling.com/schedule.php?owner=...',
         exampleUrl: 'https://acuityscheduling.com/schedule.php?owner=12345',
+        urlPattern: /^https?:\/\/(www\.)?(acuityscheduling\.com|squarespacescheduling\.com)\/.+/i,
+        urlError: 'This doesn\'t look like an Acuity link. It should include acuityscheduling.com or squarespacescheduling.com',
         instructions: [
           'Log in to Acuity Scheduling (or Squarespace Scheduling)',
           'Go to "Share Your Calendar" (left sidebar)',
@@ -180,6 +191,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'cal_com', name: 'Cal.com', emoji: '📆',
         urlPlaceholder: 'https://cal.com/your-name',
         exampleUrl: 'https://cal.com/jane-doe',
+        urlPattern: /^https?:\/\/(www\.)?cal\.com\/.+/i,
+        urlError: 'This doesn\'t look like a Cal.com link. It should look like: cal.com/your-name',
         instructions: [
           'Log in to Cal.com',
           'Go to "Event Types" in the sidebar',
@@ -191,6 +204,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'google_calendar', name: 'Google Calendar', emoji: '🔵',
         urlPlaceholder: 'https://calendar.google.com/calendar/appointments/...',
         exampleUrl: 'https://calendar.google.com/calendar/appointments/ABC123',
+        urlPattern: /^https?:\/\/calendar\.(google\.com|app\.google)\/calendar\/appointments\/.+/i,
+        urlError: 'This doesn\'t look like a Google Calendar appointment link. It should start with calendar.google.com/calendar/appointments/ — your regular calendar URL won\'t work.',
         instructions: [
           'Open Google Calendar → click the + button → "Appointment schedule"',
           'Set up your appointment schedule (name, duration, hours)',
@@ -203,6 +218,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'microsoft_bookings', name: 'Microsoft Bookings', emoji: '🪟',
         urlPlaceholder: 'https://outlook.office365.com/owa/calendar/...',
         exampleUrl: 'https://outlook.office365.com/owa/calendar/MyBusiness@...',
+        urlPattern: /^https?:\/\/(outlook\.office365\.com|outlook\.office\.com|book\.ms|booking\.microsoft\.com)\/.+/i,
+        urlError: 'This doesn\'t look like a Microsoft Bookings link. It should include outlook.office365.com or booking.microsoft.com',
         instructions: [
           'Open Microsoft 365 → go to Bookings (bookings.microsoft.com)',
           'Click on your booking page',
@@ -214,6 +231,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'setmore', name: 'Setmore', emoji: '📋',
         urlPlaceholder: 'https://yourname.setmore.com',
         exampleUrl: 'https://janedoe.setmore.com',
+        urlPattern: /^https?:\/\/(.+\.)?setmore\.com/i,
+        urlError: 'This doesn\'t look like a Setmore link. It should look like: yourname.setmore.com',
         instructions: [
           'Log in to Setmore',
           'Go to Settings → Booking Page',
@@ -225,6 +244,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'simplybook', name: 'SimplyBook.me', emoji: '📌',
         urlPlaceholder: 'https://yourname.simplybook.me',
         exampleUrl: 'https://janedoe.simplybook.me',
+        urlPattern: /^https?:\/\/(.+\.)?simplybook\.(me|it)/i,
+        urlError: 'This doesn\'t look like a SimplyBook.me link. It should look like: yourname.simplybook.me',
         instructions: [
           'Log in to SimplyBook.me',
           'Go to Settings → Booking Widget → Direct link',
@@ -241,6 +262,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'vagaro', name: 'Vagaro', emoji: '💇',
         urlPlaceholder: 'https://www.vagaro.com/your-salon',
         exampleUrl: 'https://www.vagaro.com/janessalon',
+        urlPattern: /^https?:\/\/(www\.)?vagaro\.com\/.+/i,
+        urlError: 'This doesn\'t look like a Vagaro link. It should look like: vagaro.com/your-salon-name',
         instructions: [
           'Log in to Vagaro',
           'Go to your business profile page (or MySite)',
@@ -252,6 +275,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'fresha', name: 'Fresha', emoji: '🌿',
         urlPlaceholder: 'https://www.fresha.com/a/...',
         exampleUrl: 'https://www.fresha.com/a/janes-salon-new-york-123',
+        urlPattern: /^https?:\/\/(www\.)?fresha\.com\/.+/i,
+        urlError: 'This doesn\'t look like a Fresha link. It should include fresha.com',
         instructions: [
           'Log in to Fresha (partners.fresha.com)',
           'Go to Settings → Online Booking',
@@ -263,6 +288,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'booksy', name: 'Booksy', emoji: '✂️',
         urlPlaceholder: 'https://booksy.com/en-us/...',
         exampleUrl: 'https://booksy.com/en-us/12345_janes-barbershop',
+        urlPattern: /^https?:\/\/(www\.)?booksy\.com\/.+/i,
+        urlError: 'This doesn\'t look like a Booksy link. It should include booksy.com',
         instructions: [
           'Open Booksy Biz app or log in at booksy.com',
           'Go to your business profile',
@@ -274,6 +301,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'glossgenius', name: 'GlossGenius', emoji: '💅',
         urlPlaceholder: 'https://book.glossgenius.com/...',
         exampleUrl: 'https://book.glossgenius.com/janedoe',
+        urlPattern: /^https?:\/\/(book\.)?glossgenius\.com\/.+/i,
+        urlError: 'This doesn\'t look like a GlossGenius link. It should include glossgenius.com',
         instructions: [
           'Open GlossGenius app or dashboard',
           'Go to Settings → Booking Site',
@@ -285,6 +314,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'boulevard', name: 'Boulevard', emoji: '💄',
         urlPlaceholder: 'https://booking.boulevard.app/...',
         exampleUrl: 'https://booking.boulevard.app/janes-salon',
+        urlPattern: /^https?:\/\/(booking\.)?boulevard\.(app|io)\/.+/i,
+        urlError: 'This doesn\'t look like a Boulevard link. It should include boulevard.app',
         instructions: [
           'Log in to Boulevard dashboard',
           'Go to Settings → Online Booking',
@@ -301,6 +332,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'mindbody', name: 'Mindbody', emoji: '🧘',
         urlPlaceholder: 'https://www.mindbodyonline.com/explore/locations/...',
         exampleUrl: 'https://www.mindbodyonline.com/explore/locations/janes-yoga',
+        urlPattern: /^https?:\/\/(www\.)?(mindbodyonline\.com|mindbody\.io)\/.+/i,
+        urlError: 'This doesn\'t look like a Mindbody link. It should include mindbodyonline.com',
         instructions: [
           'Log in to Mindbody business dashboard',
           'Go to Home → Marketing → Booking Links',
@@ -312,6 +345,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'jane_app', name: 'Jane App', emoji: '🏥',
         urlPlaceholder: 'https://yourname.janeapp.com',
         exampleUrl: 'https://janedoeclinic.janeapp.com',
+        urlPattern: /^https?:\/\/(.+\.)?janeapp\.com/i,
+        urlError: 'This doesn\'t look like a Jane App link. It should look like: yourname.janeapp.com',
         instructions: [
           'Log in to Jane App',
           'Go to Settings → Online Booking',
@@ -323,6 +358,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'zenoti', name: 'Zenoti', emoji: '🧬',
         urlPlaceholder: 'https://yourname.zenoti.com/webstoreNew/services',
         exampleUrl: 'https://janesspa.zenoti.com/webstoreNew/services',
+        urlPattern: /^https?:\/\/(.+\.)?zenoti\.com\/.+/i,
+        urlError: 'This doesn\'t look like a Zenoti link. It should include zenoti.com',
         instructions: [
           'Log in to Zenoti dashboard',
           'Go to Settings → Online Booking → Webstore',
@@ -334,6 +371,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'wellnessliving', name: 'WellnessLiving', emoji: '🏃',
         urlPlaceholder: 'https://widget.wellnessliving.com/...',
         exampleUrl: 'https://widget.wellnessliving.com/janes-fitness',
+        urlPattern: /^https?:\/\/(.+\.)?wellnessliving\.com\/.+/i,
+        urlError: 'This doesn\'t look like a WellnessLiving link. It should include wellnessliving.com',
         instructions: [
           'Log in to WellnessLiving',
           'Go to Setup → Online Widgets → Client Web App',
@@ -350,6 +389,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'opentable', name: 'OpenTable', emoji: '🍽️',
         urlPlaceholder: 'https://www.opentable.com/r/...',
         exampleUrl: 'https://www.opentable.com/r/janes-bistro-new-york',
+        urlPattern: /^https?:\/\/(www\.)?opentable\.com\/.+/i,
+        urlError: 'This doesn\'t look like an OpenTable link. It should include opentable.com',
         instructions: [
           'Search for your restaurant on opentable.com',
           'Go to your restaurant\'s page',
@@ -361,6 +402,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'resy', name: 'Resy', emoji: '🥂',
         urlPlaceholder: 'https://resy.com/cities/.../venues/...',
         exampleUrl: 'https://resy.com/cities/ny/venues/janes-bistro',
+        urlPattern: /^https?:\/\/(www\.)?resy\.com\/.+/i,
+        urlError: 'This doesn\'t look like a Resy link. It should include resy.com',
         instructions: [
           'Search for your restaurant on resy.com',
           'Go to your restaurant\'s page',
@@ -372,6 +415,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'toast', name: 'Toast', emoji: '🍕',
         urlPlaceholder: 'https://www.toasttab.com/your-restaurant/...',
         exampleUrl: 'https://www.toasttab.com/janes-pizza/v3',
+        urlPattern: /^https?:\/\/(www\.)?toasttab\.com\/.+/i,
+        urlError: 'This doesn\'t look like a Toast link. It should include toasttab.com',
         instructions: [
           'Log in to Toast dashboard',
           'Go to Online Ordering → Settings',
@@ -383,6 +428,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'square_online', name: 'Square Online', emoji: '🛒',
         urlPlaceholder: 'https://squareup.com/store/...',
         exampleUrl: 'https://squareup.com/store/janes-bakery',
+        urlPattern: /^https?:\/\/(www\.)?(squareup\.com|square\.site)\/.+/i,
+        urlError: 'This doesn\'t look like a Square Online link. It should include squareup.com or square.site',
         instructions: [
           'Log in to Square Dashboard',
           'Go to Online → Site → View Site',
@@ -399,6 +446,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'square_appointments', name: 'Square Appointments', emoji: '🟦',
         urlPlaceholder: 'https://squareup.com/appointments/book/...',
         exampleUrl: 'https://squareup.com/appointments/book/abc123/janes-shop',
+        urlPattern: /^https?:\/\/(www\.)?squareup\.com\/appointments\/.+/i,
+        urlError: 'This doesn\'t look like a Square Appointments link. It should include squareup.com/appointments/',
         instructions: [
           'Log in to Square Dashboard',
           'Go to Appointments → Online Booking',
@@ -411,6 +460,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'jobber', name: 'Jobber', emoji: '🔧',
         urlPlaceholder: 'https://clienthub.getjobber.com/client_hubs/...',
         exampleUrl: 'https://clienthub.getjobber.com/client_hubs/abc123',
+        urlPattern: /^https?:\/\/(.+\.)?(getjobber\.com|jobber\.com)\/.+/i,
+        urlError: 'This doesn\'t look like a Jobber link. It should include getjobber.com or jobber.com',
         instructions: [
           'Log in to Jobber',
           'Go to Client Hub → Settings',
@@ -422,6 +473,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'servicetitan', name: 'ServiceTitan', emoji: '⚙️',
         urlPlaceholder: 'https://booking.servicetitan.com/...',
         exampleUrl: 'https://booking.servicetitan.com/janes-plumbing',
+        urlPattern: /^https?:\/\/(.+\.)?servicetitan\.com\/.+/i,
+        urlError: 'This doesn\'t look like a ServiceTitan link. It should include servicetitan.com',
         instructions: [
           'Log in to ServiceTitan',
           'Go to Marketing → Online Booking',
@@ -433,6 +486,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'housecall_pro', name: 'HouseCall Pro', emoji: '🏠',
         urlPlaceholder: 'https://app.housecallpro.com/book/...',
         exampleUrl: 'https://app.housecallpro.com/book/janes-hvac',
+        urlPattern: /^https?:\/\/(.+\.)?housecallpro\.com\/.+/i,
+        urlError: 'This doesn\'t look like a HouseCall Pro link. It should include housecallpro.com',
         instructions: [
           'Log in to HouseCall Pro',
           'Go to Settings → Online Booking',
@@ -449,6 +504,8 @@ const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
         id: 'custom', name: 'Other / Custom URL', emoji: '🔗',
         urlPlaceholder: 'https://your-booking-page.com',
         exampleUrl: 'https://yourbusiness.com/book',
+        urlPattern: /^https?:\/\/.+\..+/i,
+        urlError: 'Please enter a valid URL starting with http:// or https://',
         instructions: [
           'Open your booking or scheduling page in your browser',
           'Copy the URL that customers would use to book with you',
@@ -498,6 +555,7 @@ export default function OnboardingPage() {
   const [selectedBookingPlatformId, setSelectedBookingPlatformId] = useState<string | null>(null)
   const [platformSearchQuery, setPlatformSearchQuery] = useState('')
   const [expandedPlatformCats, setExpandedPlatformCats] = useState<Record<string, boolean>>({})
+  const [urlValidation, setUrlValidation] = useState<{ status: 'idle' | 'checking' | 'valid' | 'invalid_format' | 'unreachable'; message: string }>({ status: 'idle', message: '' })
 
   const selectedBookingPlatform = selectedBookingPlatformId
     ? ALL_BOOKING_PLATFORMS.find((p) => p.id === selectedBookingPlatformId) ?? null
@@ -536,6 +594,67 @@ export default function OnboardingPage() {
     buffer_minutes: '0',
     additional_rules: '',
   })
+
+  // --- URL Validation (debounced) ---
+
+  const urlValidationTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (urlValidationTimeout.current) {
+      clearTimeout(urlValidationTimeout.current)
+    }
+
+    const url = formData.booking_url.trim()
+    if (!url || !selectedBookingPlatform) {
+      setUrlValidation({ status: 'idle', message: '' })
+      return
+    }
+
+    // Quick format check — is it a valid URL at all?
+    try {
+      new URL(url.startsWith('http') ? url : `https://${url}`)
+    } catch {
+      setUrlValidation({ status: 'invalid_format', message: 'This doesn\'t look like a valid URL. Make sure it starts with https://' })
+      return
+    }
+
+    const urlToCheck = url.startsWith('http') ? url : `https://${url}`
+
+    // Check if URL matches the platform's expected pattern
+    if (!selectedBookingPlatform.urlPattern.test(urlToCheck)) {
+      setUrlValidation({ status: 'invalid_format', message: selectedBookingPlatform.urlError })
+      return
+    }
+
+    // Pattern matched — verify the URL is reachable (debounced)
+    setUrlValidation({ status: 'checking', message: 'Checking link...' })
+
+    urlValidationTimeout.current = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/validate-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: urlToCheck }),
+        })
+        const data = await res.json()
+        if (data.reachable) {
+          setUrlValidation({ status: 'valid', message: 'Link verified — looks good!' })
+        } else {
+          setUrlValidation({ status: 'unreachable', message: 'We couldn\'t reach this link. Double-check the URL or try opening it in your browser.' })
+        }
+      } catch {
+        // Network error on our end — don't block the user
+        setUrlValidation({ status: 'valid', message: 'Link format looks correct' })
+      }
+    }, 800)
+
+    return () => {
+      if (urlValidationTimeout.current) {
+        clearTimeout(urlValidationTimeout.current)
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.booking_url, selectedBookingPlatformId])
 
   // --- Helpers ---
 
@@ -999,8 +1118,9 @@ export default function OnboardingPage() {
                                   onClick={() => {
                                     setSelectedBookingPlatformId(platform.id)
                                     updateField('booking_system_type', platform.id)
-                                    // Clear URL when switching platforms
+                                    // Clear URL and validation when switching platforms
                                     updateField('booking_url', '')
+                                    setUrlValidation({ status: 'idle', message: '' })
                                   }}
                                   className={`flex items-center gap-2.5 px-4 py-3 text-left transition-all duration-200 border-b border-r border-white/[0.04] ${
                                     isSelected
@@ -1058,7 +1178,13 @@ export default function OnboardingPage() {
 
                     {/* URL input */}
                     <div>
-                      <div className="flex items-center gap-2 hairline rounded-lg px-3 py-3 focus-within:border-accent/40 transition-colors" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+                      <div className={`flex items-center gap-2 rounded-lg px-3 py-3 transition-colors ${
+                        urlValidation.status === 'valid'
+                          ? 'border border-green-500/40 bg-green-500/[0.03]'
+                          : urlValidation.status === 'invalid_format' || urlValidation.status === 'unreachable'
+                          ? 'border border-red-500/40 bg-red-500/[0.03]'
+                          : 'hairline focus-within:border-accent/40'
+                      }`} style={urlValidation.status === 'idle' || urlValidation.status === 'checking' ? { borderColor: 'rgba(255,255,255,0.08)' } : undefined}>
                         <LinkIcon className="w-3.5 h-3.5 text-white/20 shrink-0" />
                         <input
                           type="url"
@@ -1067,10 +1193,48 @@ export default function OnboardingPage() {
                           placeholder={selectedBookingPlatform.urlPlaceholder}
                           className="flex-1 bg-transparent font-mono text-xs text-white placeholder:text-white/15 focus:outline-none"
                         />
+                        {/* Validation icon */}
+                        {urlValidation.status === 'checking' && (
+                          <Loader2 className="w-4 h-4 text-white/30 animate-spin shrink-0" />
+                        )}
+                        {urlValidation.status === 'valid' && (
+                          <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                        )}
+                        {(urlValidation.status === 'invalid_format' || urlValidation.status === 'unreachable') && (
+                          <XCircle className="w-4 h-4 text-red-500 shrink-0" />
+                        )}
                       </div>
-                      <p className="font-sans text-[11px] opacity-30 mt-2">
-                        AI assistants will direct customers here to complete their booking.
-                      </p>
+
+                      {/* Validation message */}
+                      {urlValidation.status === 'valid' && (
+                        <div className="flex items-center gap-2 mt-2">
+                          <CheckCircle className="w-3 h-3 text-green-500 shrink-0" />
+                          <p className="font-mono text-[11px] text-green-500">{urlValidation.message}</p>
+                        </div>
+                      )}
+                      {urlValidation.status === 'invalid_format' && (
+                        <div className="flex items-start gap-2 mt-2">
+                          <XCircle className="w-3 h-3 text-red-500 shrink-0 mt-0.5" />
+                          <p className="font-mono text-[11px] text-red-400">{urlValidation.message}</p>
+                        </div>
+                      )}
+                      {urlValidation.status === 'unreachable' && (
+                        <div className="flex items-start gap-2 mt-2">
+                          <XCircle className="w-3 h-3 text-red-500 shrink-0 mt-0.5" />
+                          <p className="font-mono text-[11px] text-red-400">{urlValidation.message}</p>
+                        </div>
+                      )}
+                      {urlValidation.status === 'checking' && (
+                        <div className="flex items-center gap-2 mt-2">
+                          <Loader2 className="w-3 h-3 text-white/30 animate-spin shrink-0" />
+                          <p className="font-mono text-[11px] text-white/30">{urlValidation.message}</p>
+                        </div>
+                      )}
+                      {urlValidation.status === 'idle' && (
+                        <p className="font-sans text-[11px] opacity-30 mt-2">
+                          AI assistants will direct customers here to complete their booking.
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
