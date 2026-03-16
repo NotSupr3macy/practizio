@@ -110,16 +110,16 @@ export class ExternalUrlAdapter implements BookingAdapter {
     // Record the booking intent in our database for tracking
     const { error } = await this.supabase.from('appointments').insert({
       practice_id: this.practiceId,
-      customer_name: customer.name,
-      customer_phone: customer.phone,
-      customer_email: customer.email || null,
-      service_type: serviceType,
-      service_id: service?.id || null,
+      patient_name: customer.name,
+      patient_phone: customer.phone,
+      patient_email: customer.email || null,
+      service: serviceType,
       appointment_date: datePart,
       appointment_time: timePart + ':00',
       status: 'confirmed',
       notes: notes || null,
       confirmation_number: confirmationId,
+      booked_by: 'ai_agent',
     })
 
     if (error) {

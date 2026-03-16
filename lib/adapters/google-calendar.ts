@@ -317,17 +317,16 @@ export class GoogleCalendarAdapter implements BookingAdapter {
     // Also record in our database for tracking
     await this.supabase.from('appointments').insert({
       practice_id: this.practiceId,
-      customer_name: customer.name,
-      customer_phone: customer.phone,
-      customer_email: customer.email || null,
-      service_type: serviceType,
-      service_id: service?.id || null,
+      patient_name: customer.name,
+      patient_phone: customer.phone,
+      patient_email: customer.email || null,
+      service: serviceType,
       appointment_date: datePart,
       appointment_time: timePart + ':00',
       status: 'confirmed',
       notes: notes || null,
       confirmation_number: confirmationId,
-      external_id: createdEvent.id, // Google Calendar event ID
+      booked_by: 'ai_agent',
     })
 
     return {
