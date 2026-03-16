@@ -21,10 +21,10 @@ import {
 } from 'lucide-react'
 
 const TIMEZONES = [
-  { value: 'America/New_York', label: 'Eastern Time (ET)' },
-  { value: 'America/Chicago', label: 'Central Time (CT)' },
-  { value: 'America/Denver', label: 'Mountain Time (MT)' },
   { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
+  { value: 'America/Denver', label: 'Mountain Time (MT)' },
+  { value: 'America/Chicago', label: 'Central Time (CT)' },
+  { value: 'America/New_York', label: 'Eastern Time (ET)' },
   { value: 'America/Anchorage', label: 'Alaska Time (AKT)' },
   { value: 'Pacific/Honolulu', label: 'Hawaii Time (HT)' },
   { value: 'America/Phoenix', label: 'Arizona (no DST)' },
@@ -365,11 +365,15 @@ export default function SettingsPage() {
                   setTimezone(e.target.value)
                   setTimezoneSaved(false)
                 }}
-                className="w-full appearance-none px-4 py-2.5 bg-[#0a0a0f] text-foreground font-mono text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all duration-200 cursor-pointer rounded-lg"
-                style={{ border: '1px solid rgba(255, 255, 255, 0.08)' }}
+                className="w-full appearance-none px-4 py-2.5 text-foreground font-mono text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all duration-200 cursor-pointer rounded-lg"
+                style={{
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  backgroundColor: '#0a0a0f',
+                  colorScheme: 'dark',
+                }}
               >
                 {TIMEZONES.map((tz) => (
-                  <option key={tz.value} value={tz.value} className="bg-[#0a0a0f] text-white">
+                  <option key={tz.value} value={tz.value} style={{ backgroundColor: '#0a0a0f', color: '#ffffff' }}>
                     {tz.label}
                   </option>
                 ))}
