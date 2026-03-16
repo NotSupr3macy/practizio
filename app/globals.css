@@ -58,46 +58,13 @@
     letter-spacing: -0.04em;
   }
 
-  /* ─── LIQUID CHROME TEXT ─── */
+  /* ─── SOLID TEXT ─── */
   .text-chrome {
-    background: linear-gradient(
-      135deg,
-      #1a1a1a 0%,
-      #555 15%,
-      #999 25%,
-      #ddd 35%,
-      #fff 45%,
-      #ddd 55%,
-      #999 65%,
-      #555 80%,
-      #1a1a1a 100%
-    );
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: chromeShift 8s ease-in-out infinite;
-    filter: contrast(1.2) brightness(1.1);
+    color: #fff;
   }
 
-  /* 3D Chrome text with reflection */
   .text-chrome-3d {
-    background: linear-gradient(
-      180deg,
-      #fff 0%,
-      #ccc 20%,
-      #888 40%,
-      #444 60%,
-      #888 75%,
-      #ccc 90%,
-      #fff 100%
-    );
-    background-size: 100% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: chromeShift 8s ease-in-out infinite;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)) drop-shadow(0 0 40px rgba(40,105,169,0.1));
+    color: #fff;
   }
 
   /* Acid glow text */
