@@ -196,7 +196,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-3xl">
+    <div className="space-y-8 max-w-4xl w-full">
       {/* Page Header */}
       <div>
         <span className="mono-label-sm opacity-40 block mb-3">ACCOUNT CONFIG</span>
@@ -217,30 +217,32 @@ export default function SettingsPage() {
             Update your account email. A confirmation will be sent to the new address.
           </CardDescription>
         </CardHeader>
-        <div className="flex gap-3">
-          <div className="flex-1">
-            <Input
-              id="new-email"
-              type="email"
-              placeholder="new@email.com"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-            />
+        <div className="px-6 pb-6">
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <Input
+                id="new-email"
+                type="email"
+                placeholder="new@email.com"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+              />
+            </div>
+            <Button
+              onClick={handleEmailChange}
+              loading={emailSaving}
+              disabled={!newEmail.trim() || emailSaved}
+            >
+              {emailSaved ? (
+                <>
+                  <Check className="w-4 h-4 mr-1.5" />
+                  Sent
+                </>
+              ) : (
+                'Update Email'
+              )}
+            </Button>
           </div>
-          <Button
-            onClick={handleEmailChange}
-            loading={emailSaving}
-            disabled={!newEmail.trim() || emailSaved}
-          >
-            {emailSaved ? (
-              <>
-                <Check className="w-4 h-4 mr-1.5" />
-                Sent
-              </>
-            ) : (
-              'Update Email'
-            )}
-          </Button>
         </div>
       </Card>
 
@@ -255,7 +257,7 @@ export default function SettingsPage() {
             Set a new password for your account
           </CardDescription>
         </CardHeader>
-        <div className="space-y-4">
+        <div className="px-6 pb-6 space-y-4">
           <Input
             id="new-password"
             type="password"
@@ -309,38 +311,40 @@ export default function SettingsPage() {
             Set your business timezone for accurate availability and booking
           </CardDescription>
         </CardHeader>
-        <div className="flex gap-3">
-          <div className="flex-1 relative">
-            <select
-              value={timezone}
-              onChange={(e) => {
-                setTimezone(e.target.value)
-                setTimezoneSaved(false)
-              }}
-              className="w-full appearance-none px-4 py-2.5 bg-transparent text-foreground font-mono text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all duration-200 cursor-pointer rounded-lg"
-              style={{ border: '1px solid rgba(255, 255, 255, 0.08)' }}
+        <div className="px-6 pb-6">
+          <div className="flex gap-3">
+            <div className="flex-1 relative">
+              <select
+                value={timezone}
+                onChange={(e) => {
+                  setTimezone(e.target.value)
+                  setTimezoneSaved(false)
+                }}
+                className="w-full appearance-none px-4 py-2.5 bg-transparent text-foreground font-mono text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all duration-200 cursor-pointer rounded-lg"
+                style={{ border: '1px solid rgba(255, 255, 255, 0.08)' }}
+              >
+                {TIMEZONES.map((tz) => (
+                  <option key={tz.value} value={tz.value}>
+                    {tz.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button
+              onClick={handleTimezoneChange}
+              loading={timezoneSaving}
+              disabled={timezoneSaved || timezone === practice?.timezone}
             >
-              {TIMEZONES.map((tz) => (
-                <option key={tz.value} value={tz.value}>
-                  {tz.label}
-                </option>
-              ))}
-            </select>
+              {timezoneSaved ? (
+                <>
+                  <Check className="w-4 h-4 mr-1.5" />
+                  Saved
+                </>
+              ) : (
+                'Save'
+              )}
+            </Button>
           </div>
-          <Button
-            onClick={handleTimezoneChange}
-            loading={timezoneSaving}
-            disabled={timezoneSaved || timezone === practice?.timezone}
-          >
-            {timezoneSaved ? (
-              <>
-                <Check className="w-4 h-4 mr-1.5" />
-                Saved
-              </>
-            ) : (
-              'Save'
-            )}
-          </Button>
         </div>
       </Card>
 
@@ -355,41 +359,43 @@ export default function SettingsPage() {
             Manage your connected booking system for scheduling and appointments
           </CardDescription>
         </CardHeader>
-        <div className="p-4 bg-white/[0.02] rounded-lg" style={{ border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div>
-                <p className="text-sm font-mono text-foreground font-medium">
-                  {bookingLabel}
-                </p>
-                <div className="flex items-center gap-2 mt-1">
-                  {isExternalSystem ? (
-                    isConnected ? (
-                      <Badge variant="success">Connected</Badge>
+        <div className="px-6 pb-6">
+          <div className="p-4 bg-white/[0.02] rounded-lg" style={{ border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div>
+                  <p className="text-sm font-mono text-foreground font-medium">
+                    {bookingLabel}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    {isExternalSystem ? (
+                      isConnected ? (
+                        <Badge variant="success">Connected</Badge>
+                      ) : (
+                        <Badge variant="warning">Not Connected</Badge>
+                      )
                     ) : (
-                      <Badge variant="warning">Not Connected</Badge>
-                    )
-                  ) : (
-                    <Badge variant="accent">Built-in</Badge>
-                  )}
+                      <Badge variant="accent">Built-in</Badge>
+                    )}
+                  </div>
                 </div>
               </div>
+              {isExternalSystem && isConnected && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleDisconnectBooking}
+                  loading={disconnecting}
+                >
+                  <Unplug className="w-4 h-4 mr-1.5" />
+                  Disconnect
+                </Button>
+              )}
             </div>
-            {isExternalSystem && isConnected && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleDisconnectBooking}
-                loading={disconnecting}
-              >
-                <Unplug className="w-4 h-4 mr-1.5" />
-                Disconnect
-              </Button>
-            )}
+            <p className="text-xs font-mono text-white/30 mt-3">
+              To change your booking system, re-run the setup flow from your onboarding settings.
+            </p>
           </div>
-          <p className="text-xs font-mono text-white/30 mt-3">
-            To change your booking system, re-run the setup flow from your onboarding settings.
-          </p>
         </div>
       </Card>
 
@@ -404,7 +410,7 @@ export default function SettingsPage() {
             Configure payment links and hold times for deposit-required services
           </CardDescription>
         </CardHeader>
-        <div className="space-y-4">
+        <div className="px-6 pb-6 space-y-4">
           <Input
             id="payment-url"
             label="Payment URL"
@@ -470,43 +476,45 @@ export default function SettingsPage() {
             Irreversible actions. Please proceed with caution.
           </CardDescription>
         </CardHeader>
-        <div className="flex items-center justify-between p-4 bg-destructive/5 border border-destructive/20">
-          <div>
-            <p className="text-sm font-mono text-foreground font-medium">
-              Delete Account
-            </p>
-            <p className="text-xs font-mono text-muted-foreground">
-              Permanently delete your business, data, and subscription
-            </p>
-          </div>
-          {!showDeleteConfirm ? (
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
-              Delete Account
-            </Button>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowDeleteConfirm(false)}
-              >
-                Cancel
-              </Button>
-              <Button variant="destructive" size="sm" disabled>
-                Contact Support
-              </Button>
+        <div className="px-6 pb-6">
+          <div className="flex items-center justify-between p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
+            <div>
+              <p className="text-sm font-mono text-foreground font-medium">
+                Delete Account
+              </p>
+              <p className="text-xs font-mono text-muted-foreground">
+                Permanently delete your business, data, and subscription
+              </p>
             </div>
+            {!showDeleteConfirm ? (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                Delete Account
+              </Button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowDeleteConfirm(false)}
+                >
+                  Cancel
+                </Button>
+                <Button variant="destructive" size="sm" disabled>
+                  Contact Support
+                </Button>
+              </div>
+            )}
+          </div>
+          {showDeleteConfirm && (
+            <p className="text-xs font-mono text-muted-foreground mt-3">
+              Account deletion requires contacting support. Please email support@spadechat.com to initiate the process.
+            </p>
           )}
         </div>
-        {showDeleteConfirm && (
-          <p className="text-xs font-mono text-muted-foreground mt-3">
-            Account deletion requires contacting support. Please email support@spadechat.com to initiate the process.
-          </p>
-        )}
       </Card>
     </div>
   )
