@@ -93,8 +93,41 @@ interface BookingIntegrationsProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+function detectPlatformFromUrl(url: string): string {
+  const lower = url.toLowerCase()
+  if (lower.includes('calendly.com')) return 'calendly'
+  if (lower.includes('acuityscheduling.com') || lower.includes('squareup.com/appointments')) return 'acuity'
+  if (lower.includes('cal.com')) return 'cal_com'
+  if (lower.includes('calendar.google.com') || lower.includes('calendar.app.google')) return 'google_calendar'
+  if (lower.includes('outlook.office365.com') || lower.includes('microsoft')) return 'microsoft_bookings'
+  if (lower.includes('setmore.com')) return 'setmore'
+  if (lower.includes('simplybook.me')) return 'simplybook'
+  if (lower.includes('vagaro.com')) return 'vagaro'
+  if (lower.includes('fresha.com')) return 'fresha'
+  if (lower.includes('booksy.com')) return 'booksy'
+  if (lower.includes('glossgenius.com')) return 'glossgenius'
+  if (lower.includes('boulevard.app')) return 'boulevard'
+  if (lower.includes('mindbody')) return 'mindbody'
+  if (lower.includes('janeapp.com')) return 'jane_app'
+  if (lower.includes('zenoti.com')) return 'zenoti'
+  if (lower.includes('wellnessliving.com')) return 'wellnessliving'
+  if (lower.includes('opentable.com')) return 'opentable'
+  if (lower.includes('resy.com')) return 'resy'
+  if (lower.includes('toasttab.com')) return 'toast'
+  if (lower.includes('squareup.com') || lower.includes('square.site')) return 'square_online'
+  if (lower.includes('jobber.com') || lower.includes('getjobber.com')) return 'jobber'
+  if (lower.includes('servicetitan.com')) return 'servicetitan'
+  if (lower.includes('housecallpro.com')) return 'housecall_pro'
+  return 'custom'
+}
+
 export function BookingIntegrations({ currentPlatform, currentBookingUrl, practiceId }: BookingIntegrationsProps) {
-  const activePlatformId = currentPlatform || 'spadechat'
+  // If platform is 'internal' but we have a URL, auto-detect the platform from the URL
+  const activePlatformId = (currentPlatform && currentPlatform !== 'internal')
+    ? currentPlatform
+    : currentBookingUrl
+      ? detectPlatformFromUrl(currentBookingUrl)
+      : 'custom'
   const [selectedId, setSelectedId] = useState<string>(activePlatformId)
   const [urlValue, setUrlValue] = useState<string>(currentBookingUrl || '')
   const [search, setSearch] = useState('')
@@ -123,9 +156,13 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
   }
 
   function isCategoryExpanded(label: string) {
-    // Default: SpadeChat always expanded; others collapsed unless toggled or searching
+    // Default: first category expanded; others collapsed unless toggled or searching
     if (search.trim()) return true
-    if (label === 'SPADECHAT') return true
+    // Expand the category that contains the active platform
+    const activeCat = PLATFORM_CATEGORIES.find((c) => c.platforms.some((p) => p.id === savedPlatformId))
+    if (activeCat && activeCat.label === label) return true
+    // Expand CALENDAR & SCHEDULING by default
+    if (label === 'CALENDAR & SCHEDULING' && !activeCat) return true
     return expandedCategories[label] ?? false
   }
 
