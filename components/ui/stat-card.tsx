@@ -19,7 +19,7 @@ export function StatCard({ title, value, change, trend, icon: Icon, className }:
           <Icon className="w-4 h-4 text-white/20" />
         </div>
       </div>
-      <div className="font-display font-extrabold text-4xl tracking-tightest text-chrome">{value}</div>
+      <div className="font-display font-extrabold text-4xl tracking-tightest text-chrome truncate">{value}</div>
       {change && (
         <div className="flex items-center gap-1.5 mt-3">
           {trend === 'up' ? (
