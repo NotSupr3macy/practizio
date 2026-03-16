@@ -92,7 +92,7 @@ function buildDirectoryMcpServer() {
             const matchingIds = new Set(matchingServices.map((s) => s.practice_id))
             const idToSlug = Object.fromEntries(allPractices.map((p) => [p.id, p.slug]))
             const matchingSlugs = new Set(
-              [...matchingIds].map((id) => idToSlug[id]).filter(Boolean)
+              Array.from(matchingIds).map((id) => idToSlug[id]).filter(Boolean)
             )
             filtered = filtered.filter((p) => matchingSlugs.has(p.slug))
           }
