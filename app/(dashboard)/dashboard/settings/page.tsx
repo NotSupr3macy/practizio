@@ -79,7 +79,7 @@ export default function SettingsPage() {
   const [passwordError, setPasswordError] = useState('')
 
   // Timezone
-  const [timezone, setTimezone] = useState('')
+  const [timezone, setTimezone] = useState('America/Los_Angeles')
   const [timezoneSaving, setTimezoneSaving] = useState(false)
   const [timezoneSaved, setTimezoneSaved] = useState(false)
 
@@ -112,7 +112,7 @@ export default function SettingsPage() {
 
     setPractice(data)
     if (data) {
-      setTimezone(data.timezone)
+      setTimezone(data.timezone || 'America/Los_Angeles')
       setPaymentUrl(data.payment_url || '')
       setDefaultHoldMinutes(data.default_hold_minutes ?? 30)
 
@@ -365,11 +365,11 @@ export default function SettingsPage() {
                   setTimezone(e.target.value)
                   setTimezoneSaved(false)
                 }}
-                className="w-full appearance-none px-4 py-2.5 bg-transparent text-foreground font-mono text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all duration-200 cursor-pointer rounded-lg"
+                className="w-full appearance-none px-4 py-2.5 bg-[#0a0a0f] text-foreground font-mono text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all duration-200 cursor-pointer rounded-lg"
                 style={{ border: '1px solid rgba(255, 255, 255, 0.08)' }}
               >
                 {TIMEZONES.map((tz) => (
-                  <option key={tz.value} value={tz.value}>
+                  <option key={tz.value} value={tz.value} className="bg-[#0a0a0f] text-white">
                     {tz.label}
                   </option>
                 ))}
