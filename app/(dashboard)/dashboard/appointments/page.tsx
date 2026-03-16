@@ -10,9 +10,9 @@ import { CalendarCheck, User, Clock, Phone, Mail } from 'lucide-react'
 interface Appointment {
   id: string
   confirmation_number: string
-  customer_name: string
-  customer_email: string | null
-  customer_phone: string | null
+  patient_name: string
+  patient_email: string | null
+  patient_phone: string | null
   service: string
   provider_name: string | null
   appointment_date: string
@@ -103,12 +103,12 @@ export default function AppointmentsPage() {
                       <div>
                         <div className="flex items-center gap-2">
                           <User className="w-3 h-3 text-accent" />
-                          <span className="font-mono text-sm">{appt.customer_name}</span>
+                          <span className="font-mono text-sm">{appt.patient_name}</span>
                         </div>
-                        {appt.customer_phone && (
+                        {appt.patient_phone && (
                           <div className="flex items-center gap-1 mt-1">
                             <Phone className="w-2.5 h-2.5 opacity-30" />
-                            <span className="font-mono text-[10px] opacity-40">{appt.customer_phone}</span>
+                            <span className="font-mono text-[10px] opacity-40">{appt.patient_phone}</span>
                           </div>
                         )}
                       </div>

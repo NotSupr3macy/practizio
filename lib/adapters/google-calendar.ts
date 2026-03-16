@@ -259,8 +259,12 @@ export class GoogleCalendarAdapter implements BookingAdapter {
     const token = await this.getValidAccessToken()
 
     const startDateTime = `${datePart}T${timePart}:00`
-    const endDate = new Date(new Date(startDateTime).getTime() + durationMinutes * 60000)
-    const endDateTime = endDate.toISOString().replace('Z', '').split('.')[0]
+    // Calculate end time by adding duration to the time string directly (avoids timezone shifting)
+    const [startH, startM] = timePart.split(':').map(Number)
+    const totalMinutes = startH * 60 + startM + durationMinutes
+    const endH = Math.floor(totalMinutes / 60) % 24
+    const endM = totalMinutes % 60
+    const endDateTime = `${datePart}T${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}:00`
 
     const event = {
       summary: `${serviceType} — ${customer.name}`,
