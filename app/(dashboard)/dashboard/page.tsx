@@ -180,7 +180,7 @@ export default async function DashboardPage() {
       ) : (
         /* ========== ACTIVE BUSINESS DASHBOARD ========== */
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-0">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-0">
             <StatCard title="AI Searches" value={searchAppearancesCount ?? 0} change="This month" icon={Eye} />
             <StatCard title="AI Queries" value={aiQueriesCount ?? 0} change="This month" icon={Bot} />
             <StatCard title="Bookings" value={totalBookings} change="This month" icon={CalendarCheck} />

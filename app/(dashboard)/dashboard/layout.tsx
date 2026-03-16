@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Sidebar } from '@/components/dashboard/sidebar'
+import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 
 export const metadata = {
   title: 'Dashboard',
@@ -32,9 +33,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar practice={practice} userEmail={user.email || ''} />
-      <main className="flex-1 ml-[260px] p-8 md:p-12">{children}</main>
-    </div>
+    <DashboardShell
+      logoHref="/dashboard"
+      sidebar={<Sidebar practice={practice} userEmail={user.email || ''} />}
+    >
+      {children}
+    </DashboardShell>
   )
 }

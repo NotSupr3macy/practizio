@@ -52,7 +52,7 @@ export function Sidebar({ practice, userEmail }: SidebarProps) {
   }
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-[260px] bg-[#080808] flex flex-col z-40" style={{ borderRight: '1px solid rgba(255, 255, 255, 0.04)' }}>
+    <aside className="h-screen w-[260px] bg-[#080808] flex flex-col" style={{ borderRight: '1px solid rgba(255, 255, 255, 0.04)' }}>
       {/* Logo */}
       <div className="px-6 py-6" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
         <Link href="/dashboard" className="flex items-center gap-2.5">

@@ -82,93 +82,149 @@ export default function AppointmentsPage() {
       </div>
 
       {appointments.length > 0 ? (
-        <Card>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="hairline-b">
-                  <th className="text-left mono-label-sm opacity-40 py-3 px-4">CUSTOMER</th>
-                  <th className="text-left mono-label-sm opacity-40 py-3 px-4">SERVICE</th>
-                  <th className="text-left mono-label-sm opacity-40 py-3 px-4">DATE TIME</th>
-                  <th className="text-left mono-label-sm opacity-40 py-3 px-4">STATUS</th>
-                  <th className="text-left mono-label-sm opacity-40 py-3 px-4">PAYMENT STATUS</th>
-                  <th className="text-left mono-label-sm opacity-40 py-3 px-4">SOURCE</th>
-                  <th className="text-left mono-label-sm opacity-40 py-3 px-4">CONFIRMATION</th>
-                </tr>
-              </thead>
-              <tbody>
-                {appointments.map((appt) => (
-                  <tr key={appt.id} className="hairline-b hover:bg-white/[0.02] transition-colors">
-                    <td className="py-3 px-4">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <User className="w-3 h-3 text-accent" />
-                          <span className="font-mono text-sm">{appt.patient_name}</span>
-                        </div>
-                        {appt.patient_phone && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <Phone className="w-2.5 h-2.5 opacity-30" />
-                            <span className="font-mono text-[10px] opacity-40">{appt.patient_phone}</span>
-                          </div>
-                        )}
+        <>
+          {/* Mobile Card View */}
+          <div className="space-y-3 lg:hidden">
+            {appointments.map((appt) => (
+              <Card key={appt.id} className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <User className="w-3 h-3 text-accent" />
+                      <span className="font-mono text-sm font-medium">{appt.patient_name}</span>
+                    </div>
+                    {appt.patient_phone && (
+                      <div className="flex items-center gap-1 mt-1">
+                        <Phone className="w-2.5 h-2.5 opacity-30" />
+                        <span className="font-mono text-[10px] opacity-40">{appt.patient_phone}</span>
                       </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className="font-mono text-sm">{appt.service}</span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="font-mono text-sm">{formatDate(appt.appointment_date)}</div>
-                      <div className="font-mono text-[10px] opacity-40">{formatTime(appt.appointment_time)}</div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <Badge variant={
-                        (appt.booking_status || appt.status) === 'confirmed' ? 'success' :
-                        (appt.booking_status || appt.status) === 'pending_payment' ? 'warning' :
-                        (appt.booking_status || appt.status) === 'pending_approval' ? 'warning' :
-                        (appt.booking_status || appt.status) === 'payment_expired' ? 'destructive' :
-                        (appt.booking_status || appt.status) === 'cancelled' ? 'destructive' :
-                        'default'
-                      }>
-                        {(appt.booking_status || appt.status || 'confirmed').toUpperCase()}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4">
-                      {appt.booking_status === 'confirmed' && !appt.payment_required ? (
-                        <Badge variant="default">NO PAYMENT REQ</Badge>
-                      ) : appt.booking_status === 'confirmed' && appt.payment_status === 'completed' ? (
-                        <div>
-                          <Badge variant="success">PAID</Badge>
-                          {appt.payment_amount && (
-                            <span className="font-mono text-[10px] opacity-40 ml-2">{formatCurrency(appt.payment_amount)}</span>
-                          )}
-                        </div>
-                      ) : appt.booking_status === 'pending_payment' ? (
-                        <div>
-                          <Badge variant="warning">PENDING PAYMENT</Badge>
-                          {appt.payment_deadline && (
-                            <div className="font-mono text-[10px] opacity-40 mt-1">{getPaymentCountdown(appt.payment_deadline)}</div>
-                          )}
-                        </div>
-                      ) : appt.booking_status === 'payment_expired' ? (
-                        <Badge variant="destructive">EXPIRED</Badge>
-                      ) : (
-                        <span className="font-mono text-[10px] opacity-30">—</span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      <Badge variant="accent">
-                        {appt.booked_by === 'ai_agent' ? 'AI AGENT' : appt.booked_by?.toUpperCase() || 'UNKNOWN'}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className="font-mono text-[10px] text-accent">{appt.confirmation_number}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    )}
+                  </div>
+                  <Badge variant={
+                    (appt.booking_status || appt.status) === 'confirmed' ? 'success' :
+                    (appt.booking_status || appt.status) === 'pending_payment' ? 'warning' :
+                    (appt.booking_status || appt.status) === 'pending_approval' ? 'warning' :
+                    (appt.booking_status || appt.status) === 'payment_expired' ? 'destructive' :
+                    (appt.booking_status || appt.status) === 'cancelled' ? 'destructive' :
+                    'default'
+                  }>
+                    {(appt.booking_status || appt.status || 'confirmed').toUpperCase()}
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span className="mono-label-sm opacity-30 block mb-0.5">SERVICE</span>
+                    <span className="font-mono">{appt.service}</span>
+                  </div>
+                  <div>
+                    <span className="mono-label-sm opacity-30 block mb-0.5">DATE</span>
+                    <span className="font-mono">{formatDate(appt.appointment_date)}</span>
+                    <span className="font-mono opacity-40 block">{formatTime(appt.appointment_time)}</span>
+                  </div>
+                  <div>
+                    <span className="mono-label-sm opacity-30 block mb-0.5">SOURCE</span>
+                    <Badge variant="accent">
+                      {appt.booked_by === 'ai_agent' ? 'AI AGENT' : appt.booked_by?.toUpperCase() || 'UNKNOWN'}
+                    </Badge>
+                  </div>
+                  <div>
+                    <span className="mono-label-sm opacity-30 block mb-0.5">CONFIRMATION</span>
+                    <span className="font-mono text-[10px] text-accent">{appt.confirmation_number}</span>
+                  </div>
+                </div>
+              </Card>
+            ))}
           </div>
-        </Card>
+
+          {/* Desktop Table View */}
+          <Card className="hidden lg:block">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="hairline-b">
+                    <th className="text-left mono-label-sm opacity-40 py-3 px-4">CUSTOMER</th>
+                    <th className="text-left mono-label-sm opacity-40 py-3 px-4">SERVICE</th>
+                    <th className="text-left mono-label-sm opacity-40 py-3 px-4">DATE TIME</th>
+                    <th className="text-left mono-label-sm opacity-40 py-3 px-4">STATUS</th>
+                    <th className="text-left mono-label-sm opacity-40 py-3 px-4">PAYMENT STATUS</th>
+                    <th className="text-left mono-label-sm opacity-40 py-3 px-4">SOURCE</th>
+                    <th className="text-left mono-label-sm opacity-40 py-3 px-4">CONFIRMATION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {appointments.map((appt) => (
+                    <tr key={appt.id} className="hairline-b hover:bg-white/[0.02] transition-colors">
+                      <td className="py-3 px-4">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <User className="w-3 h-3 text-accent" />
+                            <span className="font-mono text-sm">{appt.patient_name}</span>
+                          </div>
+                          {appt.patient_phone && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <Phone className="w-2.5 h-2.5 opacity-30" />
+                              <span className="font-mono text-[10px] opacity-40">{appt.patient_phone}</span>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="font-mono text-sm">{appt.service}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="font-mono text-sm">{formatDate(appt.appointment_date)}</div>
+                        <div className="font-mono text-[10px] opacity-40">{formatTime(appt.appointment_time)}</div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge variant={
+                          (appt.booking_status || appt.status) === 'confirmed' ? 'success' :
+                          (appt.booking_status || appt.status) === 'pending_payment' ? 'warning' :
+                          (appt.booking_status || appt.status) === 'pending_approval' ? 'warning' :
+                          (appt.booking_status || appt.status) === 'payment_expired' ? 'destructive' :
+                          (appt.booking_status || appt.status) === 'cancelled' ? 'destructive' :
+                          'default'
+                        }>
+                          {(appt.booking_status || appt.status || 'confirmed').toUpperCase()}
+                        </Badge>
+                      </td>
+                      <td className="py-3 px-4">
+                        {appt.booking_status === 'confirmed' && !appt.payment_required ? (
+                          <Badge variant="default">NO PAYMENT REQ</Badge>
+                        ) : appt.booking_status === 'confirmed' && appt.payment_status === 'completed' ? (
+                          <div>
+                            <Badge variant="success">PAID</Badge>
+                            {appt.payment_amount && (
+                              <span className="font-mono text-[10px] opacity-40 ml-2">{formatCurrency(appt.payment_amount)}</span>
+                            )}
+                          </div>
+                        ) : appt.booking_status === 'pending_payment' ? (
+                          <div>
+                            <Badge variant="warning">PENDING PAYMENT</Badge>
+                            {appt.payment_deadline && (
+                              <div className="font-mono text-[10px] opacity-40 mt-1">{getPaymentCountdown(appt.payment_deadline)}</div>
+                            )}
+                          </div>
+                        ) : appt.booking_status === 'payment_expired' ? (
+                          <Badge variant="destructive">EXPIRED</Badge>
+                        ) : (
+                          <span className="font-mono text-[10px] opacity-30">—</span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge variant="accent">
+                          {appt.booked_by === 'ai_agent' ? 'AI AGENT' : appt.booked_by?.toUpperCase() || 'UNKNOWN'}
+                        </Badge>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="font-mono text-[10px] text-accent">{appt.confirmation_number}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </>
       ) : (
         <Card className="text-center py-16">
           <CalendarCheck className="w-10 h-10 text-muted-foreground/50 mx-auto mb-3" />
