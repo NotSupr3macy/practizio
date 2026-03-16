@@ -100,7 +100,7 @@ export function getPaymentInfoTool(
         if (needsPayment && confirmation_id && amount) {
           // Try adapter's getPaymentLink if available
           try {
-            const adapter = createAdapter({ bookingSystemType, supabase, practiceId, rules, bookingUrl })
+            const adapter = await createAdapter({ bookingSystemType, supabase, practiceId, rules, bookingUrl })
             if (adapter.getPaymentLink) {
               const linkResult = await adapter.getPaymentLink({
                 confirmationId: confirmation_id,

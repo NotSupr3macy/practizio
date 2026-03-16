@@ -5,6 +5,7 @@
 import type { BookingAdapter } from './types'
 import { InternalAdapter } from './internal'
 import { ExternalUrlAdapter } from './external-url'
+import { GoogleCalendarAdapter } from './google-calendar'
 import { CalendlyAdapter } from './calendly'
 import { AcuityAdapter } from './acuity'
 import { SquareAdapter } from './square'
@@ -13,7 +14,7 @@ import type { BusinessRules } from '@/types/database'
 
 export type { BookingAdapter } from './types'
 
-// Booking system types that use the external URL adapter
+// Booking system types that use the external URL adapter (fallback)
 const EXTERNAL_URL_SYSTEMS = [
   'google_calendar',
   'cal_com',
@@ -64,7 +65,10 @@ const SYSTEM_LABELS: Record<string, string> = {
   custom: 'your booking platform',
 }
 
-export function createAdapter(params: {
+// Systems that support direct API integration (check credentials table)
+const API_INTEGRATED_SYSTEMS = ['google_calendar']
+
+export async function createAdapter(params: {
   bookingSystemType: string | null
   supabase: SupabaseClient
   practiceId: string
@@ -76,10 +80,38 @@ export function createAdapter(params: {
     apiKey?: string
     userId?: string
   }
-}): BookingAdapter {
+}): Promise<BookingAdapter> {
   const { bookingSystemType, supabase, practiceId, rules, bookingUrl, credentials } = params
 
-  // Check if this is an external URL-based system
+  // For systems that support direct API integration, check for stored credentials
+  if (bookingSystemType && API_INTEGRATED_SYSTEMS.includes(bookingSystemType)) {
+    const { data: cred } = await supabase
+      .from('credentials')
+      .select('*')
+      .eq('practice_id', practiceId)
+      .eq('booking_system', bookingSystemType)
+      .eq('is_valid', true)
+      .single()
+
+    if (cred && cred.refresh_token_encrypted) {
+      if (bookingSystemType === 'google_calendar') {
+        return new GoogleCalendarAdapter(
+          supabase,
+          practiceId,
+          rules,
+          cred.access_token_encrypted || '',
+          cred.refresh_token_encrypted,
+          cred.calendar_id || 'primary',
+          cred.token_expires_at,
+          cred.id
+        )
+      }
+    }
+
+    // No valid credentials — fall through to external URL adapter
+  }
+
+  // Check if this is an external URL-based system (fallback when no API credentials)
   if (bookingSystemType && EXTERNAL_URL_SYSTEMS.includes(bookingSystemType) && bookingUrl) {
     const label = SYSTEM_LABELS[bookingSystemType] || bookingSystemType
     return new ExternalUrlAdapter(supabase, practiceId, rules, bookingUrl, label)

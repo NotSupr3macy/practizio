@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -84,6 +85,9 @@ export default function SettingsPage() {
 
   // Booking system
   const [disconnecting, setDisconnecting] = useState(false)
+  const [googleCalendarConnected, setGoogleCalendarConnected] = useState(false)
+  const [connectingGoogle, setConnectingGoogle] = useState(false)
+  const searchParams = useSearchParams()
 
   // Payment settings
   const [paymentUrl, setPaymentUrl] = useState('')
@@ -94,11 +98,7 @@ export default function SettingsPage() {
   // Danger zone
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  async function loadData() {
+  const loadData = useCallback(async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser()
@@ -115,9 +115,32 @@ export default function SettingsPage() {
       setTimezone(data.timezone)
       setPaymentUrl(data.payment_url || '')
       setDefaultHoldMinutes(data.default_hold_minutes ?? 30)
+
+      // Check if Google Calendar credentials exist
+      if (data.booking_system_type === 'google_calendar') {
+        const { data: cred } = await supabase
+          .from('credentials')
+          .select('id, is_valid')
+          .eq('practice_id', data.id)
+          .eq('booking_system', 'google_calendar')
+          .eq('is_valid', true)
+          .single()
+        setGoogleCalendarConnected(!!cred)
+      }
     }
     setLoading(false)
-  }
+  }, [supabase])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
+
+  // Handle Google OAuth callback params
+  useEffect(() => {
+    if (searchParams.get('google_connected') === 'true') {
+      setGoogleCalendarConnected(true)
+    }
+  }, [searchParams])
 
   async function handleEmailChange() {
     if (!newEmail.trim()) return
@@ -418,6 +441,53 @@ export default function SettingsPage() {
               To change your booking system, re-run the setup flow from your onboarding settings.
             </p>
           </div>
+
+          {/* Google Calendar Direct Integration */}
+          {bookingSystemType === 'google_calendar' && (
+            <div className="mt-4 p-4 bg-white/[0.02] rounded-lg" style={{ border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-mono text-foreground font-medium">
+                    Google Calendar API
+                  </p>
+                  <p className="text-xs font-mono text-white/30 mt-1">
+                    {googleCalendarConnected
+                      ? 'AI assistants can create appointments directly on your Google Calendar'
+                      : 'Connect to let AI assistants book appointments directly on your calendar'}
+                  </p>
+                </div>
+                {googleCalendarConnected ? (
+                  <div className="flex items-center gap-2">
+                    <Badge variant="success">API Connected</Badge>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={async () => {
+                        setConnectingGoogle(true)
+                        await fetch('/api/integrations/google', { method: 'DELETE' })
+                        setGoogleCalendarConnected(false)
+                        setConnectingGoogle(false)
+                      }}
+                      loading={connectingGoogle}
+                    >
+                      Disconnect API
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setConnectingGoogle(true)
+                      window.location.href = '/api/integrations/google'
+                    }}
+                    loading={connectingGoogle}
+                  >
+                    Connect Google Calendar
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </Card>
 

@@ -215,7 +215,7 @@ export function checkAvailabilityTool(
       }
 
       try {
-        const adapter = createAdapter({
+        const adapter = await createAdapter({
           bookingSystemType,
           supabase,
           practiceId,
@@ -290,7 +290,7 @@ export function bookAppointmentTool(
       }
 
       try {
-        const adapter = createAdapter({
+        const adapter = await createAdapter({
           bookingSystemType,
           supabase,
           practiceId,
@@ -364,7 +364,7 @@ export function cancelAppointmentTool(
       }
 
       try {
-        const adapter = createAdapter({
+        const adapter = await createAdapter({
           bookingSystemType,
           supabase,
           practiceId,
