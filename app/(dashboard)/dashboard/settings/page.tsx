@@ -33,8 +33,30 @@ const TIMEZONES = [
 const BOOKING_SYSTEM_LABELS: Record<string, string> = {
   internal: 'Internal (SpadeChat)',
   calendly: 'Calendly',
-  acuity: 'Acuity Scheduling',
-  square: 'Square Appointments',
+  acuity: 'Acuity / Squarespace Scheduling',
+  cal_com: 'Cal.com',
+  google_calendar: 'Google Calendar',
+  microsoft_bookings: 'Microsoft Bookings',
+  setmore: 'Setmore',
+  simplybook: 'SimplyBook.me',
+  vagaro: 'Vagaro',
+  fresha: 'Fresha',
+  booksy: 'Booksy',
+  glossgenius: 'GlossGenius',
+  boulevard: 'Boulevard',
+  mindbody: 'Mindbody',
+  jane_app: 'Jane App',
+  zenoti: 'Zenoti',
+  wellnessliving: 'WellnessLiving',
+  opentable: 'OpenTable',
+  resy: 'Resy',
+  toast: 'Toast',
+  square_online: 'Square Online',
+  square_appointments: 'Square Appointments',
+  jobber: 'Jobber',
+  servicetitan: 'ServiceTitan',
+  housecall_pro: 'HouseCall Pro',
+  custom: 'Custom URL',
   other: 'Other',
 }
 
@@ -183,7 +205,7 @@ export default function SettingsPage() {
   }
 
   const bookingSystemType = practice?.booking_system_type || 'internal'
-  const bookingLabel = BOOKING_SYSTEM_LABELS[bookingSystemType] || 'Internal (SpadeChat)'
+  const bookingLabel = BOOKING_SYSTEM_LABELS[bookingSystemType] || bookingSystemType
   const isExternalSystem = bookingSystemType !== 'internal' && bookingSystemType !== null
   const isConnected = practice?.booking_system_connected ?? false
 
