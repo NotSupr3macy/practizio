@@ -13,6 +13,36 @@ import type {
 } from './types'
 import type { BusinessRules } from '@/types/database'
 
+/**
+ * Get the UTC offset string (e.g. "-07:00") for a given IANA timezone at a specific date.
+ * This ensures Google Calendar API receives unambiguous datetime values.
+ */
+function getTimezoneOffsetString(timezone: string, dateStr: string): string {
+  try {
+    // Create a date in UTC, then format it in the target timezone to extract the offset
+    const date = new Date(`${dateStr}T12:00:00Z`) // noon UTC to avoid DST edge at midnight
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      timeZoneName: 'longOffset',
+    })
+    const parts = formatter.formatToParts(date)
+    const tzPart = parts.find((p) => p.type === 'timeZoneName')?.value || ''
+    // tzPart looks like "GMT-07:00" or "GMT+05:30"
+    const match = tzPart.match(/GMT([+-]\d{2}:\d{2})/)
+    if (match) return match[1]
+    // Fallback: try shortOffset format like "GMT-7"
+    const shortMatch = tzPart.match(/GMT([+-])(\d+)/)
+    if (shortMatch) {
+      const sign = shortMatch[1]
+      const hours = shortMatch[2].padStart(2, '0')
+      return `${sign}${hours}:00`
+    }
+  } catch {
+    // fallback
+  }
+  return '-07:00' // Safe Pacific Time fallback
+}
+
 async function refreshAccessToken(
   refreshToken: string
 ): Promise<{ access_token: string; expires_in: number } | null> {
@@ -132,8 +162,9 @@ export class GoogleCalendarAdapter implements BookingAdapter {
     provider?: string
   }): Promise<AvailableSlot[]> {
     const slots: AvailableSlot[] = []
-    const start = new Date(params.startDate + 'T00:00:00')
-    const end = new Date(params.endDate + 'T00:00:00')
+    // Parse dates as simple strings to avoid timezone issues with Date objects
+    const start = new Date(params.startDate + 'T12:00:00Z') // noon UTC to avoid date boundary issues
+    const end = new Date(params.endDate + 'T12:00:00Z')
 
     // Fetch practice availability hours
     const { data: avail } = await this.supabase
@@ -164,8 +195,11 @@ export class GoogleCalendarAdapter implements BookingAdapter {
     let busyTimes: { start: string; end: string }[] = []
     try {
       const token = await this.getValidAccessToken()
-      const timeMin = new Date(params.startDate + 'T00:00:00').toISOString()
-      const timeMax = new Date(params.endDate + 'T23:59:59').toISOString()
+      // Use explicit timezone offset for Google Calendar API queries
+      const tz = await this.getCalendarTimezone()
+      const offset = getTimezoneOffsetString(tz, params.startDate)
+      const timeMin = `${params.startDate}T00:00:00${offset}`
+      const timeMax = `${params.endDate}T23:59:59${offset}`
 
       const eventsResponse = await fetch(
         `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(this.calendarId)}/events?` +
@@ -203,7 +237,8 @@ export class GoogleCalendarAdapter implements BookingAdapter {
       const [closeH, closeM] = dayAvail.close_time.split(':').map(Number)
       const openMinutes = openH * 60 + openM
       const closeMinutes = closeH * 60 + closeM
-      const dateStr = d.toISOString().split('T')[0]
+      // Use UTC-safe date string extraction (we set noon UTC above to avoid date boundary shifts)
+      const dateStr = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`
 
       for (let m = openMinutes; m + serviceDuration <= closeMinutes; m += serviceDuration + bufferMinutes) {
         const h = Math.floor(m / 60)
@@ -271,13 +306,16 @@ export class GoogleCalendarAdapter implements BookingAdapter {
     // Create Google Calendar event
     const token = await this.getValidAccessToken()
 
-    const startDateTime = `${datePart}T${timePart}:00`
+    // Get the UTC offset for this timezone on this date (e.g. "-07:00")
+    const tzOffset = getTimezoneOffsetString(timezone, datePart)
+
+    const startDateTime = `${datePart}T${timePart}:00${tzOffset}`
     // Calculate end time by adding duration to the time string directly (avoids timezone shifting)
     const [startH, startM] = timePart.split(':').map(Number)
     const totalMinutes = startH * 60 + startM + durationMinutes
     const endH = Math.floor(totalMinutes / 60) % 24
     const endM = totalMinutes % 60
-    const endDateTime = `${datePart}T${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}:00`
+    const endDateTime = `${datePart}T${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}:00${tzOffset}`
 
     const event = {
       summary: `${serviceType} — ${customer.name}`,
