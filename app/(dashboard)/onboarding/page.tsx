@@ -24,6 +24,11 @@ import {
   ShoppingCart,
   CalendarCheck,
   Package,
+  Link as LinkIcon,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  HelpCircle,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useCallback } from 'react'
@@ -127,6 +132,336 @@ const ADDITIONAL_INFO_SUGGESTIONS: Record<string, string[]> = {
   default: ['Parking', 'Accessibility', 'Payment Methods', 'Cancellation Policy'],
 }
 
+// ---------------------------------------------------------------------------
+// Booking Platform Data & Instructions
+// ---------------------------------------------------------------------------
+
+interface BookingPlatform {
+  id: string
+  name: string
+  emoji: string
+  urlPlaceholder: string
+  instructions: string[]
+  exampleUrl: string
+}
+
+interface BookingPlatformCategory {
+  label: string
+  platforms: BookingPlatform[]
+}
+
+const BOOKING_PLATFORM_CATEGORIES: BookingPlatformCategory[] = [
+  {
+    label: 'CALENDAR & SCHEDULING',
+    platforms: [
+      {
+        id: 'calendly', name: 'Calendly', emoji: '📅',
+        urlPlaceholder: 'https://calendly.com/your-name',
+        exampleUrl: 'https://calendly.com/jane-doe',
+        instructions: [
+          'Log in to Calendly at calendly.com',
+          'Click your profile icon (top-right) → "Share Your Link"',
+          'Copy your scheduling link (looks like calendly.com/your-name)',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'acuity', name: 'Acuity / Squarespace', emoji: '🗓',
+        urlPlaceholder: 'https://acuityscheduling.com/schedule.php?owner=...',
+        exampleUrl: 'https://acuityscheduling.com/schedule.php?owner=12345',
+        instructions: [
+          'Log in to Acuity Scheduling (or Squarespace Scheduling)',
+          'Go to "Share Your Calendar" (left sidebar)',
+          'Copy the "Direct Scheduling Link"',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'cal_com', name: 'Cal.com', emoji: '📆',
+        urlPlaceholder: 'https://cal.com/your-name',
+        exampleUrl: 'https://cal.com/jane-doe',
+        instructions: [
+          'Log in to Cal.com',
+          'Go to "Event Types" in the sidebar',
+          'Click "Copy link" on the event type you want to use',
+          'Paste it below (looks like cal.com/your-name)',
+        ],
+      },
+      {
+        id: 'google_calendar', name: 'Google Calendar', emoji: '🔵',
+        urlPlaceholder: 'https://calendar.google.com/calendar/appointments/...',
+        exampleUrl: 'https://calendar.google.com/calendar/appointments/ABC123',
+        instructions: [
+          'Open Google Calendar → click the + button → "Appointment schedule"',
+          'Set up your appointment schedule (name, duration, hours)',
+          'On the sharing page, click "Copy" next to "Open booking page"',
+          'Paste the link below — it should start with calendar.google.com/calendar/appointments/',
+          '⚠️ Note: Your regular calendar URL (calendar.google.com/calendar/u/0/r) will NOT work. You need the Appointment Schedule link.',
+        ],
+      },
+      {
+        id: 'microsoft_bookings', name: 'Microsoft Bookings', emoji: '🪟',
+        urlPlaceholder: 'https://outlook.office365.com/owa/calendar/...',
+        exampleUrl: 'https://outlook.office365.com/owa/calendar/MyBusiness@...',
+        instructions: [
+          'Open Microsoft 365 → go to Bookings (bookings.microsoft.com)',
+          'Click on your booking page',
+          'Click "Share" → copy the booking page link',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'setmore', name: 'Setmore', emoji: '📋',
+        urlPlaceholder: 'https://yourname.setmore.com',
+        exampleUrl: 'https://janedoe.setmore.com',
+        instructions: [
+          'Log in to Setmore',
+          'Go to Settings → Booking Page',
+          'Copy your booking page URL',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'simplybook', name: 'SimplyBook.me', emoji: '📌',
+        urlPlaceholder: 'https://yourname.simplybook.me',
+        exampleUrl: 'https://janedoe.simplybook.me',
+        instructions: [
+          'Log in to SimplyBook.me',
+          'Go to Settings → Booking Widget → Direct link',
+          'Copy the link',
+          'Paste it below',
+        ],
+      },
+    ],
+  },
+  {
+    label: 'SALON & BEAUTY',
+    platforms: [
+      {
+        id: 'vagaro', name: 'Vagaro', emoji: '💇',
+        urlPlaceholder: 'https://www.vagaro.com/your-salon',
+        exampleUrl: 'https://www.vagaro.com/janessalon',
+        instructions: [
+          'Log in to Vagaro',
+          'Go to your business profile page (or MySite)',
+          'Copy the URL from your browser — it looks like vagaro.com/your-salon-name',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'fresha', name: 'Fresha', emoji: '🌿',
+        urlPlaceholder: 'https://www.fresha.com/a/...',
+        exampleUrl: 'https://www.fresha.com/a/janes-salon-new-york-123',
+        instructions: [
+          'Log in to Fresha (partners.fresha.com)',
+          'Go to Settings → Online Booking',
+          'Copy your booking page link',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'booksy', name: 'Booksy', emoji: '✂️',
+        urlPlaceholder: 'https://booksy.com/en-us/...',
+        exampleUrl: 'https://booksy.com/en-us/12345_janes-barbershop',
+        instructions: [
+          'Open Booksy Biz app or log in at booksy.com',
+          'Go to your business profile',
+          'Tap "Share" or copy your profile link',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'glossgenius', name: 'GlossGenius', emoji: '💅',
+        urlPlaceholder: 'https://book.glossgenius.com/...',
+        exampleUrl: 'https://book.glossgenius.com/janedoe',
+        instructions: [
+          'Open GlossGenius app or dashboard',
+          'Go to Settings → Booking Site',
+          'Copy your booking link',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'boulevard', name: 'Boulevard', emoji: '💄',
+        urlPlaceholder: 'https://booking.boulevard.app/...',
+        exampleUrl: 'https://booking.boulevard.app/janes-salon',
+        instructions: [
+          'Log in to Boulevard dashboard',
+          'Go to Settings → Online Booking',
+          'Copy your booking page URL',
+          'Paste it below',
+        ],
+      },
+    ],
+  },
+  {
+    label: 'HEALTH & FITNESS',
+    platforms: [
+      {
+        id: 'mindbody', name: 'Mindbody', emoji: '🧘',
+        urlPlaceholder: 'https://www.mindbodyonline.com/explore/locations/...',
+        exampleUrl: 'https://www.mindbodyonline.com/explore/locations/janes-yoga',
+        instructions: [
+          'Log in to Mindbody business dashboard',
+          'Go to Home → Marketing → Booking Links',
+          'Copy your direct booking link',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'jane_app', name: 'Jane App', emoji: '🏥',
+        urlPlaceholder: 'https://yourname.janeapp.com',
+        exampleUrl: 'https://janedoeclinic.janeapp.com',
+        instructions: [
+          'Log in to Jane App',
+          'Go to Settings → Online Booking',
+          'Copy your online booking URL (looks like yourname.janeapp.com)',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'zenoti', name: 'Zenoti', emoji: '🧬',
+        urlPlaceholder: 'https://yourname.zenoti.com/webstoreNew/services',
+        exampleUrl: 'https://janesspa.zenoti.com/webstoreNew/services',
+        instructions: [
+          'Log in to Zenoti dashboard',
+          'Go to Settings → Online Booking → Webstore',
+          'Copy your webstore/booking URL',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'wellnessliving', name: 'WellnessLiving', emoji: '🏃',
+        urlPlaceholder: 'https://widget.wellnessliving.com/...',
+        exampleUrl: 'https://widget.wellnessliving.com/janes-fitness',
+        instructions: [
+          'Log in to WellnessLiving',
+          'Go to Setup → Online Widgets → Client Web App',
+          'Copy your booking widget link',
+          'Paste it below',
+        ],
+      },
+    ],
+  },
+  {
+    label: 'RESTAURANT & FOOD',
+    platforms: [
+      {
+        id: 'opentable', name: 'OpenTable', emoji: '🍽️',
+        urlPlaceholder: 'https://www.opentable.com/r/...',
+        exampleUrl: 'https://www.opentable.com/r/janes-bistro-new-york',
+        instructions: [
+          'Search for your restaurant on opentable.com',
+          'Go to your restaurant\'s page',
+          'Copy the URL from your browser',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'resy', name: 'Resy', emoji: '🥂',
+        urlPlaceholder: 'https://resy.com/cities/.../venues/...',
+        exampleUrl: 'https://resy.com/cities/ny/venues/janes-bistro',
+        instructions: [
+          'Search for your restaurant on resy.com',
+          'Go to your restaurant\'s page',
+          'Copy the URL from your browser',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'toast', name: 'Toast', emoji: '🍕',
+        urlPlaceholder: 'https://www.toasttab.com/your-restaurant/...',
+        exampleUrl: 'https://www.toasttab.com/janes-pizza/v3',
+        instructions: [
+          'Log in to Toast dashboard',
+          'Go to Online Ordering → Settings',
+          'Copy your online ordering link',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'square_online', name: 'Square Online', emoji: '🛒',
+        urlPlaceholder: 'https://squareup.com/store/...',
+        exampleUrl: 'https://squareup.com/store/janes-bakery',
+        instructions: [
+          'Log in to Square Dashboard',
+          'Go to Online → Site → View Site',
+          'Copy the URL of your online store/ordering page',
+          'Paste it below',
+        ],
+      },
+    ],
+  },
+  {
+    label: 'GENERAL BUSINESS',
+    platforms: [
+      {
+        id: 'square_appointments', name: 'Square Appointments', emoji: '🟦',
+        urlPlaceholder: 'https://squareup.com/appointments/book/...',
+        exampleUrl: 'https://squareup.com/appointments/book/abc123/janes-shop',
+        instructions: [
+          'Log in to Square Dashboard',
+          'Go to Appointments → Online Booking',
+          'Click "Share booking site"',
+          'Copy the booking link',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'jobber', name: 'Jobber', emoji: '🔧',
+        urlPlaceholder: 'https://clienthub.getjobber.com/client_hubs/...',
+        exampleUrl: 'https://clienthub.getjobber.com/client_hubs/abc123',
+        instructions: [
+          'Log in to Jobber',
+          'Go to Client Hub → Settings',
+          'Copy your Client Hub or online booking link',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'servicetitan', name: 'ServiceTitan', emoji: '⚙️',
+        urlPlaceholder: 'https://booking.servicetitan.com/...',
+        exampleUrl: 'https://booking.servicetitan.com/janes-plumbing',
+        instructions: [
+          'Log in to ServiceTitan',
+          'Go to Marketing → Online Booking',
+          'Copy your booking page URL',
+          'Paste it below',
+        ],
+      },
+      {
+        id: 'housecall_pro', name: 'HouseCall Pro', emoji: '🏠',
+        urlPlaceholder: 'https://app.housecallpro.com/book/...',
+        exampleUrl: 'https://app.housecallpro.com/book/janes-hvac',
+        instructions: [
+          'Log in to HouseCall Pro',
+          'Go to Settings → Online Booking',
+          'Copy your booking page link',
+          'Paste it below',
+        ],
+      },
+    ],
+  },
+  {
+    label: 'OTHER',
+    platforms: [
+      {
+        id: 'custom', name: 'Other / Custom URL', emoji: '🔗',
+        urlPlaceholder: 'https://your-booking-page.com',
+        exampleUrl: 'https://yourbusiness.com/book',
+        instructions: [
+          'Open your booking or scheduling page in your browser',
+          'Copy the URL that customers would use to book with you',
+          'Make sure it\'s a public link (test it in an incognito/private window)',
+          'Paste it below',
+        ],
+      },
+    ],
+  },
+]
+
+const ALL_BOOKING_PLATFORMS: BookingPlatform[] = BOOKING_PLATFORM_CATEGORIES.flatMap((c) => c.platforms)
+
 const DAY_LABELS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 function buildDefaultAvailability(): DayAvailability[] {
@@ -160,6 +495,22 @@ export default function OnboardingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showIndustrySuggestions, setShowIndustrySuggestions] = useState(false)
+  const [selectedBookingPlatformId, setSelectedBookingPlatformId] = useState<string | null>(null)
+  const [platformSearchQuery, setPlatformSearchQuery] = useState('')
+  const [expandedPlatformCats, setExpandedPlatformCats] = useState<Record<string, boolean>>({})
+
+  const selectedBookingPlatform = selectedBookingPlatformId
+    ? ALL_BOOKING_PLATFORMS.find((p) => p.id === selectedBookingPlatformId) ?? null
+    : null
+
+  const filteredPlatformCategories = platformSearchQuery.trim()
+    ? BOOKING_PLATFORM_CATEGORIES.map((cat) => ({
+        ...cat,
+        platforms: cat.platforms.filter(
+          (p) => p.name.toLowerCase().includes(platformSearchQuery.toLowerCase())
+        ),
+      })).filter((cat) => cat.platforms.length > 0)
+    : BOOKING_PLATFORM_CATEGORIES
 
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -314,7 +665,7 @@ export default function OnboardingPage() {
 
   function canAdvance(): boolean {
     const label = currentStepLabel()
-    if (label === 'BUSINESS_PROFILE') return formData.name.trim() !== '' && formData.industry.trim() !== '' && formData.booking_url.trim() !== ''
+    if (label === 'BUSINESS_PROFILE') return formData.name.trim() !== '' && formData.industry.trim() !== '' && selectedBookingPlatformId !== null && formData.booking_url.trim() !== ''
     if (label === 'SERVICES') return formData.services.some((s) => s.name.trim() !== '')
     if (label === 'CATALOG') return formData.catalog_items.some((c) => c.name.trim() !== '')
     return true
@@ -356,6 +707,7 @@ export default function OnboardingPage() {
         phone: formData.phone.trim() || null,
         website: formData.website.trim() || null,
         booking_url: formData.booking_url.trim() || null,
+        booking_system_type: formData.booking_system_type,
         address: hasAddress
           ? {
               street: formData.address_street.trim(),
@@ -375,7 +727,6 @@ export default function OnboardingPage() {
 
       // Appointment/hybrid: include services, booking system, business rules
       if (formData.interaction_type !== 'order') {
-        payload.booking_system_type = formData.booking_system_type
         // Collect payment link from any service that has one (use first found as practice default)
         const serviceWithPaymentLink = formData.services.find((s) => s.paymentLink.trim())
         if (serviceWithPaymentLink) {
@@ -602,19 +953,133 @@ export default function OnboardingPage() {
                 </div>
               </div>
 
-              {/* Booking URL */}
+              {/* Booking System Picker */}
               <div className="hairline-t pt-5">
-                <span className="mono-label-sm opacity-40 block mb-2">BOOKING SYSTEM</span>
-                <p className="font-sans text-xs opacity-40 mb-4">Paste your existing booking/scheduling link so AI agents can send customers to book with you.</p>
-                <Input
-                  id="booking-url"
-                  label="Booking URL *"
-                  type="url"
-                  placeholder="e.g. calendly.com/your-business, vagaro.com/your-salon, opentable.com/your-restaurant..."
-                  value={formData.booking_url}
-                  onChange={(e) => updateField('booking_url', e.target.value)}
-                />
-                <p className="font-sans text-[11px] opacity-30 mt-2">Works with Calendly, Vagaro, Fresha, Booksy, Acuity, OpenTable, Square, and any other booking platform.</p>
+                <span className="mono-label-sm opacity-40 block mb-2">BOOKING SYSTEM *</span>
+                <p className="font-sans text-xs opacity-40 mb-4">
+                  What booking system do you use? We&apos;ll show you exactly how to get the right link.
+                </p>
+
+                {/* Platform search */}
+                <div className="flex items-center gap-2 hairline rounded-lg px-3 py-2.5 mb-3 focus-within:border-accent/40 transition-colors" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+                  <HelpCircle className="w-3.5 h-3.5 text-white/20 shrink-0" />
+                  <input
+                    type="text"
+                    value={platformSearchQuery}
+                    onChange={(e) => setPlatformSearchQuery(e.target.value)}
+                    placeholder="Search for your booking platform..."
+                    className="flex-1 bg-transparent font-mono text-xs text-white placeholder:text-white/20 focus:outline-none"
+                  />
+                </div>
+
+                {/* Platform grid */}
+                <div className="hairline rounded-lg overflow-hidden mb-4 max-h-[320px] overflow-y-auto">
+                  {filteredPlatformCategories.map((cat) => {
+                    const isExpanded = platformSearchQuery.trim()
+                      ? true
+                      : expandedPlatformCats[cat.label] ?? (cat.label === 'CALENDAR & SCHEDULING' || cat.platforms.some((p) => p.id === selectedBookingPlatformId))
+                    return (
+                      <div key={cat.label}>
+                        <button
+                          type="button"
+                          onClick={() => setExpandedPlatformCats((prev) => ({ ...prev, [cat.label]: !isExpanded }))}
+                          className="w-full flex items-center justify-between px-4 py-2 bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
+                        >
+                          <span className="font-mono text-[9px] opacity-30 uppercase tracking-[0.15em]">{cat.label}</span>
+                          {isExpanded ? <ChevronUp className="w-3 h-3 opacity-20" /> : <ChevronDown className="w-3 h-3 opacity-20" />}
+                        </button>
+                        {isExpanded && (
+                          <div className="grid grid-cols-2 sm:grid-cols-3">
+                            {cat.platforms.map((platform) => {
+                              const isSelected = selectedBookingPlatformId === platform.id
+                              return (
+                                <button
+                                  key={platform.id}
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedBookingPlatformId(platform.id)
+                                    updateField('booking_system_type', platform.id)
+                                    // Clear URL when switching platforms
+                                    updateField('booking_url', '')
+                                  }}
+                                  className={`flex items-center gap-2.5 px-4 py-3 text-left transition-all duration-200 border-b border-r border-white/[0.04] ${
+                                    isSelected
+                                      ? 'bg-accent/10 border-accent/20'
+                                      : 'hover:bg-white/[0.03]'
+                                  }`}
+                                >
+                                  <span className="text-base shrink-0">{platform.emoji}</span>
+                                  <span className={`font-mono text-[11px] truncate ${isSelected ? 'text-accent font-medium' : 'text-white/60'}`}>
+                                    {platform.name}
+                                  </span>
+                                </button>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                  {filteredPlatformCategories.length === 0 && (
+                    <div className="px-4 py-6 text-center">
+                      <p className="font-mono text-xs text-white/20">No platforms found — try &quot;Other / Custom URL&quot;</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Platform-specific instructions */}
+                {selectedBookingPlatform && (
+                  <div className="space-y-4 animate-fade-in">
+                    <div className="bg-accent/5 hairline rounded-lg p-5">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-xl">{selectedBookingPlatform.emoji}</span>
+                        <div>
+                          <h4 className="font-display font-black uppercase text-sm tracking-tightest">
+                            How to get your {selectedBookingPlatform.name} link
+                          </h4>
+                        </div>
+                      </div>
+                      <ol className="space-y-2 ml-1">
+                        {selectedBookingPlatform.instructions.map((instruction, i) => (
+                          <li key={i} className="flex gap-3 items-start">
+                            <span className="font-mono text-[10px] text-accent font-bold mt-0.5 shrink-0">{i + 1}.</span>
+                            <span className={`font-sans text-xs leading-relaxed ${instruction.startsWith('⚠️') ? 'text-yellow-400/80' : 'text-white/50'}`}>
+                              {instruction}
+                            </span>
+                          </li>
+                        ))}
+                      </ol>
+                      <div className="mt-3 pt-3 border-t border-white/[0.06]">
+                        <p className="font-mono text-[10px] text-white/20">
+                          Example: <span className="text-white/30">{selectedBookingPlatform.exampleUrl}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* URL input */}
+                    <div>
+                      <div className="flex items-center gap-2 hairline rounded-lg px-3 py-3 focus-within:border-accent/40 transition-colors" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+                        <LinkIcon className="w-3.5 h-3.5 text-white/20 shrink-0" />
+                        <input
+                          type="url"
+                          value={formData.booking_url}
+                          onChange={(e) => updateField('booking_url', e.target.value)}
+                          placeholder={selectedBookingPlatform.urlPlaceholder}
+                          className="flex-1 bg-transparent font-mono text-xs text-white placeholder:text-white/15 focus:outline-none"
+                        />
+                      </div>
+                      <p className="font-sans text-[11px] opacity-30 mt-2">
+                        AI assistants will direct customers here to complete their booking.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {!selectedBookingPlatform && (
+                  <p className="font-sans text-[11px] text-accent/50 mt-2">
+                    Select your booking platform above to see step-by-step instructions.
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
