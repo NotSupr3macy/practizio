@@ -13,11 +13,17 @@ export function formatCurrency(cents: number): string {
 }
 
 export function formatDate(date: string | Date): string {
+  // For date-only strings like "2026-03-19", append T12:00:00 to avoid
+  // timezone shift (JS parses date-only strings as UTC midnight, which
+  // shifts back a day in western timezones when formatted locally)
+  const d = typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)
+    ? new Date(date + 'T12:00:00')
+    : new Date(date)
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-  }).format(new Date(date))
+  }).format(d)
 }
 
 export function formatTime(time: string): string {
