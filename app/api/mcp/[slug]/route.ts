@@ -46,7 +46,7 @@ async function resolvePractice(slug: string) {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('practices')
-    .select('id, name, is_active, booking_system_type, business_rules, industry, plan, interaction_type')
+    .select('id, name, is_active, booking_system_type, booking_url, business_rules, industry, plan, interaction_type')
     .eq('slug', slug)
     .single()
 
@@ -56,6 +56,7 @@ async function resolvePractice(slug: string) {
     id: data.id as string,
     name: data.name as string,
     bookingSystemType: (data.booking_system_type as string) ?? 'internal',
+    bookingUrl: (data.booking_url as string) ?? null,
     businessRules: (data.business_rules as BusinessRules) ?? null,
     industry: data.industry as string,
     plan: data.plan as string,
@@ -91,6 +92,7 @@ function buildMcpServer(
     id: string
     name: string
     bookingSystemType: string
+    bookingUrl: string | null
     businessRules: BusinessRules | null
     interactionType: string
   }
@@ -118,7 +120,8 @@ function buildMcpServer(
       supabase,
       practice.id,
       practice.bookingSystemType,
-      practice.businessRules
+      practice.businessRules,
+      practice.bookingUrl
     )
     server.tool(
       availability.name,
@@ -132,7 +135,8 @@ function buildMcpServer(
       practice.id,
       practice.name,
       practice.bookingSystemType,
-      practice.businessRules
+      practice.businessRules,
+      practice.bookingUrl
     )
     server.tool(
       booking.name,
@@ -145,7 +149,8 @@ function buildMcpServer(
       supabase,
       practice.id,
       practice.bookingSystemType,
-      practice.businessRules
+      practice.businessRules,
+      practice.bookingUrl
     )
     server.tool(
       cancel.name,
@@ -159,7 +164,8 @@ function buildMcpServer(
       supabase,
       practice.id,
       practice.bookingSystemType,
-      practice.businessRules
+      practice.businessRules,
+      practice.bookingUrl
     )
     server.tool(
       paymentInfo.name,

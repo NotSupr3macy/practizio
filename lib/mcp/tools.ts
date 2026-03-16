@@ -193,7 +193,8 @@ export function checkAvailabilityTool(
   supabase: SupabaseClient,
   practiceId: string,
   bookingSystemType: string | null,
-  rules: BusinessRules | null
+  rules: BusinessRules | null,
+  bookingUrl?: string | null
 ): ToolDefinition {
   return {
     name: 'check_availability',
@@ -219,6 +220,7 @@ export function checkAvailabilityTool(
           supabase,
           practiceId,
           rules,
+          bookingUrl,
         })
 
         const slots = await adapter.getAvailableSlots({
@@ -255,7 +257,8 @@ export function bookAppointmentTool(
   practiceId: string,
   practiceName: string,
   bookingSystemType: string | null,
-  rules: BusinessRules | null
+  rules: BusinessRules | null,
+  bookingUrl?: string | null
 ): ToolDefinition {
   return {
     name: 'book_appointment',
@@ -292,6 +295,7 @@ export function bookAppointmentTool(
           supabase,
           practiceId,
           rules,
+          bookingUrl,
         })
 
         const confirmation = await adapter.createAppointment({
@@ -342,7 +346,8 @@ export function cancelAppointmentTool(
   supabase: SupabaseClient,
   practiceId: string,
   bookingSystemType: string | null,
-  rules: BusinessRules | null
+  rules: BusinessRules | null,
+  bookingUrl?: string | null
 ): ToolDefinition {
   return {
     name: 'cancel_appointment',
@@ -364,6 +369,7 @@ export function cancelAppointmentTool(
           supabase,
           practiceId,
           rules,
+          bookingUrl,
         })
 
         const result = await adapter.cancelAppointment({

@@ -43,7 +43,8 @@ export function getPaymentInfoTool(
   supabase: SupabaseClient,
   practiceId: string,
   bookingSystemType: string | null,
-  rules: BusinessRules | null
+  rules: BusinessRules | null,
+  bookingUrl?: string | null
 ): ToolDefinition {
   return {
     name: 'get_payment_info',
@@ -99,7 +100,7 @@ export function getPaymentInfoTool(
         if (needsPayment && confirmation_id && amount) {
           // Try adapter's getPaymentLink if available
           try {
-            const adapter = createAdapter({ bookingSystemType, supabase, practiceId, rules })
+            const adapter = createAdapter({ bookingSystemType, supabase, practiceId, rules, bookingUrl })
             if (adapter.getPaymentLink) {
               const linkResult = await adapter.getPaymentLink({
                 confirmationId: confirmation_id,
