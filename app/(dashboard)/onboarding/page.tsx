@@ -906,6 +906,12 @@ export default function OnboardingPage() {
         throw new Error(data.error || 'Failed to create business')
       }
 
+      // If they chose Google Calendar, redirect to OAuth so AI can book directly
+      if (selectedBookingPlatformId === 'google_calendar') {
+        window.location.href = '/api/integrations/google?from=onboarding'
+        return
+      }
+
       router.push('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -1550,6 +1556,21 @@ export default function OnboardingPage() {
                 </div>
               </div>
             </div>
+
+            {/* Google Calendar OAuth notice */}
+            {selectedBookingPlatformId === 'google_calendar' && (
+              <div className="bg-accent/10 border border-accent/20 rounded-lg px-5 py-4">
+                <div className="flex items-start gap-3">
+                  <span className="text-xl mt-0.5">🔵</span>
+                  <div>
+                    <p className="text-sm font-mono text-foreground font-medium">One more step after launch</p>
+                    <p className="text-xs font-sans text-white/50 mt-1">
+                      You&apos;ll be asked to sign in with Google so AI assistants can create appointments directly on your calendar. This is what makes the magic happen — customers get booked automatically.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {error && (
               <div className="bg-destructive/10 border border-destructive/20 px-4 py-3">

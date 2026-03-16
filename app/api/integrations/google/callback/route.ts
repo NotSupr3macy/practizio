@@ -5,11 +5,18 @@ import { createAdminClient } from '@/lib/supabase/admin'
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code')
   const error = request.nextUrl.searchParams.get('error')
+  const from = request.nextUrl.searchParams.get('state') || 'settings'
 
-  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings`
+  // Determine redirect destination based on where the OAuth started
+  const successUrl = from === 'onboarding'
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?google_connected=true`
+    : `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings?google_connected=true`
+  const errorBaseUrl = from === 'onboarding'
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
+    : `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings`
 
   if (error || !code) {
-    return NextResponse.redirect(`${dashboardUrl}?google_error=denied`)
+    return NextResponse.redirect(`${errorBaseUrl}?google_error=denied`)
   }
 
   // Exchange code for tokens
@@ -34,7 +41,7 @@ export async function GET(request: NextRequest) {
 
     if (!tokens.access_token) {
       console.error('[Google OAuth] Token exchange failed:', tokens)
-      return NextResponse.redirect(`${dashboardUrl}?google_error=token_failed`)
+      return NextResponse.redirect(`${errorBaseUrl}?google_error=token_failed`)
     }
 
     // Get the user's primary calendar ID
@@ -54,7 +61,7 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      return NextResponse.redirect(`${dashboardUrl}?google_error=not_authenticated`)
+      return NextResponse.redirect(`${errorBaseUrl}?google_error=not_authenticated`)
     }
 
     // Get their practice
@@ -65,7 +72,7 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (!practice) {
-      return NextResponse.redirect(`${dashboardUrl}?google_error=no_practice`)
+      return NextResponse.redirect(`${errorBaseUrl}?google_error=no_practice`)
     }
 
     // Store credentials using admin client (bypasses RLS for insert)
@@ -94,7 +101,7 @@ export async function GET(request: NextRequest) {
 
     if (upsertError) {
       console.error('[Google OAuth] Credential store failed:', upsertError)
-      return NextResponse.redirect(`${dashboardUrl}?google_error=store_failed`)
+      return NextResponse.redirect(`${errorBaseUrl}?google_error=store_failed`)
     }
 
     // Update practice to mark Google Calendar as connected
@@ -103,9 +110,9 @@ export async function GET(request: NextRequest) {
       .update({ booking_system_connected: true })
       .eq('id', practice.id)
 
-    return NextResponse.redirect(`${dashboardUrl}?google_connected=true`)
+    return NextResponse.redirect(successUrl)
   } catch (err) {
     console.error('[Google OAuth] Callback error:', err)
-    return NextResponse.redirect(`${dashboardUrl}?google_error=unknown`)
+    return NextResponse.redirect(`${errorBaseUrl}?google_error=unknown`)
   }
 }
