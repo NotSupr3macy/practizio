@@ -132,7 +132,6 @@ export async function POST(request: Request) {
           price_max: service.price_max,
           duration_minutes: service.duration_minutes,
           description: service.description,
-          show_price: service.show_price ?? true,
           pricing: service.pricing ?? {
             price: null,
             currency: 'USD',
@@ -144,7 +143,10 @@ export async function POST(request: Request) {
         }))
 
       if (servicesData.length > 0) {
-        await supabase.from('services').insert(servicesData)
+        const { error: servicesError } = await supabase.from('services').insert(servicesData)
+        if (servicesError) {
+          console.error('Failed to insert services:', servicesError)
+        }
       }
     }
 
@@ -163,7 +165,10 @@ export async function POST(request: Request) {
         }))
 
       if (catalogData.length > 0) {
-        await supabase.from('catalog_items').insert(catalogData)
+        const { error: catalogError } = await supabase.from('catalog_items').insert(catalogData)
+        if (catalogError) {
+          console.error('Failed to insert catalog items:', catalogError)
+        }
       }
     }
 
@@ -176,7 +181,10 @@ export async function POST(request: Request) {
         is_open: avail.is_open,
       }))
 
-      await supabase.from('availability').insert(availabilityData)
+      const { error: availError } = await supabase.from('availability').insert(availabilityData)
+      if (availError) {
+        console.error('Failed to insert availability:', availError)
+      }
     }
 
     // Send welcome email (non-blocking)
