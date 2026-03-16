@@ -95,6 +95,23 @@ export class GoogleCalendarAdapter implements BookingAdapter {
     return this.accessToken
   }
 
+  private async getCalendarTimezone(): Promise<string> {
+    try {
+      const token = await this.getValidAccessToken()
+      const response = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(this.calendarId)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      if (response.ok) {
+        const cal = await response.json()
+        if (cal.timeZone) return cal.timeZone
+      }
+    } catch {
+      // fall through to default
+    }
+    return 'America/New_York'
+  }
+
   async validateCredentials(): Promise<boolean> {
     try {
       const token = await this.getValidAccessToken()
@@ -126,13 +143,8 @@ export class GoogleCalendarAdapter implements BookingAdapter {
 
     if (!avail || avail.length === 0) return slots
 
-    // Fetch practice timezone
-    const { data: practice } = await this.supabase
-      .from('practices')
-      .select('timezone')
-      .eq('id', this.practiceId)
-      .single()
-    const timezone = practice?.timezone || 'America/New_York'
+    // Use the Google Calendar's own timezone (most reliable)
+    const timezone = await this.getCalendarTimezone()
 
     // Get service duration if specified
     let serviceDuration = 30
@@ -248,11 +260,12 @@ export class GoogleCalendarAdapter implements BookingAdapter {
     // Get practice info for event description
     const { data: practice } = await this.supabase
       .from('practices')
-      .select('name, timezone')
+      .select('name')
       .eq('id', this.practiceId)
       .single()
 
-    const timezone = practice?.timezone || 'America/New_York'
+    // Use the Google Calendar's own timezone (most reliable)
+    const timezone = await this.getCalendarTimezone()
     const practiceName = practice?.name || 'Business'
 
     // Create Google Calendar event
