@@ -63,6 +63,7 @@ interface CreatePracticeBody {
     additional_rules: string
   }
   catalog_items?: CatalogItemPayload[]
+  booking_url?: string | null
   payment_url?: string
   default_hold_minutes?: number
 }
@@ -105,6 +106,7 @@ export async function POST(request: Request) {
         additional_info: body.additional_info ?? {},
         interaction_type: body.interaction_type ?? 'appointment',
         booking_system_type: body.booking_system_type ?? 'internal',
+        booking_url: body.booking_url ?? null,
         booking_system_connected: true,
         business_rules: body.business_rules ?? null,
         is_active: true,

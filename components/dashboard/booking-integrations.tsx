@@ -25,21 +25,6 @@ interface PlatformCategory {
 
 const PLATFORM_CATEGORIES: PlatformCategory[] = [
   {
-    label: 'SPADECHAT',
-    platforms: [
-      {
-        id: 'spadechat',
-        name: 'SpadeChat Built-in',
-        emoji: '⚡',
-        description: 'AI-powered booking managed directly through SpadeChat. No external link needed.',
-        urlPlaceholder: '',
-        urlLabel: '',
-        isDefault: true,
-        noUrl: true,
-      },
-    ],
-  },
-  {
     label: 'CALENDAR & SCHEDULING',
     platforms: [
       { id: 'calendly', name: 'Calendly', emoji: '📅', description: 'Scheduling automation', urlPlaceholder: 'https://calendly.com/your-name', urlLabel: 'Scheduling Link' },

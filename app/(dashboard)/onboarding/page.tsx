@@ -84,6 +84,7 @@ interface FormData {
   address_state: string
   address_zip: string
   additional_info: AdditionalInfoEntry[]
+  booking_url: string
   // Step 3: Booking System (appointment/hybrid only)
   booking_system_type: string
   integration_request_system: string
@@ -173,6 +174,7 @@ export default function OnboardingPage() {
     address_state: '',
     address_zip: '',
     additional_info: [],
+    booking_url: '',
     booking_system_type: 'internal',
     integration_request_system: '',
     services: [{ name: '', price_min: '', price_max: '', duration_minutes: '30', description: '', show_price: true, price: '', priceType: 'fixed' as const, currency: 'USD', paymentTiming: 'at_service' as const, depositAmount: '', paymentLink: '', reservationHoldMinutes: '15' }],
@@ -312,7 +314,7 @@ export default function OnboardingPage() {
 
   function canAdvance(): boolean {
     const label = currentStepLabel()
-    if (label === 'BUSINESS_PROFILE') return formData.name.trim() !== '' && formData.industry.trim() !== ''
+    if (label === 'BUSINESS_PROFILE') return formData.name.trim() !== '' && formData.industry.trim() !== '' && formData.booking_url.trim() !== ''
     if (label === 'SERVICES') return formData.services.some((s) => s.name.trim() !== '')
     if (label === 'CATALOG') return formData.catalog_items.some((c) => c.name.trim() !== '')
     return true
@@ -353,6 +355,7 @@ export default function OnboardingPage() {
         tags: formData.tags,
         phone: formData.phone.trim() || null,
         website: formData.website.trim() || null,
+        booking_url: formData.booking_url.trim() || null,
         address: hasAddress
           ? {
               street: formData.address_street.trim(),
@@ -597,6 +600,21 @@ export default function OnboardingPage() {
                   />
                   <Button variant="outline" onClick={addTag} className="shrink-0"><Tag className="w-4 h-4" /></Button>
                 </div>
+              </div>
+
+              {/* Booking URL */}
+              <div className="hairline-t pt-5">
+                <span className="mono-label-sm opacity-40 block mb-2">BOOKING SYSTEM</span>
+                <p className="font-sans text-xs opacity-40 mb-4">Paste your existing booking/scheduling link so AI agents can send customers to book with you.</p>
+                <Input
+                  id="booking-url"
+                  label="Booking URL *"
+                  type="url"
+                  placeholder="e.g. calendly.com/your-business, vagaro.com/your-salon, opentable.com/your-restaurant..."
+                  value={formData.booking_url}
+                  onChange={(e) => updateField('booking_url', e.target.value)}
+                />
+                <p className="font-sans text-[11px] opacity-30 mt-2">Works with Calendly, Vagaro, Fresha, Booksy, Acuity, OpenTable, Square, and any other booking platform.</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
