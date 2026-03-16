@@ -17,13 +17,9 @@ import {
   ArrowRight,
   ArrowLeft,
   Globe,
-  Link2,
-  ShieldCheck,
   Tag,
   X,
   Sparkles,
-  Check,
-  AlertCircle,
   Settings2,
   ShoppingCart,
   CalendarCheck,
@@ -119,13 +115,6 @@ const INDUSTRY_SUGGESTIONS = [
   'Plumbing', 'Electrical', 'HVAC', 'Accounting', 'Insurance Agent',
 ]
 
-const BOOKING_SYSTEMS = [
-  { id: 'internal', name: 'SpadeChat Built-in', description: 'Use our simple booking system', icon: '⚡' },
-  { id: 'calendly', name: 'Calendly', description: 'Connect via OAuth', icon: '📅' },
-  { id: 'acuity', name: 'Acuity Scheduling', description: 'Squarespace Scheduling', icon: '🗓️' },
-  { id: 'square', name: 'Square Appointments', description: 'Square booking system', icon: '⬜' },
-]
-
 const ADDITIONAL_INFO_SUGGESTIONS: Record<string, string[]> = {
   dental: ['Accepted Insurance', 'Emergency Services', 'Parking'],
   medical: ['Accepted Insurance', 'Telehealth Available', 'Languages Spoken'],
@@ -151,13 +140,13 @@ function buildDefaultAvailability(): DayAvailability[] {
 
 function getSteps(interactionType: string) {
   if (interactionType === 'order') {
-    return ['BUSINESS_PROFILE', 'CATALOG', 'AVAILABILITY', 'VALIDATE', 'LAUNCH']
+    return ['BUSINESS_PROFILE', 'CATALOG', 'AVAILABILITY', 'LAUNCH']
   }
   if (interactionType === 'hybrid') {
-    return ['BUSINESS_PROFILE', 'BOOKING_SYSTEM', 'SERVICES', 'CATALOG', 'AVAILABILITY', 'BUSINESS_RULES', 'VALIDATE', 'LAUNCH']
+    return ['BUSINESS_PROFILE', 'SERVICES', 'CATALOG', 'AVAILABILITY', 'LAUNCH']
   }
   // appointment (default)
-  return ['BUSINESS_PROFILE', 'BOOKING_SYSTEM', 'SERVICES', 'AVAILABILITY', 'BUSINESS_RULES', 'VALIDATE', 'LAUNCH']
+  return ['BUSINESS_PROFILE', 'SERVICES', 'AVAILABILITY', 'LAUNCH']
 }
 
 // ---------------------------------------------------------------------------
@@ -169,8 +158,6 @@ export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [validationResults, setValidationResults] = useState<{passed: string[]; failed: string[]} | null>(null)
-  const [isValidating, setIsValidating] = useState(false)
   const [showIndustrySuggestions, setShowIndustrySuggestions] = useState(false)
 
   const [formData, setFormData] = useState<FormData>({
@@ -343,54 +330,6 @@ export default function OnboardingPage() {
       setCurrentStep((prev) => prev - 1)
       setError(null)
     }
-  }
-
-  async function runValidation() {
-    setIsValidating(true)
-    setValidationResults(null)
-    // Simulate validation checks
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    const passed: string[] = []
-    const failed: string[] = []
-
-    // Check business info complete
-    if (formData.name && formData.industry) {
-      passed.push('Business profile complete')
-    } else {
-      failed.push('Business profile incomplete')
-    }
-
-    passed.push(`Business type: ${formData.interaction_type}`)
-
-    // Check services configured (appointment/hybrid)
-    if (formData.interaction_type !== 'order') {
-      if (formData.services.some((s) => s.name.trim())) {
-        passed.push('Services configured')
-      } else {
-        failed.push('No services configured')
-      }
-      passed.push(`Booking system: ${formData.booking_system_type === 'internal' ? 'SpadeChat Built-in' : formData.booking_system_type}`)
-    }
-
-    // Check catalog configured (order/hybrid)
-    if (formData.interaction_type !== 'appointment') {
-      if (formData.catalog_items.some((c) => c.name.trim())) {
-        passed.push('Catalog items configured')
-      } else {
-        failed.push('No catalog items configured')
-      }
-    }
-
-    // Check availability set
-    if (formData.availability.some((a) => a.is_open)) {
-      passed.push('Availability schedule set')
-    } else {
-      failed.push('No availability hours set')
-    }
-
-    setValidationResults({ passed, failed })
-    setIsValidating(false)
   }
 
   async function handleLaunch() {
@@ -722,110 +661,12 @@ export default function OnboardingPage() {
         )}
 
         {/* ============================================================ */}
-        {/* Step: Booking System (appointment/hybrid only) */}
-        {/* ============================================================ */}
-        {currentStepLabel() === 'BOOKING_SYSTEM' && (
-          <div className="animate-fade-in space-y-8">
-            <div>
-              <span className="mono-label-sm opacity-40 block mb-2">STEP 02</span>
-              <h2 className="font-display font-black uppercase text-xl tracking-tightest">BOOKING SYSTEM</h2>
-              <p className="font-sans text-sm font-light opacity-50 mt-2">Choose how you manage appointments. We will connect to your system.</p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {BOOKING_SYSTEMS.map((system) => (
-                <button
-                  key={system.id}
-                  type="button"
-                  onClick={() => updateField('booking_system_type', system.id)}
-                  className={`p-6 text-left transition-all duration-300 ${
-                    formData.booking_system_type === system.id
-                      ? 'bg-accent/10 border-2 border-accent'
-                      : 'hairline hover:bg-white/[0.02]'
-                  }`}
-                >
-                  <span className="text-2xl mb-3 block">{system.icon}</span>
-                  <p className="font-mono text-sm font-medium text-foreground">{system.name}</p>
-                  <p className="font-sans text-xs opacity-50 mt-1">{system.description}</p>
-                </button>
-              ))}
-            </div>
-
-            {/* Other option */}
-            <button
-              type="button"
-              onClick={() => updateField('booking_system_type', 'other')}
-              className={`w-full p-6 text-left transition-all duration-300 ${
-                formData.booking_system_type === 'other'
-                  ? 'bg-accent/10 border-2 border-accent'
-                  : 'hairline hover:bg-white/[0.02]'
-              }`}
-            >
-              <p className="font-mono text-sm font-medium text-foreground">Other / I don't see mine</p>
-              <p className="font-sans text-xs opacity-50 mt-1">Request an integration for your booking system</p>
-            </button>
-
-            {formData.booking_system_type === 'other' && (
-              <Card className="p-6">
-                <p className="font-mono text-sm mb-4 opacity-70">Tell us what booking system you use and we will notify you when it is supported.</p>
-                <Input
-                  id="integration-request"
-                  label="Booking System Name"
-                  placeholder="e.g. Vagaro, Mindbody, Booksy..."
-                  value={formData.integration_request_system}
-                  onChange={(e) => updateField('integration_request_system', e.target.value)}
-                />
-                <p className="font-sans text-xs opacity-40 mt-3">
-                  In the meantime, you can use SpadeChat's built-in booking system.
-                </p>
-                <Button variant="outline" size="sm" className="mt-3" onClick={() => updateField('booking_system_type', 'internal')}>
-                  Use Built-in System Instead
-                </Button>
-              </Card>
-            )}
-
-            {formData.booking_system_type === 'calendly' && (
-              <Card className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Link2 className="w-5 h-5 text-accent" />
-                  <p className="font-mono text-sm font-medium">Connect Calendly</p>
-                </div>
-                <p className="font-sans text-xs opacity-50 mb-4">OAuth integration coming soon. For now, using SpadeChat built-in booking.</p>
-                <Button variant="accent" disabled>Connect with Calendly (Coming Soon)</Button>
-              </Card>
-            )}
-
-            {formData.booking_system_type === 'acuity' && (
-              <Card className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Link2 className="w-5 h-5 text-accent" />
-                  <p className="font-mono text-sm font-medium">Connect Acuity Scheduling</p>
-                </div>
-                <p className="font-sans text-xs opacity-50 mb-4">OAuth integration coming soon. For now, using SpadeChat built-in booking.</p>
-                <Button variant="accent" disabled>Connect with Acuity (Coming Soon)</Button>
-              </Card>
-            )}
-
-            {formData.booking_system_type === 'square' && (
-              <Card className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Link2 className="w-5 h-5 text-accent" />
-                  <p className="font-mono text-sm font-medium">Connect Square Appointments</p>
-                </div>
-                <p className="font-sans text-xs opacity-50 mb-4">OAuth integration coming soon. For now, using SpadeChat built-in booking.</p>
-                <Button variant="accent" disabled>Connect with Square (Coming Soon)</Button>
-              </Card>
-            )}
-          </div>
-        )}
-
-        {/* ============================================================ */}
         {/* Step: Services (appointment/hybrid only) */}
         {/* ============================================================ */}
         {currentStepLabel() === 'SERVICES' && (
           <div className="animate-fade-in space-y-8">
             <div>
-              <span className="mono-label-sm opacity-40 block mb-2">STEP 03</span>
+              <span className="mono-label-sm opacity-40 block mb-2">STEP {STEP_NUMBERS[currentStep]}</span>
               <h2 className="font-display font-black uppercase text-xl tracking-tightest">SERVICES</h2>
               <p className="font-sans text-sm font-light opacity-50 mt-2">Add the services AI agents can book for your customers.</p>
             </div>
@@ -940,7 +781,7 @@ export default function OnboardingPage() {
         {currentStepLabel() === 'AVAILABILITY' && (
           <div className="animate-fade-in space-y-8">
             <div>
-              <span className="mono-label-sm opacity-40 block mb-2">STEP 04</span>
+              <span className="mono-label-sm opacity-40 block mb-2">STEP {STEP_NUMBERS[currentStep]}</span>
               <h2 className="font-display font-black uppercase text-xl tracking-tightest">AVAILABILITY</h2>
               <p className="font-sans text-sm font-light opacity-50 mt-2">Set your weekly hours so AI agents know when to schedule.</p>
             </div>
@@ -961,90 +802,6 @@ export default function OnboardingPage() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {/* ============================================================ */}
-        {/* Step: Business Rules (appointment/hybrid only) */}
-        {/* ============================================================ */}
-        {currentStepLabel() === 'BUSINESS_RULES' && (
-          <div className="animate-fade-in space-y-8">
-            <div>
-              <span className="mono-label-sm opacity-40 block mb-2">STEP 05</span>
-              <h2 className="font-display font-black uppercase text-xl tracking-tightest">BUSINESS RULES</h2>
-              <p className="font-sans text-sm font-light opacity-50 mt-2">Configure booking rules to control how AI agents schedule appointments.</p>
-            </div>
-
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <Input id="min-advance" label="Min Advance Booking (hours)" type="number" placeholder="1" value={formData.min_advance_hours} onChange={(e) => updateField('min_advance_hours', e.target.value)} />
-                <Input id="max-advance" label="Max Advance Booking (days)" type="number" placeholder="60" value={formData.max_advance_days} onChange={(e) => updateField('max_advance_days', e.target.value)} />
-                <Input id="buffer" label="Buffer Between Appts (min)" type="number" placeholder="0" value={formData.buffer_minutes} onChange={(e) => updateField('buffer_minutes', e.target.value)} />
-              </div>
-
-              <div>
-                <label htmlFor="additional-rules" className="block text-sm text-muted-foreground mb-2">Additional Rules (free text)</label>
-                <textarea
-                  id="additional-rules"
-                  rows={4}
-                  placeholder="Any special rules for your business (e.g. 'Dogs must be leashed', 'Deposit required for tattoos over 2 hours', 'New clients require 15 min extra')..."
-                  className="w-full px-4 py-2.5 bg-card hairline text-foreground font-mono text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200 resize-none"
-                  value={formData.additional_rules}
-                  onChange={(e) => updateField('additional_rules', e.target.value)}
-                />
-                <p className="font-sans text-xs opacity-30 mt-2">These rules are displayed on your profile. Structured rules above are enforced automatically by the booking engine.</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ============================================================ */}
-        {/* Step: Validation */}
-        {/* ============================================================ */}
-        {currentStepLabel() === 'VALIDATE' && (
-          <div className="animate-fade-in space-y-8">
-            <div>
-              <span className="mono-label-sm opacity-40 block mb-2">STEP 06</span>
-              <h2 className="font-display font-black uppercase text-xl tracking-tightest">VALIDATE SETUP</h2>
-              <p className="font-sans text-sm font-light opacity-50 mt-2">Run automated checks to make sure everything is configured correctly.</p>
-            </div>
-
-            {!validationResults && !isValidating && (
-              <div className="text-center py-12">
-                <ShieldCheck className="w-12 h-12 text-accent mx-auto mb-4 opacity-50" />
-                <p className="font-mono text-sm opacity-50 mb-6">Click below to validate your configuration</p>
-                <Button variant="accent" onClick={runValidation}><ShieldCheck className="w-4 h-4 mr-2" />RUN VALIDATION</Button>
-              </div>
-            )}
-
-            {isValidating && (
-              <div className="text-center py-12">
-                <div className="w-12 h-12 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                <p className="font-mono text-sm text-accent">VALIDATING CONFIGURATION...</p>
-              </div>
-            )}
-
-            {validationResults && (
-              <div className="space-y-4">
-                {validationResults.passed.map((msg, i) => (
-                  <div key={i} className="flex items-center gap-3 p-4 bg-green-500/5 hairline">
-                    <Check className="w-5 h-5 text-green-500 shrink-0" />
-                    <span className="font-mono text-sm">{msg}</span>
-                  </div>
-                ))}
-                {validationResults.failed.map((msg, i) => (
-                  <div key={i} className="flex items-center gap-3 p-4 bg-destructive/5 hairline">
-                    <AlertCircle className="w-5 h-5 text-destructive shrink-0" />
-                    <span className="font-mono text-sm">{msg}</span>
-                  </div>
-                ))}
-                {validationResults.failed.length === 0 && (
-                  <div className="text-center pt-4">
-                    <p className="font-mono text-sm text-green-500">ALL CHECKS PASSED — Ready to launch!</p>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         )}
 

@@ -113,9 +113,25 @@ export function Pricing() {
                 </ul>
               </div>
 
-              <Link href={plan.href} className={plan.style}>
-                {plan.cta}
-              </Link>
+              {plan.name === 'FREE' ? (
+                <div className="flex flex-col gap-3">
+                  <Link href="/signup" className="btn-solid text-center">
+                    SET UP MYSELF — FREE
+                  </Link>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-px bg-white/10" />
+                    <span className="mono-label-sm text-white/20">or</span>
+                    <div className="flex-1 h-px bg-white/10" />
+                  </div>
+                  <Link href="/get-setup" className="btn-pill text-center">
+                    HAVE US DO IT — FREE
+                  </Link>
+                </div>
+              ) : (
+                <Link href={plan.href} className={plan.style}>
+                  {plan.cta}
+                </Link>
+              )}
             </div>
           ))}
         </div>
