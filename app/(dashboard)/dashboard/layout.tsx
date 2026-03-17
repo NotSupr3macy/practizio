@@ -45,10 +45,24 @@ export default async function DashboardLayout({
     )
   }
 
+  // Check which sections need setup for sidebar pings
+  const [
+    { count: servicesCount },
+    { count: availabilityCount },
+  ] = await Promise.all([
+    supabase.from('services').select('*', { count: 'exact', head: true }).eq('practice_id', practice.id),
+    supabase.from('availability').select('*', { count: 'exact', head: true }).eq('practice_id', practice.id).eq('is_open', true),
+  ])
+
+  const needsAttention: Record<string, boolean> = {}
+  if ((servicesCount ?? 0) === 0) needsAttention['/dashboard/services'] = true
+  if ((availabilityCount ?? 0) === 0) needsAttention['/dashboard/availability'] = true
+  if (!practice.booking_system_connected) needsAttention['/dashboard/settings'] = true
+
   return (
     <DashboardShell
       logoHref="/dashboard"
-      sidebar={<Sidebar practice={practice} userEmail={user.email || ''} />}
+      sidebar={<Sidebar practice={practice} userEmail={user.email || ''} needsAttention={needsAttention} />}
     >
       {children}
     </DashboardShell>

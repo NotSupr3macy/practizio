@@ -13,6 +13,7 @@ import {
 interface SidebarProps {
   practice: Practice
   userEmail: string
+  needsAttention?: Record<string, boolean>
 }
 
 function getNavItems(interactionType: string) {
@@ -36,7 +37,7 @@ function getNavItems(interactionType: string) {
   return items
 }
 
-export function Sidebar({ practice, userEmail }: SidebarProps) {
+export function Sidebar({ practice, userEmail, needsAttention = {} }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -89,6 +90,9 @@ export function Sidebar({ practice, userEmail }: SidebarProps) {
             >
               <item.icon className={cn('w-4 h-4', active ? 'text-accent' : 'opacity-30')} />
               {item.label}
+              {needsAttention[item.href] && (
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse ml-auto shrink-0" />
+              )}
             </Link>
           )
         })}
