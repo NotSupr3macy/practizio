@@ -7,21 +7,21 @@
 @tailwind utilities;
 
 :root {
-  /* Dark palette (Design A) */
-  --navy: #171e19;
-  --sage: #b7c6c2;
-  --cyan-glow: #d5f4f9;
-  --soft-blue: #bbe2f5;
-  --taupe: #9f8d8b;
-  --charcoal: #302b2f;
+  /* Dark palette */
+  --navy: #131a2e;
+  --sage: #b7c0d4;
+  --cyan-glow: #d5e4f9;
+  --soft-blue: #bbc8f5;
+  --taupe: #8b8d9f;
+  --charcoal: #1e2540;
 
-  /* Light palette (Design B) */
+  /* Light palette */
   --cream: #f7f6f2;
   --foreground: #1c1c1c;
-  --primary-accent: #3d7068;
+  --primary-accent: #2c4a7c;
   --border-light: #e5e4de;
   --muted-text: #B4B4B4;
-  --beige: #d7c5b2;
+  --beige: #b2c0d7;
 
   /* Shared */
   --white: #ffffff;
