@@ -5,7 +5,7 @@ import { LayoutDashboard, Building2, Users, Wrench, Settings, LogOut } from 'luc
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 
 export const metadata = {
-  title: 'Admin — Practizio',
+  title: 'Admin — SpadeChat',
 }
 
 const navItems = [
@@ -36,9 +36,9 @@ function AdminSidebar({ email }: { email: string }) {
         style={{ borderBottom: '1px solid var(--border-light)' }}
       >
         <Link href="/admin" className="flex items-center gap-2.5">
-          <img src="/logo.png" alt="Practizio Admin" className="w-7 h-7 object-contain" />
+          <img src="/logo.png" alt="SpadeChat Admin" className="w-7 h-7 object-contain" />
           <span style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, letterSpacing: '0.05em', fontSize: '16px', color: 'white' }}>
-            PRACTIZIO ADMIN
+            SPADECHAT ADMIN
           </span>
         </Link>
         <p className="mt-2.5 truncate" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)' }}>
@@ -122,7 +122,7 @@ export default async function AdminLayout({
   return (
     <DashboardShell
       logoHref="/admin"
-      title="PRACTIZIO ADMIN"
+      title="SPADECHAT ADMIN"
       sidebar={<AdminSidebar email={user.email || ''} />}
     >
       {children}

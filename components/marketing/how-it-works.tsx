@@ -29,7 +29,8 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="section-light bg-editorial-grid py-24 px-6 md:px-10"
+      className="section-light py-24 px-6 md:px-10"
+      style={{ borderTop: '1px solid var(--border-light)' }}
     >
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Two-column header */}
@@ -55,86 +56,62 @@ export function HowItWorks() {
           </div>
         </div>
 
-        {/* Steps */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Steps — divider-separated, no cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3">
           {steps.map((step, idx) => {
             const isActive = idx === activeStep
             return (
               <div
                 key={step.number}
-                className="cursor-pointer transition-all duration-500"
-                style={{ opacity: isActive ? 1 : 0.4 }}
+                className="cursor-pointer transition-all duration-500 py-8 md:px-8 first:md:pl-0 last:md:pr-0"
+                style={{
+                  opacity: isActive ? 1 : 0.35,
+                  borderLeft: idx > 0 ? '1px solid var(--border-light)' : 'none',
+                }}
                 onClick={() => setActiveStep(idx)}
               >
-                {/* Scanline progress bar on active */}
+                {/* Progress line */}
                 <div
-                  className="mb-6"
-                  style={{ height: 2, background: 'var(--border-light)', position: 'relative', overflow: 'hidden' }}
-                >
-                  {isActive && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: 'var(--primary-accent)',
-                        animation: 'slide 2s infinite',
-                      }}
-                    />
-                  )}
-                </div>
+                  className="mb-8"
+                  style={{ height: 2, background: isActive ? 'var(--primary-accent)' : 'var(--border-light)', transition: 'background 500ms' }}
+                />
 
-                {/* Card */}
-                <div
-                  className="p-8 md:p-10 min-h-[280px] flex flex-col justify-between"
+                {/* Step number */}
+                <span
+                  className="font-mono text-[10px] uppercase block mb-2"
+                  style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
+                >
+                  {step.number}
+                </span>
+                <h3
+                  className="font-mono text-sm uppercase font-bold mb-4"
+                  style={{ letterSpacing: '0.2em', color: 'var(--foreground)' }}
+                >
+                  {step.title}
+                </h3>
+
+                <p
+                  className="text-sm leading-relaxed mb-6"
                   style={{
-                    background: 'var(--white)',
-                    border: '1px solid var(--border-light)',
-                    borderRadius: '2px',
+                    fontFamily: '"Playfair Display", serif',
+                    fontWeight: 300,
+                    color: 'var(--muted-text)',
+                    maxWidth: 280,
                   }}
                 >
-                  {/* Step number */}
-                  <div>
-                    <span
-                      className="font-mono text-[10px] uppercase block mb-2"
-                      style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
-                    >
-                      {step.number}
-                    </span>
-                    <h3
-                      className="font-mono text-sm uppercase font-bold"
-                      style={{ letterSpacing: '0.2em', color: 'var(--foreground)' }}
-                    >
-                      {step.title}
-                    </h3>
-                  </div>
+                  {step.description}
+                </p>
 
-                  <p
-                    className="text-sm leading-relaxed mt-4"
-                    style={{
-                      fontFamily: '"Playfair Display", serif',
-                      fontWeight: 300,
-                      color: 'var(--muted-text)',
-                      maxWidth: 280,
-                    }}
-                  >
-                    {step.description}
-                  </p>
-
-                  {/* Detail badge */}
-                  <div className="mt-6">
-                    <span
-                      className="font-mono text-[8px] uppercase inline-block px-3 py-1.5"
-                      style={{
-                        letterSpacing: '0.3em',
-                        color: 'var(--primary-accent)',
-                        border: '1px solid var(--border-light)',
-                        borderRadius: '2px',
-                      }}
-                    >
-                      {step.detail}
-                    </span>
-                  </div>
-                </div>
+                {/* Detail label */}
+                <span
+                  className="font-mono text-[8px] uppercase"
+                  style={{
+                    letterSpacing: '0.3em',
+                    color: 'var(--primary-accent)',
+                  }}
+                >
+                  {step.detail}
+                </span>
               </div>
             )
           })}

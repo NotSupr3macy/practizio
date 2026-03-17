@@ -28,10 +28,10 @@ export async function generateMetadata({
   const topServices = tags.slice(0, 3).join(', ')
 
   return {
-    title: `${practice.name} — Book with AI | Practizio`,
+    title: `${practice.name} — Book with AI | SpadeChat`,
     description: `Book appointments at ${practice.name}${city ? ` in ${city}` : ''} through any AI assistant. ${practice.industry} services${topServices ? ` including ${topServices}` : ''}.`,
     openGraph: {
-      title: `${practice.name} — Book with AI | Practizio`,
+      title: `${practice.name} — Book with AI | SpadeChat`,
       description: `${practice.industry}${city ? ` in ${city}` : ''} — AI-powered booking available`,
     },
   }
@@ -97,7 +97,7 @@ export default async function DirectoryDetailPage({
             </span>
           ) : (
             <span className="bg-white border border-[var(--border-light)] px-3 py-1 rounded-[2px] mono-label-sm text-[var(--muted-text)]">
-              New on Practizio
+              New on SpadeChat
             </span>
           )}
         </div>
@@ -305,7 +305,7 @@ export default async function DirectoryDetailPage({
             '@context': 'https://schema.org',
             '@type': 'LocalBusiness',
             name: practice.name,
-            description: `${practice.industry}${address?.city ? ` in ${address.city}` : ''} — Book with AI at Practizio`,
+            description: `${practice.industry}${address?.city ? ` in ${address.city}` : ''} — Book with AI at SpadeChat`,
             address: address ? {
               '@type': 'PostalAddress',
               streetAddress: address.street,

@@ -38,9 +38,9 @@ export function DashboardShell({ children, sidebar, logoHref, title }: Dashboard
         style={{ background: 'var(--white)', borderBottom: '1px solid var(--border-light)' }}
       >
         <Link href={logoHref} className="flex items-center gap-2">
-          <img src="/logo.png" alt="Practizio" className="w-6 h-6 object-contain" />
+          <img src="/logo.png" alt="SpadeChat" className="w-6 h-6 object-contain" />
           <span className="font-display uppercase" style={{ letterSpacing: '-0.02em', fontSize: '0.875rem', color: 'var(--navy)' }}>
-            {title || 'PRACTIZIO'}
+            {title || 'SPADECHAT'}
           </span>
         </Link>
         <button

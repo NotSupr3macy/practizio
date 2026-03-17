@@ -107,7 +107,7 @@ export default function JoinForm() {
       <div className="max-w-lg w-full relative z-10">
         {/* Header */}
         <div className="mb-10">
-          <span className="mono-label-sm text-[var(--muted-text)] block mb-4">JOIN PRACTIZIO</span>
+          <span className="mono-label-sm text-[var(--muted-text)] block mb-4">JOIN SPADECHAT</span>
           <h1 className="text-3xl md:text-5xl tracking-tight text-[var(--foreground)]" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
             Get your business <em className="text-[var(--taupe)]">AI-bookable</em>
           </h1>
@@ -217,7 +217,7 @@ export default function JoinForm() {
               disabled={loading}
               className="w-full btn-primary disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              {loading ? 'SUBMITTING...' : 'JOIN PRACTIZIO'}
+              {loading ? 'SUBMITTING...' : 'JOIN SPADECHAT'}
             </button>
           </form>
         </div>

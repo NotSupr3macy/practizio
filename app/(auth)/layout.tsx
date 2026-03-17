@@ -18,9 +18,9 @@ export default function AuthLayout({
       <div className="w-full max-w-md mx-auto relative z-10">
         {/* Brand */}
         <div className="text-center mb-10">
-          <img src="/logo.png" alt="Practizio" className="w-28 h-28 object-contain mx-auto mb-5" />
+          <img src="/logo.png" alt="SpadeChat" className="w-28 h-28 object-contain mx-auto mb-5" />
           <h1 className="font-display" style={{ color: 'var(--navy)', fontSize: '1.875rem', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
-            PRACTIZIO
+            SPADECHAT
           </h1>
           <p className="font-mono" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted-text)', marginTop: '0.75rem' }}>
             AI ACCESSIBLE BOOKING PLATFORM

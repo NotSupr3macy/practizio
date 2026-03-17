@@ -4,7 +4,7 @@ import { ArrowRight, Search } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'AI Directory — Find AI-Bookable Businesses | Practizio',
+  title: 'AI Directory — Find AI-Bookable Businesses | SpadeChat',
   description: 'Browse businesses that accept AI-powered bookings. Hair salons, dentists, yoga studios, mechanics, and more — all bookable through AI assistants.',
 }
 

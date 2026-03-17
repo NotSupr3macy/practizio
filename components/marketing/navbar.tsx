@@ -68,7 +68,7 @@ export function Navbar() {
               className="font-mono uppercase tracking-[0.35em] text-[14px] font-bold"
               style={{ color: 'var(--foreground)' }}
             >
-              PRACTIZIO
+              SPADECHAT
             </span>
           </Link>
         </div>

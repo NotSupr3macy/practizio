@@ -25,7 +25,7 @@ export async function POST(request: Request) {
         signal: controller.signal,
         redirect: 'follow',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; PractizioBot/1.0; +https://spadechat.com)',
+          'User-Agent': 'Mozilla/5.0 (compatible; SpadeChatBot/1.0; +https://spadechat.com)',
         },
       })
 
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
           signal: controller.signal,
           redirect: 'follow',
           headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; PractizioBot/1.0; +https://spadechat.com)',
+            'User-Agent': 'Mozilla/5.0 (compatible; SpadeChatBot/1.0; +https://spadechat.com)',
           },
         })
       }

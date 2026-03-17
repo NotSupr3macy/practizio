@@ -28,7 +28,7 @@ export function Footer() {
           {/* Brand */}
           <div>
             <span className="font-mono uppercase tracking-[0.35em] text-[14px] font-bold block mb-4" style={{ color: 'var(--cream)' }}>
-              PRACTIZIO
+              SPADECHAT
             </span>
             <p
               className="text-xs leading-relaxed"
@@ -116,7 +116,7 @@ export function Footer() {
             className="font-mono text-[12px] uppercase"
             style={{ letterSpacing: '0.3em', color: 'rgba(247, 246, 242, 0.25)' }}
           >
-            &copy; 2026 PRACTIZIO
+            &copy; 2026 SPADECHAT
           </span>
           <div className="flex items-center gap-6">
             {legalLinks.map((link) => (

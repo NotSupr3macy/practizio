@@ -259,7 +259,7 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
         {/* Logo */}
         <div className="text-center">
           <span className="font-mono font-extrabold text-xl tracking-[-0.03em] text-[var(--foreground)]">
-            PRACTIZIO
+            SPADECHAT
           </span>
         </div>
 

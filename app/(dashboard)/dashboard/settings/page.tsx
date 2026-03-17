@@ -31,7 +31,7 @@ const TIMEZONES = [
 ]
 
 const BOOKING_SYSTEM_LABELS: Record<string, string> = {
-  internal: 'Internal (Practizio)',
+  internal: 'Internal (SpadeChat)',
   calendly: 'Calendly',
   acuity: 'Acuity / Squarespace Scheduling',
   cal_com: 'Cal.com',

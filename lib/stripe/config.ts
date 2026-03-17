@@ -8,7 +8,7 @@ export const PLANS = {
       'Live AI booking link',
       'Up to 10 AI bookings/month',
       'Basic dashboard',
-      'Listed in Practizio directory',
+      'Listed in SpadeChat directory',
     ],
   },
   starter: {

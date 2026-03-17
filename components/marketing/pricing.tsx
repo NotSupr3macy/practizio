@@ -48,7 +48,8 @@ export function Pricing() {
   return (
     <section
       id="pricing"
-      className="section-light bg-editorial-grid py-24 px-6 md:px-10"
+      className="section-light py-24 px-6 md:px-10"
+      style={{ borderTop: '1px solid var(--border-light)' }}
     >
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="mb-16">
@@ -79,84 +80,76 @@ export function Pricing() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map((plan) => (
+        {/* Pricing columns — separated by vertical dividers, no card boxes */}
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          {plans.map((plan, idx) => (
             <div
               key={plan.name}
-              className="relative flex flex-col h-full p-8 md:p-10"
+              className="relative flex flex-col py-10 md:px-10 first:md:pl-0 last:md:pr-0"
               style={{
-                background: 'var(--white)',
-                border: '1px solid var(--border-light)',
-                borderRadius: '2px',
-                borderTop: plan.recommended
-                  ? '2px solid var(--primary-accent)'
-                  : '1px solid var(--border-light)',
+                borderLeft: idx > 0 ? '1px solid var(--border-light)' : 'none',
               }}
             >
               {plan.recommended && (
                 <span
-                  className="font-mono text-[8px] uppercase inline-block px-3 py-1.5 mb-6 self-start"
+                  className="font-mono text-[8px] uppercase mb-6"
                   style={{
                     letterSpacing: '0.3em',
                     color: 'var(--primary-accent)',
-                    border: '1px solid var(--border-light)',
-                    borderRadius: '2px',
                   }}
                 >
                   RECOMMENDED
                 </span>
               )}
 
-              <div className="flex-1">
+              <span
+                className="mono-label block mb-6"
+                style={{ color: 'var(--muted-text)' }}
+              >
+                {plan.name}
+              </span>
+
+              <div className="mb-8">
                 <span
-                  className="mono-label block mb-6"
-                  style={{ color: 'var(--muted-text)' }}
+                  className="text-4xl"
+                  style={{
+                    fontFamily: '"Playfair Display", serif',
+                    fontWeight: 300,
+                    color: 'var(--foreground)',
+                  }}
                 >
-                  {plan.name}
+                  ${plan.price}
                 </span>
-
-                <div className="mb-8">
-                  <span
-                    className="text-4xl"
-                    style={{
-                      fontFamily: '"Playfair Display", serif',
-                      fontWeight: 300,
-                      color: 'var(--foreground)',
-                    }}
-                  >
-                    ${plan.price}
-                  </span>
-                  <span
-                    className="font-mono text-[8px] uppercase ml-2"
-                    style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
-                  >
-                    /MO
-                  </span>
-                </div>
-
-                <div style={{ height: 1, background: 'var(--border-light)' }} className="mb-6" />
-
-                <ul className="space-y-4 mb-10">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3">
-                      <span
-                        className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
-                        style={{ background: 'var(--primary-accent)' }}
-                      />
-                      <span
-                        className="text-sm leading-relaxed"
-                        style={{
-                          fontFamily: '"Playfair Display", serif',
-                          fontWeight: 300,
-                          color: 'var(--muted-text)',
-                        }}
-                      >
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                <span
+                  className="font-mono text-[8px] uppercase ml-2"
+                  style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
+                >
+                  /MO
+                </span>
               </div>
+
+              <div style={{ height: 1, background: 'var(--border-light)' }} className="mb-6" />
+
+              <ul className="space-y-4 mb-10 flex-1">
+                {plan.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-3">
+                    <span
+                      className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
+                      style={{ background: 'var(--primary-accent)' }}
+                    />
+                    <span
+                      className="text-sm leading-relaxed"
+                      style={{
+                        fontFamily: '"Playfair Display", serif',
+                        fontWeight: 300,
+                        color: 'var(--muted-text)',
+                      }}
+                    >
+                      {feature}
+                    </span>
+                  </li>
+                ))}
+              </ul>
 
               {plan.name === 'FREE' ? (
                 <div className="flex flex-col gap-3">
@@ -165,10 +158,7 @@ export function Pricing() {
                   </Link>
                   <div className="flex items-center gap-3">
                     <div className="flex-1" style={{ height: 1, background: 'var(--border-light)' }} />
-                    <span
-                      className="font-mono text-[8px] uppercase"
-                      style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
-                    >
+                    <span className="font-mono text-[8px] uppercase" style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}>
                       or
                     </span>
                     <div className="flex-1" style={{ height: 1, background: 'var(--border-light)' }} />

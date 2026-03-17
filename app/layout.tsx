@@ -3,17 +3,17 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Practizio — Make Your Business Discoverable by AI Agents',
-    template: '%s | Practizio',
+    default: 'SpadeChat — Make Your Business Discoverable by AI Agents',
+    template: '%s | SpadeChat',
   },
   description:
-    'Practizio makes any business discoverable and bookable by AI assistants like Claude, ChatGPT, and Gemini. Appointments, orders, products, and more — the platform that makes you visible to the AI era.',
+    'SpadeChat makes any business discoverable and bookable by AI assistants like Claude, ChatGPT, and Gemini. Appointments, orders, products, and more — the platform that makes you visible to the AI era.',
   openGraph: {
-    title: 'Practizio — AI-Accessible for Any Business',
+    title: 'SpadeChat — AI-Accessible for Any Business',
     description:
       'Make your business discoverable by every AI agent on Earth. Hair salons, restaurants, yoga studios, retail shops — appointments, orders, and more.',
     url: 'https://practizio.com',
-    siteName: 'Practizio',
+    siteName: 'SpadeChat',
     type: 'website',
   },
 }

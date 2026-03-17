@@ -763,7 +763,7 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
                     <p className="font-mono text-xs text-[var(--foreground)] opacity-70">No external link required</p>
                   </div>
                   <p className="font-sans text-xs text-[var(--muted-text)] opacity-60">
-                    Practizio will handle booking directly through your AI-powered profile. Customers interact with your services and book without leaving the Practizio ecosystem.
+                    SpadeChat will handle booking directly through your AI-powered profile. Customers interact with your services and book without leaving the SpadeChat ecosystem.
                   </p>
                 </div>
               ) : (

@@ -57,9 +57,9 @@ export function Sidebar({ practice, userEmail, needsAttention = {} }: SidebarPro
       {/* Logo */}
       <div className="px-6 py-6" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <img src="/logo.png" alt="Practizio" className="w-7 h-7 object-contain" />
+          <img src="/logo.png" alt="SpadeChat" className="w-7 h-7 object-contain" />
           <span className="font-display uppercase" style={{ letterSpacing: '-0.02em', fontSize: '1rem', color: 'var(--white)' }}>
-            PRACTIZIO
+            SPADECHAT
           </span>
         </Link>
         <p className="font-mono mt-2.5 truncate" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.3)' }}>

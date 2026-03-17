@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import JoinForm from './join-form'
 
 export const metadata: Metadata = {
-  title: 'Join Practizio — Get Your Business AI-Bookable | Practizio',
+  title: 'Join SpadeChat — Get Your Business AI-Bookable | SpadeChat',
 }
 
 export default function JoinPage() {

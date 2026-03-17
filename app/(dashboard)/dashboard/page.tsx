@@ -96,7 +96,7 @@ export default async function DashboardPage() {
                   <Share2 className="w-4 h-4 text-[var(--primary-accent)]" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-['Space_Mono'] text-sm font-medium text-[var(--foreground)] mb-2">Share your Practizio profile with customers</p>
+                  <p className="font-['Space_Mono'] text-sm font-medium text-[var(--foreground)] mb-2">Share your SpadeChat profile with customers</p>
                   <p className="font-['Space_Mono'] text-xs text-[var(--muted-text)] mb-3">
                     The more people know about your AI booking option, the more bookings you&apos;ll get.
                   </p>

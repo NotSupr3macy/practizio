@@ -326,7 +326,7 @@ export class GoogleCalendarAdapter implements BookingAdapter {
         customer.email ? `Email: ${customer.email}` : null,
         notes ? `Notes: ${notes}` : null,
         '',
-        `Booked via ${practiceName} on Practizio`,
+        `Booked via ${practiceName} on SpadeChat`,
       ]
         .filter(Boolean)
         .join('\n'),

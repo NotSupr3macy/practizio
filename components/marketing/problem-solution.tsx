@@ -4,25 +4,21 @@ const aiBrands = [
   {
     name: 'ChatGPT',
     company: 'OpenAI',
-    color: '#10A37F',
     image: '/ai-logos/chatgpt.webp',
   },
   {
     name: 'Claude',
     company: 'Anthropic',
-    color: '#D4956A',
     image: '/ai-logos/claude.png',
   },
   {
     name: 'Gemini',
     company: 'Google',
-    color: '#4285F4',
     image: '/ai-logos/gemini.png',
   },
   {
     name: 'Perplexity',
     company: 'Perplexity AI',
-    color: '#20B8CD',
     image: '/ai-logos/perplexity.png',
   },
 ]
@@ -31,11 +27,12 @@ export function ProblemSolution() {
   return (
     <section
       id="features"
-      className="section-light bg-editorial-grid py-20 px-6 md:px-10"
+      className="section-light py-24 px-6 md:px-10"
+      style={{ borderTop: '1px solid var(--border-light)' }}
     >
       <div className="max-w-5xl mx-auto relative z-10">
         {/* Section header */}
-        <div className="text-center mb-14">
+        <div className="text-center mb-16">
           <span
             className="font-mono text-[10px] uppercase block mb-4"
             style={{ letterSpacing: '0.3em', color: 'var(--taupe)' }}
@@ -65,43 +62,29 @@ export function ProblemSolution() {
           </p>
         </div>
 
-        {/* AI brand grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {aiBrands.map((brand) => (
+        {/* AI brand row — no boxes, just logos and text with dividers */}
+        <div className="grid grid-cols-2 md:grid-cols-4">
+          {aiBrands.map((brand, idx) => (
             <div
               key={brand.name}
-              className="group flex flex-col items-center text-center p-6 md:p-8 transition-all duration-500"
+              className="flex flex-col items-center text-center py-8 md:py-10"
               style={{
-                background: 'var(--white)',
-                border: '1px solid var(--border-light)',
-                borderRadius: '2px',
+                borderLeft: idx > 0 ? '1px solid var(--border-light)' : 'none',
               }}
             >
-              {/* Logo container */}
-              <div
-                className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center mb-5 overflow-hidden"
-                style={{
-                  background: 'var(--cream)',
-                  border: '1px solid var(--border-light)',
-                  borderRadius: '2px',
-                }}
-              >
+              {/* Logo */}
+              <div className="w-14 h-14 md:w-16 md:h-16 mb-5 overflow-hidden rounded-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={brand.image}
                   alt={`${brand.name} logo`}
                   className="w-full h-full object-cover"
-                  style={{ borderRadius: '2px' }}
                 />
               </div>
 
-              {/* Name */}
               <h3
                 className="font-mono text-sm uppercase font-bold"
-                style={{
-                  letterSpacing: '0.2em',
-                  color: 'var(--foreground)',
-                }}
+                style={{ letterSpacing: '0.2em', color: 'var(--foreground)' }}
               >
                 {brand.name}
               </h3>
@@ -112,7 +95,6 @@ export function ProblemSolution() {
                 {brand.company.toUpperCase()}
               </span>
 
-              {/* Status indicator */}
               <div className="flex items-center gap-2 mt-4">
                 <span
                   className="w-1.5 h-1.5 rounded-full animate-pulse-dot"
