@@ -27,6 +27,8 @@ export interface Practice {
   stripe_subscription_id: string | null
   plan: 'free' | 'starter' | 'growth'
   timezone: string
+  onboarding_completed_at: string | null
+  skip_connection_count: number
   created_at: string
   // Business rules (stored as JSON)
   business_rules: BusinessRules | null
@@ -188,9 +190,23 @@ export interface HealthCheck {
 
 export interface IntegrationRequest {
   id: string
-  business_email: string
+  practice_id: string | null
+  business_email?: string
   booking_system_name: string
-  industry: string | null
+  industry?: string | null
+  status: 'new' | 'contacted' | 'resolved'
+  created_at: string
+}
+
+export interface EmailSequence {
+  id: string
+  practice_id: string
+  sequence_name: string
+  current_step: number
+  last_sent_at: string | null
+  next_send_at: string | null
+  completed: boolean
+  stopped_reason: string | null
   created_at: string
 }
 

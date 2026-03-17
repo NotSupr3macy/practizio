@@ -395,6 +395,7 @@ interface BookingIntegrationsProps {
   currentPlatform?: string | null
   currentBookingUrl?: string | null
   practiceId: string
+  onConnected?: () => void
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -427,7 +428,7 @@ function detectPlatformFromUrl(url: string): string {
   return 'custom'
 }
 
-export function BookingIntegrations({ currentPlatform, currentBookingUrl, practiceId }: BookingIntegrationsProps) {
+export function BookingIntegrations({ currentPlatform, currentBookingUrl, practiceId, onConnected }: BookingIntegrationsProps) {
   // If platform is 'internal' but we have a URL, auto-detect the platform from the URL
   const activePlatformId = (currentPlatform && currentPlatform !== 'internal')
     ? currentPlatform
@@ -574,6 +575,7 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
         setSavedPlatformId(selectedPlatform.id)
         setSavedUrl(selectedPlatform.noUrl ? '' : urlValue.trim())
         setSuccessMsg(`${selectedPlatform.name} connected successfully.`)
+        onConnected?.()
       }
     } catch {
       setError('Network error. Please try again.')

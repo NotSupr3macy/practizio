@@ -7,6 +7,8 @@ import {
   CalendarCheck,
   ShoppingCart,
   Users,
+  Unplug,
+  MessageSquarePlus,
 } from 'lucide-react'
 
 export default async function AdminOverviewPage() {
@@ -24,6 +26,8 @@ export default async function AdminOverviewPage() {
     leadsRes,
     recentLeadsRes,
     activePracticesRes,
+    unconnectedRes,
+    integrationRequestsRes,
   ] = await Promise.all([
     supabase.from('practices').select('id', { count: 'exact', head: true }),
     supabase
@@ -48,6 +52,8 @@ export default async function AdminOverviewPage() {
       .from('ai_queries')
       .select('practice_id, practices(name, slug)')
       .gte('created_at', startOfMonth),
+    supabase.from('practices').select('id', { count: 'exact', head: true }).eq('booking_system_connected', false),
+    supabase.from('integration_requests').select('*, practices(name)').order('created_at', { ascending: false }).limit(10),
   ])
 
   // Aggregate most active practices
@@ -76,6 +82,8 @@ export default async function AdminOverviewPage() {
   const totalOrders = ordersRes.count ?? 0
   const totalLeads = leadsRes.count ?? 0
   const recentLeads = recentLeadsRes.data ?? []
+  const unconnectedCount = unconnectedRes.count ?? 0
+  const integrationRequests = integrationRequestsRes.data ?? []
 
   const statusVariant = (status: string) => {
     switch (status) {
@@ -108,7 +116,7 @@ export default async function AdminOverviewPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
         <StatCard
           title="Businesses"
           value={totalPractices}
@@ -136,6 +144,18 @@ export default async function AdminOverviewPage() {
           title="Leads"
           value={totalLeads}
           icon={Users}
+        />
+        <StatCard
+          title="Unconnected"
+          value={unconnectedCount}
+          icon={Unplug}
+          change={totalPractices > 0 ? `${Math.round((unconnectedCount / totalPractices) * 100)}%` : '0%'}
+          trend={unconnectedCount > 0 ? 'down' : 'up'}
+        />
+        <StatCard
+          title="Integration Reqs"
+          value={integrationRequests.length}
+          icon={MessageSquarePlus}
         />
       </div>
 
@@ -201,6 +221,33 @@ export default async function AdminOverviewPage() {
           )}
         </div>
       </div>
+
+      {/* Integration Requests */}
+      {integrationRequests.length > 0 && (
+        <div className="card-metal rounded-xl p-6">
+          <h2 className="mono-label-sm text-white/20 mb-4">INTEGRATION REQUESTS</h2>
+          <div className="space-y-3">
+            {integrationRequests.map((req: Record<string, unknown>) => (
+              <div
+                key={req.id as string}
+                className="glass-panel rounded-lg p-4 flex items-center justify-between"
+              >
+                <div>
+                  <p className="font-mono text-sm text-white/80">
+                    {req.booking_system_name as string}
+                  </p>
+                  <p className="mono-label-sm text-white/20 mt-1">
+                    {(req.practices as { name: string } | null)?.name || 'Unknown business'}
+                  </p>
+                </div>
+                <Badge variant={req.status === 'new' ? 'accent' : 'default'}>
+                  {(req.status as string).toUpperCase()}
+                </Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

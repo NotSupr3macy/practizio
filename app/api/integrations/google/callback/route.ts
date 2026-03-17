@@ -8,10 +8,10 @@ export async function GET(request: NextRequest) {
   const from = request.nextUrl.searchParams.get('state') || 'settings'
 
   // Determine redirect destination based on where the OAuth started
-  const successUrl = from === 'onboarding'
-    ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?google_connected=true`
+  const successUrl = (from === 'onboarding' || from === 'connection-gate')
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?booking_connected=true`
     : `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings?google_connected=true`
-  const errorBaseUrl = from === 'onboarding'
+  const errorBaseUrl = (from === 'onboarding' || from === 'connection-gate')
     ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
     : `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings`
 

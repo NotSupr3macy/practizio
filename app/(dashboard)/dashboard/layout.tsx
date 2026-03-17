@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
+import { ConnectionGateWrapper } from '@/components/dashboard/connection-gate-wrapper'
 
 export const metadata = {
   title: 'Dashboard',
@@ -30,6 +31,18 @@ export default async function DashboardLayout({
 
   if (!practice) {
     redirect('/onboarding')
+  }
+
+  // Gate: if booking system not connected, show connection flow
+  if (!practice.booking_system_connected) {
+    return (
+      <ConnectionGateWrapper
+        practice={practice}
+        userEmail={user.email || ''}
+      >
+        {children}
+      </ConnectionGateWrapper>
+    )
   }
 
   return (
