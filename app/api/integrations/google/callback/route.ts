@@ -107,7 +107,10 @@ export async function GET(request: NextRequest) {
     // Update practice to mark Google Calendar as connected
     await adminSupabase
       .from('practices')
-      .update({ booking_system_connected: true })
+      .update({
+        booking_system_connected: true,
+        booking_system_type: 'google_calendar',
+      })
       .eq('id', practice.id)
 
     return NextResponse.redirect(successUrl)
