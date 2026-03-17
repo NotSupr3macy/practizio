@@ -3,9 +3,12 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
-const NAV_LINKS = [
+const NAV_LEFT = [
   { label: 'DIRECTORY', href: '/directory' },
   { label: 'FOR BUSINESSES', href: '/#features' },
+] as const
+
+const NAV_RIGHT = [
   { label: 'ABOUT', href: '/about' },
 ] as const
 
@@ -22,43 +25,24 @@ export function Navbar() {
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
-      style={
-        scrolled
-          ? {
-              background: 'rgba(247, 246, 242, 0.8)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              borderBottom: '1px solid var(--border-light)',
-            }
-          : {
-              mixBlendMode: 'difference' as const,
-            }
-      }
+      style={{
+        background: scrolled ? 'rgba(247, 246, 242, 0.85)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(20px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
+        borderBottom: scrolled ? '1px solid var(--border-light)' : '1px solid transparent',
+      }}
     >
       <div className="w-full px-6 md:px-10 h-[72px] flex items-center justify-between">
-        {/* Left: Brand */}
-        <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="Practizio" className="w-12 h-12 object-contain" />
-            <span
-              className="font-display uppercase tracking-widest text-[20px]"
-              style={{ color: scrolled ? 'var(--foreground)' : 'var(--white)' }}
-            >
-              PRACTIZIO
-            </span>
-          </Link>
-        </div>
-
-        {/* Center: Nav links (desktop) */}
-        <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
+        {/* Left: Nav links (desktop) */}
+        <div className="hidden md:flex items-center gap-8 flex-1">
+          {NAV_LEFT.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="font-mono text-[10px] uppercase transition-all duration-400"
+              className="font-mono text-[10px] uppercase transition-all duration-300 hover:text-[var(--foreground)]"
               style={{
                 letterSpacing: '0.3em',
-                color: scrolled ? 'var(--muted-text)' : 'rgba(255,255,255,0.4)',
+                color: 'var(--muted-text)',
               }}
             >
               {link.label}
@@ -66,19 +50,53 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* Right: CTA (desktop) */}
-        <div className="hidden md:flex items-center gap-5">
+        {/* Center: Brand */}
+        <div className="flex items-center justify-center">
+          <Link href="/" className="flex items-center gap-3">
+            <div
+              className="flex items-center gap-1"
+              style={{ color: 'var(--primary-accent)' }}
+            >
+              {/* Minimal logo mark */}
+              <svg width="28" height="16" viewBox="0 0 28 16" fill="none">
+                <line x1="0" y1="8" x2="12" y2="8" stroke="currentColor" strokeWidth="2" />
+                <line x1="16" y1="4" x2="28" y2="4" stroke="currentColor" strokeWidth="2" />
+                <line x1="16" y1="12" x2="28" y2="12" stroke="currentColor" strokeWidth="2" />
+              </svg>
+            </div>
+            <span
+              className="font-mono uppercase tracking-[0.35em] text-[14px] font-bold"
+              style={{ color: 'var(--foreground)' }}
+            >
+              PRACTIZIO
+            </span>
+          </Link>
+        </div>
+
+        {/* Right: Nav links + CTA (desktop) */}
+        <div className="hidden md:flex items-center gap-8 flex-1 justify-end">
+          {NAV_RIGHT.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="font-mono text-[10px] uppercase transition-all duration-300 hover:text-[var(--foreground)]"
+              style={{
+                letterSpacing: '0.3em',
+                color: 'var(--muted-text)',
+              }}
+            >
+              {link.label}
+            </Link>
+          ))}
           <Link
             href="/get-setup"
-            className="font-mono text-[10px] uppercase transition-all duration-400"
+            className="font-mono text-[10px] uppercase transition-all duration-300"
             style={{
-              letterSpacing: '0.3em',
+              letterSpacing: '0.25em',
               padding: '10px 24px',
               borderRadius: '2px',
-              border: scrolled
-                ? '1px solid var(--foreground)'
-                : '1px solid rgba(255,255,255,0.5)',
-              color: scrolled ? 'var(--foreground)' : 'var(--white)',
+              background: 'var(--primary-accent)',
+              color: 'var(--white)',
             }}
           >
             GET ACCESS
@@ -94,11 +112,11 @@ export function Navbar() {
         >
           <span
             className={`block w-5 h-[1.5px] transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-[3.5px]' : ''}`}
-            style={{ background: scrolled ? 'var(--foreground)' : 'var(--white)' }}
+            style={{ background: 'var(--foreground)' }}
           />
           <span
             className={`block w-5 h-[1.5px] transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-[3.5px]' : ''}`}
-            style={{ background: scrolled ? 'var(--foreground)' : 'var(--white)' }}
+            style={{ background: 'var(--foreground)' }}
           />
         </button>
       </div>
@@ -113,7 +131,7 @@ export function Navbar() {
       >
         <div style={{ height: '1px', background: 'var(--border-light)' }} />
         <div className="px-6 py-8 flex flex-col gap-6">
-          {NAV_LINKS.map((link) => (
+          {[...NAV_LEFT, ...NAV_RIGHT].map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -129,11 +147,11 @@ export function Navbar() {
             href="/get-setup"
             className="font-mono text-[10px] uppercase text-center transition-all duration-300"
             style={{
-              letterSpacing: '0.3em',
+              letterSpacing: '0.25em',
               padding: '12px 24px',
-              border: '1px solid var(--foreground)',
               borderRadius: '2px',
-              color: 'var(--foreground)',
+              background: 'var(--primary-accent)',
+              color: 'var(--white)',
             }}
             onClick={() => setMobileOpen(false)}
           >

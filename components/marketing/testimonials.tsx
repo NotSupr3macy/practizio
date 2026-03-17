@@ -30,17 +30,21 @@ export function Testimonials() {
   return (
     <section
       className="py-24 px-6 md:px-10 relative overflow-hidden"
-      style={{ background: 'var(--charcoal)' }}
+      style={{
+        background: 'var(--cream)',
+        borderTop: '1px solid var(--border-light)',
+        borderBottom: '1px solid var(--border-light)',
+      }}
     >
       {/* Decorative quote mark */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none"
         style={{
-          fontFamily: 'Anton, sans-serif',
+          fontFamily: '"Playfair Display", serif',
           fontSize: 'clamp(20rem, 40vw, 30rem)',
           lineHeight: 1,
-          color: 'var(--navy)',
-          opacity: 0.3,
+          color: 'var(--border-light)',
+          opacity: 0.6,
         }}
       >
         &ldquo;
@@ -50,15 +54,15 @@ export function Testimonials() {
         {/* Label */}
         <span
           className="font-mono text-[10px] uppercase block mb-10"
-          style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.3)' }}
+          style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
         >
           CLIENT FEEDBACK
         </span>
 
         {/* Quote */}
         <p
-          className="font-display uppercase text-3xl md:text-5xl leading-tight"
-          style={{ color: 'var(--white)' }}
+          className="editorial-heading text-3xl md:text-5xl leading-tight"
+          style={{ color: 'var(--foreground)' }}
         >
           {t.quote}
         </p>
@@ -67,7 +71,7 @@ export function Testimonials() {
         <div className="mt-10">
           <span
             className="font-mono text-sm uppercase font-bold block"
-            style={{ letterSpacing: '0.2em', color: 'var(--white)' }}
+            style={{ letterSpacing: '0.2em', color: 'var(--foreground)' }}
           >
             {t.name}
           </span>
@@ -90,7 +94,7 @@ export function Testimonials() {
                 width: idx === active ? 24 : 8,
                 height: 8,
                 borderRadius: '9999px',
-                background: idx === active ? 'var(--primary-accent)' : 'rgba(255,255,255,0.15)',
+                background: idx === active ? 'var(--primary-accent)' : 'var(--border-light)',
               }}
               aria-label={`Show testimonial ${idx + 1}`}
             />

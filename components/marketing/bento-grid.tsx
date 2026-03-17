@@ -19,32 +19,47 @@ const cards = [
 export function BentoGrid() {
   return (
     <section
-      className="w-full py-20 px-6 md:px-10"
-      style={{ background: 'var(--navy)' }}
+      className="w-full py-24 px-6 md:px-10 bg-editorial-grid"
+      style={{ background: 'var(--cream)' }}
     >
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {cards.map((card) => (
+      <div className="max-w-6xl mx-auto relative z-10">
+        {/* Section header */}
+        <div className="mb-16">
+          <span
+            className="font-mono text-[10px] uppercase block mb-4"
+            style={{ letterSpacing: '0.3em', color: 'var(--taupe)' }}
+          >
+            CORE SYSTEMS
+          </span>
+          <h2
+            className="editorial-heading text-4xl md:text-6xl"
+            style={{ color: 'var(--foreground)' }}
+          >
+            How it{' '}
+            <span style={{ fontStyle: 'italic', color: 'var(--taupe)' }}>
+              works.
+            </span>
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
+          {cards.map((card, idx) => (
             <div
               key={card.tag}
               className="group relative p-8 md:p-10 min-h-[380px] flex flex-col justify-between transition-all duration-500"
               style={{
-                background: 'var(--charcoal)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '2px',
+                background: 'var(--white)',
+                borderTop: '2px solid var(--primary-accent)',
+                borderBottom: '1px solid var(--border-light)',
+                borderLeft: idx === 0 ? '1px solid var(--border-light)' : 'none',
+                borderRight: '1px solid var(--border-light)',
               }}
             >
-              {/* Top accent line */}
-              <div
-                className="absolute top-0 left-8 right-8"
-                style={{ height: 1, background: 'rgba(255,255,255,0.06)' }}
-              />
-
               {/* Tag */}
               <div>
                 <span
                   className="font-mono text-[10px] uppercase"
-                  style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.2)' }}
+                  style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
                 >
                   {card.tag}
                 </span>
@@ -55,8 +70,8 @@ export function BentoGrid() {
                 <div
                   className="w-16 h-16 rounded-full"
                   style={{
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.06)',
+                    background: 'rgba(61, 112, 104, 0.06)',
+                    border: '1px solid var(--border-light)',
                   }}
                 />
               </div>
@@ -64,16 +79,17 @@ export function BentoGrid() {
               {/* Bottom: Title and description */}
               <div>
                 <h3
-                  className="font-display uppercase text-xl"
-                  style={{ color: 'var(--white)' }}
+                  className="font-mono text-sm uppercase font-bold"
+                  style={{ letterSpacing: '0.2em', color: 'var(--foreground)' }}
                 >
                   {card.title}
                 </h3>
                 <p
                   className="mt-3 text-sm leading-relaxed"
                   style={{
-                    fontFamily: '"Space Mono", monospace',
-                    color: 'rgba(255,255,255,0.3)',
+                    fontFamily: '"Playfair Display", serif',
+                    fontWeight: 300,
+                    color: 'var(--muted-text)',
                   }}
                 >
                   {card.sub}

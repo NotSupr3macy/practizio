@@ -22,19 +22,19 @@ const legalLinks = [
 
 export function Footer() {
   return (
-    <footer style={{ background: 'var(--navy)', color: 'var(--white)' }}>
+    <footer style={{ background: 'var(--foreground)', color: 'var(--cream)' }}>
       <div className="max-w-6xl mx-auto py-16 px-6 md:px-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div>
-            <span className="font-display uppercase tracking-widest text-xl block mb-4" style={{ color: 'var(--white)' }}>
+            <span className="font-mono uppercase tracking-[0.35em] text-[14px] font-bold block mb-4" style={{ color: 'var(--cream)' }}>
               PRACTIZIO
             </span>
             <p
               className="text-xs leading-relaxed"
               style={{
                 fontFamily: '"Space Mono", monospace',
-                color: 'rgba(255,255,255,0.25)',
+                color: 'rgba(247, 246, 242, 0.3)',
               }}
             >
               Making every business discoverable by AI agents worldwide.
@@ -45,7 +45,7 @@ export function Footer() {
           <div>
             <span
               className="mono-label block mb-5"
-              style={{ color: 'rgba(255,255,255,0.3)' }}
+              style={{ color: 'rgba(247, 246, 242, 0.35)' }}
             >
               PRODUCT
             </span>
@@ -54,8 +54,8 @@ export function Footer() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="block font-mono text-[12px] transition-colors duration-300"
-                  style={{ color: 'rgba(255,255,255,0.25)' }}
+                  className="block font-mono text-[12px] transition-colors duration-300 hover:text-[var(--cream)]"
+                  style={{ color: 'rgba(247, 246, 242, 0.3)' }}
                 >
                   {link.label}
                 </Link>
@@ -67,7 +67,7 @@ export function Footer() {
           <div>
             <span
               className="mono-label block mb-5"
-              style={{ color: 'rgba(255,255,255,0.3)' }}
+              style={{ color: 'rgba(247, 246, 242, 0.35)' }}
             >
               COMPANY
             </span>
@@ -76,8 +76,8 @@ export function Footer() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="block font-mono text-[12px] transition-colors duration-300"
-                  style={{ color: 'rgba(255,255,255,0.25)' }}
+                  className="block font-mono text-[12px] transition-colors duration-300 hover:text-[var(--cream)]"
+                  style={{ color: 'rgba(247, 246, 242, 0.3)' }}
                 >
                   {link.label}
                 </Link>
@@ -89,7 +89,7 @@ export function Footer() {
           <div>
             <span
               className="mono-label block mb-5"
-              style={{ color: 'rgba(255,255,255,0.3)' }}
+              style={{ color: 'rgba(247, 246, 242, 0.35)' }}
             >
               LEGAL
             </span>
@@ -98,8 +98,8 @@ export function Footer() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="block font-mono text-[12px] transition-colors duration-300"
-                  style={{ color: 'rgba(255,255,255,0.25)' }}
+                  className="block font-mono text-[12px] transition-colors duration-300 hover:text-[var(--cream)]"
+                  style={{ color: 'rgba(247, 246, 242, 0.3)' }}
                 >
                   {link.label}
                 </Link>
@@ -110,11 +110,11 @@ export function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+      <div style={{ borderTop: '1px solid rgba(247, 246, 242, 0.1)' }}>
         <div className="max-w-6xl mx-auto py-6 px-6 md:px-10 flex flex-col sm:flex-row justify-between items-center gap-4">
           <span
             className="font-mono text-[12px] uppercase"
-            style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}
+            style={{ letterSpacing: '0.3em', color: 'rgba(247, 246, 242, 0.25)' }}
           >
             &copy; 2026 PRACTIZIO
           </span>
@@ -124,7 +124,7 @@ export function Footer() {
                 key={link.label}
                 href={link.href}
                 className="font-mono text-[12px] uppercase transition-colors duration-300"
-                style={{ letterSpacing: '0.2em', color: 'rgba(255,255,255,0.25)' }}
+                style={{ letterSpacing: '0.2em', color: 'rgba(247, 246, 242, 0.25)' }}
               >
                 {link.label}
               </Link>
