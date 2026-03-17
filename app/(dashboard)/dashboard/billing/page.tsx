@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PLANS } from '@/lib/stripe/config'
@@ -57,7 +56,7 @@ export default function BillingPage() {
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-[400px]"><div className="mono-label-sm opacity-40">LOADING BILLING</div></div>
+    return <div className="flex items-center justify-center min-h-[400px]"><div className="font-['Space_Mono'] text-[10px] uppercase tracking-[0.2em] text-[var(--muted-text)]">LOADING BILLING</div></div>
   }
 
   const currentPlan = (practice?.plan as string) || 'free'
@@ -67,39 +66,39 @@ export default function BillingPage() {
   return (
     <div className="space-y-8 max-w-4xl">
       <div>
-        <span className="mono-label-sm opacity-40 block mb-3">SUBSCRIPTION MANAGEMENT</span>
-        <h1 className="font-display font-black uppercase text-3xl tracking-tightest">BILLING</h1>
+        <span className="font-['Space_Mono'] text-[10px] uppercase tracking-[0.2em] text-[var(--muted-text)] block mb-3">SUBSCRIPTION MANAGEMENT</span>
+        <h1 className="font-['Playfair_Display'] font-light text-3xl text-[var(--foreground)]">BILLING</h1>
       </div>
 
       {/* Current Plan */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><CreditCard className="w-5 h-5 text-accent" />Current Plan</CardTitle>
-          <CardDescription>
-            You are on the <span className="text-accent font-medium">{currentPlanConfig?.name || 'Free'}</span> plan
-          </CardDescription>
-        </CardHeader>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-background hairline">
+      <div className="bg-white border border-[var(--border-light)] rounded-[2px]">
+        <div className="p-6 border-b border-[var(--border-light)]">
+          <h3 className="font-['Playfair_Display'] font-light text-lg text-[var(--foreground)] flex items-center gap-2"><CreditCard className="w-5 h-5 text-[var(--primary-accent)]" />Current Plan</h3>
+          <p className="font-['Space_Mono'] text-sm text-[var(--muted-text)] mt-1">
+            You are on the <span className="text-[var(--primary-accent)] font-medium">{currentPlanConfig?.name || 'Free'}</span> plan
+          </p>
+        </div>
+        <div className="p-6 space-y-4">
+          <div className="flex items-center justify-between p-4 bg-[var(--cream)] border border-[var(--border-light)] rounded-[2px]">
             <div>
-              <p className="font-mono text-sm">AI Bookings This Month</p>
-              <p className="font-mono text-2xl font-bold text-accent mt-1">{bookingsThisMonth}</p>
+              <p className="font-['Space_Mono'] text-sm text-[var(--foreground)]">AI Bookings This Month</p>
+              <p className="font-['Space_Mono'] text-2xl font-bold text-[var(--primary-accent)] mt-1">{bookingsThisMonth}</p>
             </div>
             <div className="text-right">
-              <p className="font-mono text-xs opacity-40">Limit</p>
-              <p className="font-mono text-lg opacity-60">{bookingLimit === Infinity ? 'Unlimited' : bookingLimit}</p>
+              <p className="font-['Space_Mono'] text-xs text-[var(--muted-text)]">Limit</p>
+              <p className="font-['Space_Mono'] text-lg text-[var(--muted-text)]">{bookingLimit === Infinity ? 'Unlimited' : bookingLimit}</p>
             </div>
           </div>
           {bookingLimit !== Infinity && (
-            <div className="w-full bg-card hairline h-2 overflow-hidden">
-              <div className="h-full bg-accent transition-all" style={{ width: `${Math.min(100, (bookingsThisMonth / bookingLimit) * 100)}%` }} />
+            <div className="w-full bg-[var(--cream)] border border-[var(--border-light)] h-2 overflow-hidden rounded-[2px]">
+              <div className="h-full bg-[var(--primary-accent)] transition-all" style={{ width: `${Math.min(100, (bookingsThisMonth / bookingLimit) * 100)}%` }} />
             </div>
           )}
           {practice?.stripe_subscription_id && (
             <Button variant="outline" onClick={handleManageBilling}>Manage Billing</Button>
           )}
         </div>
-      </Card>
+      </div>
 
       {/* Plans */}
       <div className="grid md:grid-cols-3 gap-0">
@@ -107,21 +106,21 @@ export default function BillingPage() {
           const isCurrent = key === currentPlan
           const isPopular = 'popular' in plan && plan.popular
           return (
-            <div key={key} className={`p-8 hairline ${isCurrent ? 'bg-accent/5 border-accent/30' : ''}`}>
+            <div key={key} className={`p-8 border border-[var(--border-light)] ${isCurrent ? 'bg-[rgba(61,112,104,0.05)] border-[var(--primary-accent)]/30' : 'bg-white'}`}>
               <div className="flex items-center gap-2 mb-4">
                 {isPopular && <Badge variant="accent">POPULAR</Badge>}
                 {isCurrent && <Badge variant="success">CURRENT</Badge>}
               </div>
-              <h3 className="font-display font-black uppercase text-xl tracking-tightest">{plan.name}</h3>
+              <h3 className="font-['Playfair_Display'] font-light text-xl text-[var(--foreground)]">{plan.name}</h3>
               <div className="mt-2 mb-6">
-                <span className="font-display font-black text-3xl">${plan.price}</span>
-                {plan.price > 0 && <span className="font-mono text-xs opacity-40">/MO</span>}
+                <span className="font-['Playfair_Display'] font-light text-3xl text-[var(--foreground)]">${plan.price}</span>
+                {plan.price > 0 && <span className="font-['Space_Mono'] text-xs text-[var(--muted-text)]">/MO</span>}
               </div>
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                    <span className="font-sans text-sm opacity-70">{feature}</span>
+                    <Check className="w-4 h-4 text-[var(--primary-accent)] shrink-0 mt-0.5" />
+                    <span className="font-['Space_Mono'] text-sm text-[var(--foreground)] opacity-70">{feature}</span>
                   </li>
                 ))}
               </ul>

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatTime } from '@/lib/utils'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import type { Availability } from '@/types/database'
@@ -137,7 +136,7 @@ export default function AvailabilityPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="mono-label-sm opacity-40">LOADING AVAILABILITY</div>
+        <div className="font-['Space_Mono'] text-[10px] uppercase tracking-[0.2em] text-[var(--muted-text)]">LOADING AVAILABILITY</div>
       </div>
     )
   }
@@ -147,9 +146,9 @@ export default function AvailabilityPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <span className="mono-label-sm opacity-40 block mb-3">SCHEDULE CONFIG</span>
-          <h1 className="font-display font-black uppercase text-3xl tracking-tightest">AVAILABILITY</h1>
-          <p className="font-sans text-sm font-light opacity-50 mt-2">
+          <span className="font-['Space_Mono'] text-[10px] uppercase tracking-[0.2em] text-[var(--muted-text)] block mb-3">SCHEDULE CONFIG</span>
+          <h1 className="font-['Playfair_Display'] font-light text-3xl text-[var(--foreground)]">AVAILABILITY</h1>
+          <p className="font-['Space_Mono'] text-sm text-[var(--muted-text)] mt-2">
             Set your weekly hours so AI agents can book appointments
           </p>
         </div>
@@ -171,9 +170,9 @@ export default function AvailabilityPage() {
       {/* Availability Grid */}
       <div className="space-y-3">
         {availability.map((day) => (
-          <Card
+          <div
             key={day.day_of_week}
-            className={!day.is_open ? 'opacity-60' : undefined}
+            className={`bg-white border border-[var(--border-light)] rounded-[2px] p-4 ${!day.is_open ? 'opacity-60' : ''}`}
           >
             <div className="flex items-center gap-6">
               {/* Day toggle */}
@@ -184,7 +183,7 @@ export default function AvailabilityPage() {
                     updateDay(day.day_of_week, 'is_open', checked)
                   }
                 />
-                <span className="text-sm font-mono text-foreground font-medium">
+                <span className="text-sm font-['Space_Mono'] text-[var(--foreground)] font-medium">
                   {DAY_NAMES[day.day_of_week]}
                 </span>
               </div>
@@ -193,17 +192,17 @@ export default function AvailabilityPage() {
               {day.is_open ? (
                 <div className="flex items-center gap-3 flex-1">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5 text-accent" />
+                    <Clock className="w-3.5 h-3.5 text-[var(--primary-accent)]" />
                     <input
                       type="time"
                       value={day.open_time}
                       onChange={(e) =>
                         updateDay(day.day_of_week, 'open_time', e.target.value)
                       }
-                      className="px-3 py-1.5 bg-transparent hairline-b text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all"
+                      className="px-3 py-1.5 bg-transparent border-b border-[var(--border-light)] text-[var(--foreground)] font-['Space_Mono'] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)]/50 focus:border-[var(--primary-accent)]/50 transition-all"
                     />
                   </div>
-                  <span className="text-sm font-mono text-muted-foreground">to</span>
+                  <span className="text-sm font-['Space_Mono'] text-[var(--muted-text)]">to</span>
                   <div>
                     <input
                       type="time"
@@ -211,18 +210,18 @@ export default function AvailabilityPage() {
                       onChange={(e) =>
                         updateDay(day.day_of_week, 'close_time', e.target.value)
                       }
-                      className="px-3 py-1.5 bg-transparent hairline-b text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all"
+                      className="px-3 py-1.5 bg-transparent border-b border-[var(--border-light)] text-[var(--foreground)] font-['Space_Mono'] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)]/50 focus:border-[var(--primary-accent)]/50 transition-all"
                     />
                   </div>
-                  <span className="text-xs font-mono text-muted-foreground ml-2">
+                  <span className="text-xs font-['Space_Mono'] text-[var(--muted-text)] ml-2">
                     {formatTime(day.open_time)} - {formatTime(day.close_time)}
                   </span>
                 </div>
               ) : (
-                <span className="text-sm font-mono text-muted-foreground">Closed</span>
+                <span className="text-sm font-['Space_Mono'] text-[var(--muted-text)]">Closed</span>
               )}
             </div>
-          </Card>
+          </div>
         ))}
       </div>
     </div>

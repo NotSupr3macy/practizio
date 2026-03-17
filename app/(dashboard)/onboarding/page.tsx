@@ -1060,7 +1060,7 @@ export default function OnboardingPage() {
                   {formData.tags.map((tag) => (
                     <Badge key={tag} variant="accent" className="flex items-center gap-1">
                       {tag}
-                      <button type="button" onClick={() => removeTag(tag)} className="ml-1 hover:text-white">
+                      <button type="button" onClick={() => removeTag(tag)} className="ml-1 hover:text-[var(--foreground)]">
                         <X className="w-3 h-3" />
                       </button>
                     </Badge>
@@ -1086,14 +1086,14 @@ export default function OnboardingPage() {
                 </p>
 
                 {/* Platform search */}
-                <div className="flex items-center gap-2 hairline rounded-lg px-3 py-2.5 mb-3 focus-within:border-accent/40 transition-colors" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-                  <HelpCircle className="w-3.5 h-3.5 text-white/20 shrink-0" />
+                <div className="flex items-center gap-2 rounded-[2px] px-3 py-2.5 mb-3 border border-[var(--border-light)] focus-within:border-[var(--primary-accent)]/40 transition-colors">
+                  <HelpCircle className="w-3.5 h-3.5 text-[var(--muted-text)] shrink-0" />
                   <input
                     type="text"
                     value={platformSearchQuery}
                     onChange={(e) => setPlatformSearchQuery(e.target.value)}
                     placeholder="Search for your booking platform..."
-                    className="flex-1 bg-transparent font-mono text-xs text-white placeholder:text-white/20 focus:outline-none"
+                    className="flex-1 bg-transparent font-mono text-xs text-[var(--foreground)] placeholder:text-[var(--muted-text)] focus:outline-none"
                   />
                 </div>
 
@@ -1128,14 +1128,14 @@ export default function OnboardingPage() {
                                     updateField('booking_url', '')
                                     setUrlValidation({ status: 'idle', message: '' })
                                   }}
-                                  className={`flex items-center gap-2.5 px-4 py-3 text-left transition-all duration-200 border-b border-r border-white/[0.04] ${
+                                  className={`flex items-center gap-2.5 px-4 py-3 text-left transition-all duration-200 border-b border-r border-[var(--border-light)] ${
                                     isSelected
-                                      ? 'bg-accent/10 border-accent/20'
-                                      : 'hover:bg-white/[0.03]'
+                                      ? 'bg-[var(--primary-accent)]/10 border-[var(--primary-accent)]/20'
+                                      : 'hover:bg-[var(--cream)]'
                                   }`}
                                 >
                                   <span className="text-base shrink-0">{platform.emoji}</span>
-                                  <span className={`font-mono text-[11px] truncate ${isSelected ? 'text-accent font-medium' : 'text-white/60'}`}>
+                                  <span className={`font-mono text-[11px] truncate ${isSelected ? 'text-[var(--primary-accent)] font-medium' : 'text-[var(--muted-text)]'}`}>
                                     {platform.name}
                                   </span>
                                 </button>
@@ -1148,7 +1148,7 @@ export default function OnboardingPage() {
                   })}
                   {filteredPlatformCategories.length === 0 && (
                     <div className="px-4 py-6 text-center">
-                      <p className="font-mono text-xs text-white/20">No platforms found — try &quot;Other / Custom URL&quot;</p>
+                      <p className="font-mono text-xs text-[var(--muted-text)]">No platforms found — try &quot;Other / Custom URL&quot;</p>
                     </div>
                   )}
                 </div>
@@ -1169,15 +1169,15 @@ export default function OnboardingPage() {
                         {selectedBookingPlatform.instructions.map((instruction, i) => (
                           <li key={i} className="flex gap-3 items-start">
                             <span className="font-mono text-[10px] text-accent font-bold mt-0.5 shrink-0">{i + 1}.</span>
-                            <span className={`font-sans text-xs leading-relaxed ${instruction.startsWith('⚠️') ? 'text-yellow-400/80' : 'text-white/50'}`}>
+                            <span className={`font-sans text-xs leading-relaxed ${instruction.startsWith('⚠️') ? 'text-[#d4956a]' : 'text-[var(--muted-text)]'}`}>
                               {instruction}
                             </span>
                           </li>
                         ))}
                       </ol>
-                      <div className="mt-3 pt-3 border-t border-white/[0.06]">
-                        <p className="font-mono text-[10px] text-white/20">
-                          Example: <span className="text-white/30">{selectedBookingPlatform.exampleUrl}</span>
+                      <div className="mt-3 pt-3 border-t border-[var(--border-light)]">
+                        <p className="font-mono text-[10px] text-[var(--muted-text)]">
+                          Example: <span className="text-[var(--foreground)] opacity-50">{selectedBookingPlatform.exampleUrl}</span>
                         </p>
                       </div>
                     </div>
@@ -1190,18 +1190,18 @@ export default function OnboardingPage() {
                           : urlValidation.status === 'invalid_format' || urlValidation.status === 'unreachable'
                           ? 'border border-red-500/40 bg-red-500/[0.03]'
                           : 'hairline focus-within:border-accent/40'
-                      }`} style={urlValidation.status === 'idle' || urlValidation.status === 'checking' ? { borderColor: 'rgba(255,255,255,0.08)' } : undefined}>
-                        <LinkIcon className="w-3.5 h-3.5 text-white/20 shrink-0" />
+                      }`} style={urlValidation.status === 'idle' || urlValidation.status === 'checking' ? { borderColor: 'var(--border-light)' } : undefined}>
+                        <LinkIcon className="w-3.5 h-3.5 text-[var(--muted-text)] shrink-0" />
                         <input
                           type="url"
                           value={formData.booking_url}
                           onChange={(e) => updateField('booking_url', e.target.value)}
                           placeholder={selectedBookingPlatform.urlPlaceholder}
-                          className="flex-1 bg-transparent font-mono text-xs text-white placeholder:text-white/15 focus:outline-none"
+                          className="flex-1 bg-transparent font-mono text-xs text-[var(--foreground)] placeholder:text-[var(--muted-text)] focus:outline-none"
                         />
                         {/* Validation icon */}
                         {urlValidation.status === 'checking' && (
-                          <Loader2 className="w-4 h-4 text-white/30 animate-spin shrink-0" />
+                          <Loader2 className="w-4 h-4 text-[var(--muted-text)] animate-spin shrink-0" />
                         )}
                         {urlValidation.status === 'valid' && (
                           <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
@@ -1232,8 +1232,8 @@ export default function OnboardingPage() {
                       )}
                       {urlValidation.status === 'checking' && (
                         <div className="flex items-center gap-2 mt-2">
-                          <Loader2 className="w-3 h-3 text-white/30 animate-spin shrink-0" />
-                          <p className="font-mono text-[11px] text-white/30">{urlValidation.message}</p>
+                          <Loader2 className="w-3 h-3 text-[var(--muted-text)] animate-spin shrink-0" />
+                          <p className="font-mono text-[11px] text-[var(--muted-text)]">{urlValidation.message}</p>
                         </div>
                       )}
                       {urlValidation.status === 'idle' && (
@@ -1551,7 +1551,7 @@ export default function OnboardingPage() {
                 <p className="font-sans text-sm font-light opacity-50 mb-3">AI assistants will use this link to book for your customers.</p>
                 <div className="bg-background hairline px-4 py-3">
                   <code className="text-accent font-mono text-sm break-all">
-                    {typeof window !== 'undefined' ? window.location.origin : 'https://spadechat.com'}/api/mcp/{generatedSlug}
+                    {typeof window !== 'undefined' ? window.location.origin : 'https://practizio.com'}/api/mcp/{generatedSlug}
                   </code>
                 </div>
               </div>
@@ -1564,7 +1564,7 @@ export default function OnboardingPage() {
                   <span className="text-xl mt-0.5">🔵</span>
                   <div>
                     <p className="text-sm font-mono text-foreground font-medium">One more step after launch</p>
-                    <p className="text-xs font-sans text-white/50 mt-1">
+                    <p className="text-xs font-sans text-[var(--muted-text)] mt-1">
                       You&apos;ll be asked to sign in with Google so AI assistants can create appointments directly on your calendar. This is what makes the magic happen — customers get booked automatically.
                     </p>
                   </div>

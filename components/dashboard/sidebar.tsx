@@ -53,20 +53,20 @@ export function Sidebar({ practice, userEmail, needsAttention = {} }: SidebarPro
   }
 
   return (
-    <aside className="h-screen w-[260px] bg-[#080808] flex flex-col" style={{ borderRight: '1px solid rgba(255, 255, 255, 0.04)' }}>
+    <aside className="h-screen w-[260px] flex flex-col" style={{ background: 'var(--navy)', borderRight: '1px solid rgba(255, 255, 255, 0.06)' }}>
       {/* Logo */}
-      <div className="px-6 py-6" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
+      <div className="px-6 py-6" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <img src="/logo.png" alt="SpadeChat" className="w-7 h-7 object-contain" />
-          <span className="font-display font-extrabold uppercase tracking-tightest text-base text-chrome">
-            SPADECHAT
+          <img src="/logo.png" alt="Practizio" className="w-7 h-7 object-contain" />
+          <span className="font-display uppercase" style={{ letterSpacing: '-0.02em', fontSize: '1rem', color: 'var(--white)' }}>
+            PRACTIZIO
           </span>
         </Link>
-        <p className="mt-2.5 mono-label-sm text-white/15 truncate">
+        <p className="font-mono mt-2.5 truncate" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.3)' }}>
           {practice.name?.toUpperCase() || 'UNNAMED BUSINESS'}
         </p>
         {practice.industry && (
-          <p className="mono-label-sm text-white/10 truncate mt-0.5" style={{ fontSize: '8px' }}>
+          <p className="font-mono truncate mt-0.5" style={{ fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.15)' }}>
             {(practice.industry as string).toUpperCase()}
           </p>
         )}
@@ -81,14 +81,17 @@ export function Sidebar({ practice, userEmail, needsAttention = {} }: SidebarPro
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 px-6 py-2.5 font-mono text-[11px] font-medium uppercase transition-all duration-300 mx-2 rounded-lg',
+                'flex items-center gap-3 px-6 py-2.5 font-mono transition-all duration-300 relative',
                 active
-                  ? 'text-accent bg-accent/[0.06]'
-                  : 'text-white/25 hover:text-white/50 hover:bg-white/[0.02]'
+                  ? 'text-white'
+                  : 'text-white/25 hover:text-white/50'
               )}
-              style={{ letterSpacing: '0.15em' }}
+              style={{ fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.2em' }}
             >
-              <item.icon className={cn('w-4 h-4', active ? 'text-accent' : 'opacity-30')} />
+              {active && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5" style={{ background: 'var(--primary-accent)' }} />
+              )}
+              <item.icon className={cn('w-4 h-4', active ? 'text-white' : 'opacity-30')} strokeWidth={1.5} />
               {item.label}
               {needsAttention[item.href] && (
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse ml-auto shrink-0" />
@@ -99,31 +102,33 @@ export function Sidebar({ practice, userEmail, needsAttention = {} }: SidebarPro
       </nav>
 
       {/* Status */}
-      <div className="px-6 py-3" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.04)' }}>
+      <div className="px-6 py-3" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
         <div className="flex items-center gap-2">
-          <span className={`w-1.5 h-1.5 rounded-full ${practice.is_active ? 'bg-accent animate-glow-pulse' : 'bg-neon-pink'}`} />
-          <span className="mono-label-sm text-white/20">
+          <span className={`w-1.5 h-1.5 rounded-full ${practice.is_active ? 'animate-glow-pulse' : ''}`} style={{ background: practice.is_active ? 'var(--primary-accent)' : '#e74c6f' }} />
+          <span className="font-mono" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.3)' }}>
             {practice.is_active ? 'AI BOOKING ACTIVE' : 'AI BOOKING INACTIVE'}
           </span>
         </div>
         <div className="flex items-center gap-2 mt-1">
-          <span className="mono-label-sm text-white/10" style={{ fontSize: '8px' }}>
+          <span className="font-mono" style={{ fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.15)' }}>
             PLAN: {((practice.plan as string) || 'free').toUpperCase()}
           </span>
         </div>
       </div>
 
       {/* User */}
-      <div className="px-6 py-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.04)' }}>
-        <p className="mono-label-sm text-white/15 truncate mb-3">
+      <div className="px-6 py-4" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <p className="font-mono truncate mb-3" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.25)' }}>
           {userEmail}
         </p>
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-2 w-full py-2 font-mono text-[10px] font-medium uppercase text-white/15 hover:text-accent transition-all duration-300"
-          style={{ letterSpacing: '0.3em' }}
+          className="flex items-center gap-2 w-full py-2 font-mono transition-all duration-300"
+          style={{ fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(255, 255, 255, 0.25)' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-accent)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.25)'}
         >
-          <LogOut className="w-3.5 h-3.5" />
+          <LogOut className="w-3.5 h-3.5" strokeWidth={1.5} />
           SIGN OUT
         </button>
       </div>

@@ -12,11 +12,11 @@ const statuses = [
 ]
 
 const statusColors: Record<string, string> = {
-  new: 'text-accent border-accent/30 bg-accent/5',
-  contacted: 'text-neon-cyan border-neon-cyan/30 bg-neon-cyan/5',
-  setup_in_progress: 'text-neon-pink border-neon-pink/30 bg-neon-pink/5',
-  setup_complete: 'text-accent border-accent/30 bg-accent/5',
-  not_interested: 'text-destructive border-destructive/30 bg-destructive/5',
+  new: 'text-[var(--primary-accent)] border-[var(--primary-accent)]',
+  contacted: 'text-[var(--foreground)] border-[var(--border-light)]',
+  setup_in_progress: 'text-amber-600 border-amber-400',
+  setup_complete: 'text-emerald-600 border-emerald-400',
+  not_interested: 'text-red-600 border-red-400',
 }
 
 export function LeadStatusUpdater({
@@ -58,10 +58,14 @@ export function LeadStatusUpdater({
       value={status}
       onChange={(e) => handleChange(e.target.value)}
       disabled={loading}
-      className={`appearance-none bg-transparent font-mono text-[9px] font-medium uppercase px-2.5 py-1 rounded-full cursor-pointer focus:outline-none transition-all ${
-        statusColors[status] || 'text-white/50 border-white/10 bg-white/5'
+      className={`appearance-none bg-white px-2.5 py-1 rounded-[2px] cursor-pointer focus:outline-none transition-all ${
+        statusColors[status] || 'text-[var(--foreground)] border-[var(--border-light)]'
       } ${loading ? 'opacity-40' : ''}`}
       style={{
+        fontFamily: "'Space Mono', monospace",
+        fontSize: '9px',
+        fontWeight: 500,
+        textTransform: 'uppercase',
         letterSpacing: '0.15em',
         border: '1px solid',
       }}
@@ -70,7 +74,7 @@ export function LeadStatusUpdater({
         <option
           key={s.value}
           value={s.value}
-          className="bg-[#0c0c0c] text-white"
+          className="bg-white text-[var(--foreground)]"
         >
           {s.label}
         </option>

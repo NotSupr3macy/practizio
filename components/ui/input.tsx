@@ -13,24 +13,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div>
         {label && (
-          <label htmlFor={id} className="mono-label text-white/30 mb-2 block">{label}</label>
+          <label htmlFor={id} className="font-mono text-[10px] uppercase tracking-[0.25em] text-[var(--muted-text)] mb-2 block">{label}</label>
         )}
         <input
           ref={ref}
           id={id}
           className={cn(
-            'w-full bg-transparent border-0 pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none transition-colors duration-300 rounded-none',
-            error && 'focus:border-destructive',
+            'w-full bg-transparent border-0 border-b pb-3 font-mono text-sm text-[var(--foreground)] placeholder:text-[var(--muted-text)]/40 focus:outline-none transition-colors duration-300 rounded-none',
+            error ? 'border-b-red-600 focus:border-b-red-600' : 'border-b-[var(--border-light)] focus:border-b-[var(--primary-accent)]',
             className
           )}
-          style={{
-            borderBottom: error
-              ? '1px solid rgb(255, 51, 102)'
-              : '1px solid rgba(255, 255, 255, 0.08)',
-          }}
           {...props}
         />
-        {error && <p className="text-destructive font-mono text-xs mt-2">{error}</p>}
+        {error && <p className="text-red-600 font-mono text-xs mt-2 uppercase tracking-[0.2em]">{error}</p>}
       </div>
     )
   }

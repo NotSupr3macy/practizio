@@ -10,16 +10,15 @@ export function Badge({ children, variant = 'default', className }: BadgeProps) 
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2.5 py-1 font-mono text-[9px] font-medium uppercase rounded-full',
+        'inline-flex items-center px-2.5 py-1 font-mono text-[9px] font-medium uppercase rounded-[2px] tracking-[0.2em]',
         {
-          'bg-white/5 text-white/50': variant === 'default',
-          'bg-accent/10 text-accent': variant === 'accent' || variant === 'success',
-          'bg-neon-pink/10 text-neon-pink': variant === 'warning',
-          'bg-destructive/10 text-destructive': variant === 'destructive',
+          'bg-[var(--cream)] text-[var(--muted-text)] border border-[var(--border-light)]': variant === 'default',
+          'bg-[var(--primary-accent)]/10 text-[var(--primary-accent)]': variant === 'accent' || variant === 'success',
+          'bg-amber-50 text-amber-700': variant === 'warning',
+          'bg-red-50 text-red-600': variant === 'destructive',
         },
         className
       )}
-      style={{ letterSpacing: '0.15em' }}
     >
       {children}
     </span>

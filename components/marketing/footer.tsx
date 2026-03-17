@@ -22,57 +22,41 @@ const legalLinks = [
 
 export function Footer() {
   return (
-    <footer className="relative">
-      {/* Marquee divider */}
-      <div className="divider-chrome" />
-      <div className="py-3 overflow-hidden">
-        <div className="marquee-track">
-          <div className="marquee-content-reverse">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <span key={i} className="flex items-center gap-4 mx-4">
-                <span className="mono-label-sm text-white/[0.06]">SPADECHAT</span>
-                <span className="w-0.5 h-0.5 rounded-full bg-white/10" />
-                <span className="mono-label-sm text-white/[0.06]">AI FIRST</span>
-                <span className="w-0.5 h-0.5 rounded-full bg-white/10" />
-                <span className="mono-label-sm text-white/[0.06]">AI POWERED</span>
-                <span className="w-0.5 h-0.5 rounded-full bg-white/10" />
-              </span>
-            ))}
-          </div>
-          <div className="marquee-content-reverse" aria-hidden>
-            {Array.from({ length: 8 }).map((_, i) => (
-              <span key={i} className="flex items-center gap-4 mx-4">
-                <span className="mono-label-sm text-white/[0.06]">SPADECHAT</span>
-                <span className="w-0.5 h-0.5 rounded-full bg-white/10" />
-                <span className="mono-label-sm text-white/[0.06]">AI FIRST</span>
-                <span className="w-0.5 h-0.5 rounded-full bg-white/10" />
-                <span className="mono-label-sm text-white/[0.06]">AI POWERED</span>
-                <span className="w-0.5 h-0.5 rounded-full bg-white/10" />
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="divider-chrome" />
-
+    <footer style={{ background: 'var(--navy)', color: 'var(--white)' }}>
       <div className="max-w-6xl mx-auto py-16 px-6 md:px-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div>
-            <span className="font-display font-extrabold uppercase tracking-tightest text-xl block mb-4 text-white">
-              SPADECHAT
+            <span className="font-display uppercase tracking-widest text-xl block mb-4" style={{ color: 'var(--white)' }}>
+              PRACTIZIO
             </span>
-            <p className="font-sans text-xs text-white/20 leading-relaxed">
+            <p
+              className="text-xs leading-relaxed"
+              style={{
+                fontFamily: '"Space Mono", monospace',
+                color: 'rgba(255,255,255,0.25)',
+              }}
+            >
               Making every business discoverable by AI agents worldwide.
             </p>
           </div>
 
           {/* Product */}
           <div>
-            <span className="mono-label text-white/30 block mb-5">PRODUCT</span>
+            <span
+              className="mono-label block mb-5"
+              style={{ color: 'rgba(255,255,255,0.3)' }}
+            >
+              PRODUCT
+            </span>
             <div className="space-y-3">
               {productLinks.map((link) => (
-                <Link key={link.label} href={link.href} className="block font-sans text-sm font-light text-white/25 hover:text-accent transition-colors duration-300">
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="block font-mono text-[12px] transition-colors duration-300"
+                  style={{ color: 'rgba(255,255,255,0.25)' }}
+                >
                   {link.label}
                 </Link>
               ))}
@@ -81,10 +65,20 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <span className="mono-label text-white/30 block mb-5">COMPANY</span>
+            <span
+              className="mono-label block mb-5"
+              style={{ color: 'rgba(255,255,255,0.3)' }}
+            >
+              COMPANY
+            </span>
             <div className="space-y-3">
               {companyLinks.map((link) => (
-                <Link key={link.label} href={link.href} className="block font-sans text-sm font-light text-white/25 hover:text-accent transition-colors duration-300">
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="block font-mono text-[12px] transition-colors duration-300"
+                  style={{ color: 'rgba(255,255,255,0.25)' }}
+                >
                   {link.label}
                 </Link>
               ))}
@@ -93,10 +87,20 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <span className="mono-label text-white/30 block mb-5">LEGAL</span>
+            <span
+              className="mono-label block mb-5"
+              style={{ color: 'rgba(255,255,255,0.3)' }}
+            >
+              LEGAL
+            </span>
             <div className="space-y-3">
               {legalLinks.map((link) => (
-                <Link key={link.label} href={link.href} className="block font-sans text-sm font-light text-white/25 hover:text-accent transition-colors duration-300">
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="block font-mono text-[12px] transition-colors duration-300"
+                  style={{ color: 'rgba(255,255,255,0.25)' }}
+                >
                   {link.label}
                 </Link>
               ))}
@@ -106,13 +110,27 @@ export function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="divider-chrome" />
-      <div className="max-w-6xl mx-auto py-6 px-6 md:px-10 flex justify-between items-center">
-        <span className="mono-label-sm text-white/15">2026 SPADECHAT INC</span>
-        <span className="mono-label-sm text-white/20 flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-glow-pulse" />
-          OPERATIONAL
-        </span>
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="max-w-6xl mx-auto py-6 px-6 md:px-10 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <span
+            className="font-mono text-[12px] uppercase"
+            style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}
+          >
+            &copy; 2026 PRACTIZIO
+          </span>
+          <div className="flex items-center gap-6">
+            {legalLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="font-mono text-[12px] uppercase transition-colors duration-300"
+                style={{ letterSpacing: '0.2em', color: 'rgba(255,255,255,0.25)' }}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </footer>
   )

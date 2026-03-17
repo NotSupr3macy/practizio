@@ -62,40 +62,39 @@ export default function JoinForm() {
     }
   }
 
-  const inputStyle = { borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }
+  const inputStyle = { borderBottom: '1px solid var(--border-light)' }
   const shareUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/join${businessName ? `?ref=${encodeURIComponent(businessName.toLowerCase().replace(/\s+/g, '-'))}` : ''}`
     : ''
 
   if (success) {
     return (
-      <div className="pt-[72px] min-h-screen flex items-center justify-center px-6">
-        <div className="card-chrome p-10 md:p-14 max-w-lg w-full text-center">
-          <div className="w-16 h-16 rounded-full mx-auto glass-panel flex items-center justify-center mb-6">
-            <span className="text-accent font-display font-extrabold text-2xl">✓</span>
+      <div className="pt-[72px] min-h-screen flex items-center justify-center px-6 bg-[var(--cream)]">
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-10 md:p-14 max-w-lg w-full text-center">
+          <div className="w-16 h-16 rounded-[2px] mx-auto border border-[var(--border-light)] flex items-center justify-center mb-6">
+            <span className="text-[var(--primary-accent)] text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>&#10003;</span>
           </div>
-          <h2 className="font-display font-extrabold uppercase text-2xl tracking-tightest text-chrome-3d mb-4">
-            YOU&apos;RE IN
+          <h2 className="text-2xl tracking-tight text-[var(--foreground)] mb-4" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
+            You&apos;re In
           </h2>
-          <p className="font-sans text-sm text-white/50 leading-relaxed mb-8">
+          <p className="font-mono text-sm text-[var(--muted-text)] leading-relaxed mb-8">
             Thanks! We&apos;ll have your AI booking set up within 24 hours. Check your email for a confirmation.
           </p>
 
           {/* Referral share */}
-          <div className="glass-panel rounded-lg p-6 text-left">
-            <span className="mono-label-sm text-accent block mb-3">KNOW OTHER BUSINESS OWNERS?</span>
-            <p className="font-sans text-sm text-white/40 mb-4">
+          <div className="bg-[var(--cream)] border border-[var(--border-light)] rounded-[2px] p-6 text-left">
+            <span className="mono-label-sm text-[var(--primary-accent)] block mb-3">KNOW OTHER BUSINESS OWNERS?</span>
+            <p className="font-mono text-sm text-[var(--muted-text)] mb-4">
               Share this link and help them get AI-bookable too:
             </p>
             <div
-              className="font-mono text-xs text-white/70 bg-white/[0.03] p-3 rounded break-all select-all cursor-pointer"
-              style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}
+              className="font-mono text-xs text-[var(--foreground)] bg-white p-3 rounded-[2px] break-all select-all cursor-pointer border border-[var(--border-light)]"
             >
               {shareUrl}
             </div>
           </div>
 
-          <Link href="/" className="inline-block mt-8 btn-solid">
+          <Link href="/" className="inline-block mt-8 btn-primary">
             BACK TO HOME
           </Link>
         </div>
@@ -104,29 +103,29 @@ export default function JoinForm() {
   }
 
   return (
-    <div className="pt-[72px] min-h-screen flex items-center justify-center px-6 py-16">
-      <div className="max-w-lg w-full">
+    <div className="pt-[72px] min-h-screen flex items-center justify-center px-6 py-16 bg-[var(--cream)] bg-editorial-grid">
+      <div className="max-w-lg w-full relative z-10">
         {/* Header */}
         <div className="mb-10">
-          <span className="mono-label-sm opacity-40 block mb-4">JOIN SPADECHAT</span>
-          <h1 className="font-display font-black uppercase text-3xl md:text-5xl tracking-tightest text-chrome-3d">
-            GET YOUR BUSINESS AI-BOOKABLE
+          <span className="mono-label-sm text-[var(--muted-text)] block mb-4">JOIN PRACTIZIO</span>
+          <h1 className="text-3xl md:text-5xl tracking-tight text-[var(--foreground)]" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
+            Get your business <em className="text-[var(--taupe)]">AI-bookable</em>
           </h1>
-          <p className="font-sans text-sm font-light opacity-50 mt-4 max-w-md">
+          <p className="font-mono text-xs text-[var(--muted-text)] mt-4 max-w-md uppercase" style={{ letterSpacing: '0.2em' }}>
             Let AI assistants find and book your services. We&apos;ll set everything up for you — free.
           </p>
           {ref && (
-            <p className="font-mono text-xs text-accent/60 mt-2 uppercase" style={{ letterSpacing: '0.1em' }}>
+            <p className="font-mono text-xs text-[var(--primary-accent)] mt-2 uppercase" style={{ letterSpacing: '0.1em' }}>
               REFERRED BY: {ref}
             </p>
           )}
         </div>
 
         {/* Form */}
-        <div className="card-chrome p-8 md:p-10">
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-8 md:p-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="business-name" className="mono-label-sm text-white/30 mb-2 block">
+              <label htmlFor="business-name" className="mono-label-sm text-[var(--muted-text)] mb-2 block">
                 BUSINESS NAME *
               </label>
               <input
@@ -136,13 +135,13 @@ export default function JoinForm() {
                 onChange={(e) => setBusinessName(e.target.value)}
                 required
                 placeholder="e.g. Joe's Barbershop"
-                className="w-full bg-transparent pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none transition-colors duration-300"
+                className="w-full bg-transparent pb-3 font-mono text-sm text-[var(--foreground)] placeholder:text-[var(--muted-text)] focus:outline-none transition-colors duration-300"
                 style={inputStyle}
               />
             </div>
 
             <div>
-              <label htmlFor="owner-name" className="mono-label-sm text-white/30 mb-2 block">
+              <label htmlFor="owner-name" className="mono-label-sm text-[var(--muted-text)] mb-2 block">
                 YOUR NAME *
               </label>
               <input
@@ -152,13 +151,13 @@ export default function JoinForm() {
                 onChange={(e) => setOwnerName(e.target.value)}
                 required
                 placeholder="e.g. Joe Smith"
-                className="w-full bg-transparent pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none transition-colors duration-300"
+                className="w-full bg-transparent pb-3 font-mono text-sm text-[var(--foreground)] placeholder:text-[var(--muted-text)] focus:outline-none transition-colors duration-300"
                 style={inputStyle}
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="mono-label-sm text-white/30 mb-2 block">
+              <label htmlFor="email" className="mono-label-sm text-[var(--muted-text)] mb-2 block">
                 EMAIL *
               </label>
               <input
@@ -168,13 +167,13 @@ export default function JoinForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@business.com"
-                className="w-full bg-transparent pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none transition-colors duration-300"
+                className="w-full bg-transparent pb-3 font-mono text-sm text-[var(--foreground)] placeholder:text-[var(--muted-text)] focus:outline-none transition-colors duration-300"
                 style={inputStyle}
               />
             </div>
 
             <div>
-              <label htmlFor="phone" className="mono-label-sm text-white/30 mb-2 block">
+              <label htmlFor="phone" className="mono-label-sm text-[var(--muted-text)] mb-2 block">
                 PHONE
               </label>
               <input
@@ -183,24 +182,24 @@ export default function JoinForm() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="(555) 123-4567"
-                className="w-full bg-transparent pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none transition-colors duration-300"
+                className="w-full bg-transparent pb-3 font-mono text-sm text-[var(--foreground)] placeholder:text-[var(--muted-text)] focus:outline-none transition-colors duration-300"
                 style={inputStyle}
               />
             </div>
 
             <div>
-              <label htmlFor="booking-system" className="mono-label-sm text-white/30 mb-2 block">
+              <label htmlFor="booking-system" className="mono-label-sm text-[var(--muted-text)] mb-2 block">
                 WHAT BOOKING SYSTEM DO YOU USE?
               </label>
               <select
                 id="booking-system"
                 value={bookingSystem}
                 onChange={(e) => setBookingSystem(e.target.value)}
-                className="w-full bg-transparent pb-3 font-mono text-sm text-white focus:outline-none transition-colors duration-300 appearance-none cursor-pointer"
+                className="w-full bg-transparent pb-3 font-mono text-sm text-[var(--foreground)] focus:outline-none transition-colors duration-300 appearance-none cursor-pointer"
                 style={inputStyle}
               >
                 {BOOKING_SYSTEMS.map((system) => (
-                  <option key={system} value={system} className="bg-black text-white">
+                  <option key={system} value={system} className="bg-white text-[var(--foreground)]">
                     {system}
                   </option>
                 ))}
@@ -208,25 +207,25 @@ export default function JoinForm() {
             </div>
 
             {error && (
-              <div className="glass-panel rounded-lg px-4 py-3" style={{ borderColor: 'rgba(255, 51, 102, 0.2)' }}>
-                <p className="text-destructive font-mono text-sm">{error}</p>
+              <div className="border border-[#c0392b]/20 rounded-[2px] px-4 py-3 bg-white">
+                <p className="text-[#c0392b] font-mono text-sm">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full btn-solid disabled:opacity-30 disabled:cursor-not-allowed"
+              className="w-full btn-primary disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              {loading ? 'SUBMITTING...' : 'JOIN SPADECHAT'}
+              {loading ? 'SUBMITTING...' : 'JOIN PRACTIZIO'}
             </button>
           </form>
         </div>
 
         {/* Footer link */}
         <p className="mt-8 text-center">
-          <span className="mono-label-sm text-white/20">WANT TO SET IT UP YOURSELF?</span>{' '}
-          <Link href="/signup" className="text-accent hover:text-accent-hover mono-label-sm transition-colors duration-300">
+          <span className="mono-label-sm text-[var(--muted-text)]">WANT TO SET IT UP YOURSELF?</span>{' '}
+          <Link href="/signup" className="text-[var(--primary-accent)] hover:text-[var(--foreground)] mono-label-sm transition-colors duration-300">
             SIGN UP HERE
           </Link>
         </p>

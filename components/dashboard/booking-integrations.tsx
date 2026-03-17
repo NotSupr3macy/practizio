@@ -590,29 +590,29 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
   function renderValidationIcon() {
     switch (urlValidation.status) {
       case 'checking':
-        return <Loader2 className="w-3.5 h-3.5 text-white/40 animate-spin shrink-0" />
+        return <Loader2 className="w-3.5 h-3.5 text-[var(--muted-text)] animate-spin shrink-0" />
       case 'valid':
-        return <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+        return <CheckCircle className="w-3.5 h-3.5 text-[var(--primary-accent)] shrink-0" />
       case 'invalid_format':
       case 'unreachable':
-        return <XCircle className="w-3.5 h-3.5 text-red-400 shrink-0" />
+        return <XCircle className="w-3.5 h-3.5 text-[#c0392b] shrink-0" />
       default:
         return null
     }
   }
 
   return (
-    <div className="hairline rounded-2xl overflow-hidden">
+    <div className="border border-[var(--border-light)] rounded-[2px] overflow-hidden">
       {/* Header */}
       <div className="px-6 py-5 hairline-b flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <span className="mono-label-sm opacity-40 block mb-1">BOOKING SYSTEM</span>
-          <h3 className="font-display font-black uppercase text-lg tracking-tightest">CONNECT YOUR BOOKING SYSTEM</h3>
+          <span className="mono-label-sm text-[var(--muted-text)] opacity-60 block mb-1">BOOKING SYSTEM</span>
+          <h3 className="font-serif text-lg tracking-tightest" style={{ fontWeight: 300 }}>Connect Your Booking System</h3>
         </div>
         {savedPlatformId && (
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-accent animate-glow-pulse" />
-            <span className="mono-label-sm text-accent/70">
+            <span className="w-2 h-2 rounded-full bg-[var(--primary-accent)] animate-glow-pulse" />
+            <span className="mono-label-sm text-[var(--primary-accent)] opacity-70">
               {ALL_PLATFORMS.find((p) => p.id === savedPlatformId)?.name?.toUpperCase() || 'CONNECTED'}
             </span>
           </div>
@@ -624,13 +624,13 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
         <div className="md:w-64 lg:w-72 hairline-r shrink-0 flex flex-col">
           {/* Search */}
           <div className="px-4 py-3 hairline-b flex items-center gap-2">
-            <Search className="w-3.5 h-3.5 text-white/20 shrink-0" />
+            <Search className="w-3.5 h-3.5 text-[var(--muted-text)] opacity-40 shrink-0" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search platforms..."
-              className="flex-1 bg-transparent font-mono text-xs text-white placeholder:text-white/20 focus:outline-none"
+              className="flex-1 bg-transparent font-mono text-xs text-[var(--foreground)] placeholder:text-[var(--muted-text)] placeholder:opacity-40 focus:outline-none"
             />
           </div>
 
@@ -643,12 +643,12 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
                   {/* Category header */}
                   <button
                     onClick={() => toggleCategory(cat.label)}
-                    className="w-full flex items-center justify-between px-4 py-2 hairline-b hover:bg-white/[0.02] transition-colors"
+                    className="w-full flex items-center justify-between px-4 py-2 hairline-b hover:bg-[var(--cream)] transition-colors"
                   >
-                    <span className="font-mono text-[9px] opacity-30 uppercase tracking-[0.15em]">{cat.label}</span>
+                    <span className="font-mono text-[9px] text-[var(--muted-text)] opacity-50 uppercase tracking-[0.15em]">{cat.label}</span>
                     {expanded
-                      ? <ChevronUp className="w-3 h-3 opacity-20" />
-                      : <ChevronDown className="w-3 h-3 opacity-20" />}
+                      ? <ChevronUp className="w-3 h-3 text-[var(--muted-text)] opacity-40" />
+                      : <ChevronDown className="w-3 h-3 text-[var(--muted-text)] opacity-40" />}
                   </button>
 
                   {/* Platforms in category */}
@@ -662,21 +662,21 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
                         className={[
                           'w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hairline-b',
                           selected
-                            ? 'bg-accent/10'
-                            : 'hover:bg-white/[0.02]',
+                            ? 'bg-[var(--primary-accent)]/10'
+                            : 'hover:bg-[var(--cream)]',
                         ].join(' ')}
                       >
                         <span className="text-base shrink-0">{platform.emoji}</span>
                         <div className="flex-1 min-w-0">
-                          <p className={['font-mono text-xs truncate', selected ? 'text-white' : 'text-white/60'].join(' ')}>
+                          <p className={['font-mono text-xs truncate', selected ? 'text-[var(--foreground)]' : 'text-[var(--muted-text)]'].join(' ')}>
                             {platform.name}
                           </p>
                           {platform.isDefault && (
-                            <span className="font-mono text-[9px] text-accent/60 uppercase tracking-[0.1em]">Default</span>
+                            <span className="font-mono text-[9px] text-[var(--primary-accent)] opacity-60 uppercase tracking-[0.1em]">Default</span>
                           )}
                         </div>
                         {connected && (
-                          <CheckCircle className="w-3 h-3 text-accent shrink-0" />
+                          <CheckCircle className="w-3 h-3 text-[var(--primary-accent)] shrink-0" />
                         )}
                       </button>
                     )
@@ -687,7 +687,7 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
 
             {filteredCategories.length === 0 && (
               <div className="px-4 py-8 text-center">
-                <p className="font-mono text-xs text-white/20">No platforms found</p>
+                <p className="font-mono text-xs text-[var(--muted-text)] opacity-40">No platforms found</p>
               </div>
             )}
           </div>
@@ -699,12 +699,12 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
             <>
               {/* Platform header */}
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-white/5 hairline flex items-center justify-center text-2xl shrink-0">
+                <div className="w-12 h-12 rounded-[2px] bg-[var(--cream)] border border-[var(--border-light)] flex items-center justify-center text-2xl shrink-0">
                   {selectedPlatform.emoji}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="font-display font-black uppercase text-base tracking-tightest">
+                    <h4 className="font-serif text-base tracking-tightest" style={{ fontWeight: 300 }}>
                       {selectedPlatform.name}
                     </h4>
                     {isConnected(selectedPlatform.id) && (
@@ -714,7 +714,7 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
                       <Badge variant="accent">DEFAULT</Badge>
                     )}
                   </div>
-                  <p className="font-sans text-xs text-white/40 mt-1">{selectedPlatform.description}</p>
+                  <p className="font-sans text-xs text-[var(--muted-text)] mt-1">{selectedPlatform.description}</p>
                 </div>
               </div>
 
@@ -722,7 +722,7 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
               <div>
                 <button
                   onClick={() => setShowInstructions(!showInstructions)}
-                  className="flex items-center gap-2 font-mono text-[11px] text-accent/70 hover:text-accent transition-colors"
+                  className="flex items-center gap-2 font-mono text-[11px] text-[var(--primary-accent)] opacity-70 hover:opacity-100 transition-colors"
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
                   <span>{showInstructions ? 'Hide' : 'How to find your'} {selectedPlatform.name} link</span>
@@ -730,24 +730,24 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
                 </button>
 
                 {showInstructions && (
-                  <div className="mt-3 rounded-xl bg-white/[0.03] hairline p-4 space-y-2">
+                  <div className="mt-3 rounded-[2px] bg-[var(--cream)] border border-[var(--border-light)] p-4 space-y-2">
                     {selectedPlatform.instructions.map((step, i) => (
                       <div key={i} className="flex gap-3">
-                        <span className="font-mono text-[10px] text-accent/60 shrink-0 mt-0.5 w-4 text-right">
+                        <span className="font-mono text-[10px] text-[var(--primary-accent)] opacity-60 shrink-0 mt-0.5 w-4 text-right">
                           {step.startsWith('⚠️') ? '' : `${i + 1}.`}
                         </span>
                         <p className={[
                           'font-sans text-xs leading-relaxed',
-                          step.startsWith('⚠️') ? 'text-amber-400/80' : 'text-white/50',
+                          step.startsWith('⚠️') ? 'text-[#d4956a]' : 'text-[var(--muted-text)]',
                         ].join(' ')}>
                           {step}
                         </p>
                       </div>
                     ))}
                     {selectedPlatform.exampleUrl && (
-                      <div className="pt-2 mt-2 border-t border-white/[0.05]">
-                        <p className="font-mono text-[10px] text-white/25">
-                          Example: <span className="text-white/40">{selectedPlatform.exampleUrl}</span>
+                      <div className="pt-2 mt-2 border-t border-[var(--border-light)]">
+                        <p className="font-mono text-[10px] text-[var(--muted-text)] opacity-50">
+                          Example: <span className="text-[var(--muted-text)] opacity-70">{selectedPlatform.exampleUrl}</span>
                         </p>
                       </div>
                     )}
@@ -757,33 +757,33 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
 
               {/* URL input */}
               {selectedPlatform.noUrl ? (
-                <div className="card-metal rounded-xl p-5">
+                <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-5">
                   <div className="flex items-center gap-3 mb-3">
-                    <CheckCircle className="w-4 h-4 text-accent" />
-                    <p className="font-mono text-xs text-white/70">No external link required</p>
+                    <CheckCircle className="w-4 h-4 text-[var(--primary-accent)]" />
+                    <p className="font-mono text-xs text-[var(--foreground)] opacity-70">No external link required</p>
                   </div>
-                  <p className="font-sans text-xs text-white/30">
-                    SpadeChat will handle booking directly through your AI-powered profile. Customers interact with your services and book without leaving the SpadeChat ecosystem.
+                  <p className="font-sans text-xs text-[var(--muted-text)] opacity-60">
+                    Practizio will handle booking directly through your AI-powered profile. Customers interact with your services and book without leaving the Practizio ecosystem.
                   </p>
                 </div>
               ) : (
                 <div>
-                  <label className="mono-label-sm opacity-40 block mb-3">
+                  <label className="mono-label-sm text-[var(--muted-text)] opacity-60 block mb-3">
                     {selectedPlatform.urlLabel.toUpperCase()}
                   </label>
                   <div className={[
-                    'flex items-center gap-2 rounded-lg px-3 py-3 transition-colors border',
-                    urlValidation.status === 'valid' ? 'border-emerald-500/30' :
-                    urlValidation.status === 'invalid_format' || urlValidation.status === 'unreachable' ? 'border-red-500/30' :
-                    'border-white/[0.08] focus-within:border-accent/40',
+                    'flex items-center gap-2 rounded-[2px] px-3 py-3 transition-colors border',
+                    urlValidation.status === 'valid' ? 'border-[var(--primary-accent)]/30' :
+                    urlValidation.status === 'invalid_format' || urlValidation.status === 'unreachable' ? 'border-[#c0392b]/30' :
+                    'border-[var(--border-light)] focus-within:border-[var(--primary-accent)]/40',
                   ].join(' ')}>
-                    <LinkIcon className="w-3.5 h-3.5 text-white/20 shrink-0" />
+                    <LinkIcon className="w-3.5 h-3.5 text-[var(--muted-text)] opacity-40 shrink-0" />
                     <input
                       type="url"
                       value={urlValue}
                       onChange={(e) => { setUrlValue(e.target.value); setError(null); setSuccessMsg(null) }}
                       placeholder={selectedPlatform.urlPlaceholder}
-                      className="flex-1 bg-transparent font-mono text-xs text-white placeholder:text-white/15 focus:outline-none"
+                      className="flex-1 bg-transparent font-mono text-xs text-[var(--foreground)] placeholder:text-[var(--muted-text)] placeholder:opacity-30 focus:outline-none"
                     />
                     {renderValidationIcon()}
                   </div>
@@ -792,16 +792,16 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
                   {urlValidation.status !== 'idle' && (
                     <p className={[
                       'font-mono text-[11px] mt-2',
-                      urlValidation.status === 'valid' ? 'text-emerald-400' :
-                      urlValidation.status === 'checking' ? 'text-white/40' :
-                      'text-red-400',
+                      urlValidation.status === 'valid' ? 'text-[var(--primary-accent)]' :
+                      urlValidation.status === 'checking' ? 'text-[var(--muted-text)]' :
+                      'text-[#c0392b]',
                     ].join(' ')}>
                       {urlValidation.message}
                     </p>
                   )}
 
                   {urlValidation.status === 'idle' && (
-                    <p className="font-sans text-[11px] text-white/25 mt-2">
+                    <p className="font-sans text-[11px] text-[var(--muted-text)] opacity-50 mt-2">
                       Paste the direct link to your booking page. AI assistants will direct customers here to complete their booking.
                     </p>
                   )}
@@ -813,7 +813,7 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
                 <p className="font-mono text-[11px] text-destructive">{error}</p>
               )}
               {successMsg && (
-                <p className="font-mono text-[11px] text-accent">{successMsg}</p>
+                <p className="font-mono text-[11px] text-[var(--primary-accent)]">{successMsg}</p>
               )}
 
               {/* Action */}
@@ -827,7 +827,7 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
                   {saving ? 'SAVING...' : isConnected(selectedPlatform.id) ? 'UPDATE' : 'CONNECT'}
                 </Button>
                 {isConnected(selectedPlatform.id) && (
-                  <span className="flex items-center gap-1.5 font-mono text-[10px] text-accent/60">
+                  <span className="flex items-center gap-1.5 font-mono text-[10px] text-[var(--primary-accent)] opacity-60">
                     <CheckCircle className="w-3 h-3" />
                     ACTIVE
                   </span>
@@ -836,14 +836,14 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
 
               {/* Info callout */}
               <div className="mt-auto pt-4 hairline-t">
-                <p className="font-sans text-[11px] text-white/20 leading-relaxed">
+                <p className="font-sans text-[11px] text-[var(--muted-text)] opacity-40 leading-relaxed">
                   When AI assistants recommend your business, they will direct customers to your connected booking system. You can change this at any time.
                 </p>
               </div>
             </>
           ) : (
             <div className="flex items-center justify-center h-full py-16">
-              <p className="font-mono text-xs text-white/20">Select a platform to configure</p>
+              <p className="font-mono text-xs text-[var(--muted-text)] opacity-40">Select a platform to configure</p>
             </div>
           )}
         </div>

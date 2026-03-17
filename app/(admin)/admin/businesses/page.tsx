@@ -45,57 +45,58 @@ export default async function AdminBusinessesPage({
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="font-display font-extrabold text-4xl tracking-tightest text-chrome-3d">
-          BUSINESSES
+        <h1 className="text-4xl text-[var(--foreground)]" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
+          Businesses
         </h1>
-        <p className="mono-label-sm text-white/20 mt-2">
+        <p className="mt-2 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
           {practices?.length ?? 0} TOTAL BUSINESSES
         </p>
       </div>
 
       {/* Search */}
       <form method="GET" className="relative max-w-md">
-        <Search className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+        <Search className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-text)]" />
         <input
           name="q"
           defaultValue={q || ''}
           placeholder="Search by name, slug, or industry..."
-          className="w-full bg-transparent pl-7 pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none"
+          className="w-full bg-transparent pl-7 pb-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-text)] focus:outline-none"
           style={{
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            fontFamily: "'Space Mono', monospace",
+            borderBottom: '1px solid var(--border-light)',
           }}
         />
       </form>
 
       {/* Table */}
-      <div className="card-metal rounded-xl overflow-hidden">
+      <div className="bg-white border border-[var(--border-light)] rounded-[2px] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr
                 style={{
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                  borderBottom: '1px solid var(--border-light)',
                 }}
               >
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   NAME
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   INDUSTRY
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   SLUG
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   PLAN
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   STATUS
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   AI QUERIES
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   CREATED
                 </th>
               </tr>
@@ -104,23 +105,24 @@ export default async function AdminBusinessesPage({
               {practices?.map((practice) => (
                 <tr
                   key={practice.id}
-                  className="hover:bg-white/[0.02] transition-colors duration-200"
+                  className="hover:bg-[var(--cream)] transition-colors duration-200"
                   style={{
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.02)',
+                    borderBottom: '1px solid var(--border-light)',
                   }}
                 >
                   <td className="px-6 py-4">
                     <Link
                       href={`/admin/businesses/${practice.id}`}
-                      className="font-mono text-sm text-white/80 hover:text-accent transition-colors"
+                      className="text-sm text-[var(--foreground)] hover:text-[var(--primary-accent)] transition-colors"
+                      style={{ fontFamily: "'Space Mono', monospace" }}
                     >
                       {practice.name}
                     </Link>
                   </td>
-                  <td className="px-6 py-4 font-mono text-sm text-white/40">
+                  <td className="px-6 py-4 text-sm text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace" }}>
                     {practice.industry || '—'}
                   </td>
-                  <td className="px-6 py-4 mono-label-sm text-white/30">
+                  <td className="px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                     /{practice.slug}
                   </td>
                   <td className="px-6 py-4">
@@ -143,10 +145,10 @@ export default async function AdminBusinessesPage({
                       {practice.is_active ? 'ACTIVE' : 'INACTIVE'}
                     </Badge>
                   </td>
-                  <td className="px-6 py-4 font-display font-extrabold text-lg tracking-tightest text-accent">
+                  <td className="px-6 py-4 text-lg text-[var(--primary-accent)]" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
                     {queryCounts[practice.id] || 0}
                   </td>
-                  <td className="px-6 py-4 mono-label-sm text-white/20">
+                  <td className="px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                     {new Date(practice.created_at).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -159,7 +161,8 @@ export default async function AdminBusinessesPage({
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-6 py-12 text-center font-mono text-sm text-white/20"
+                    className="px-6 py-12 text-center text-sm text-[var(--muted-text)]"
+                    style={{ fontFamily: "'Space Mono', monospace" }}
                   >
                     No businesses found.
                   </td>

@@ -106,10 +106,10 @@ export default async function AdminOverviewPage() {
     <div className="space-y-10">
       {/* Header */}
       <div>
-        <h1 className="font-display font-extrabold text-4xl tracking-tightest text-chrome-3d">
-          ADMIN OVERVIEW
+        <h1 className="text-4xl text-[var(--foreground)]" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
+          Admin Overview
         </h1>
-        <p className="mono-label-sm text-white/20 mt-2">
+        <p className="mt-2 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
           PLATFORM METRICS &mdash;{' '}
           {now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase()}
         </p>
@@ -162,22 +162,22 @@ export default async function AdminOverviewPage() {
       {/* Tables Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Leads */}
-        <div className="card-metal rounded-xl p-6">
-          <h2 className="mono-label-sm text-white/20 mb-4">RECENT LEADS</h2>
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-6">
+          <h2 className="mb-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>RECENT LEADS</h2>
           {recentLeads.length === 0 ? (
-            <p className="font-mono text-sm text-white/20">No leads yet.</p>
+            <p className="text-sm text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace" }}>No leads yet.</p>
           ) : (
             <div className="space-y-3">
               {recentLeads.map((lead: Record<string, unknown>) => (
                 <div
                   key={lead.id as string}
-                  className="glass-panel rounded-lg p-4 flex items-center justify-between"
+                  className="bg-white border border-[var(--border-light)] rounded-[2px] p-4 flex items-center justify-between"
                 >
                   <div>
-                    <p className="font-mono text-sm text-white/80">
+                    <p className="text-sm text-[var(--foreground)]" style={{ fontFamily: "'Space Mono', monospace" }}>
                       {lead.business_name as string}
                     </p>
-                    <p className="mono-label-sm text-white/20 mt-1">
+                    <p className="mt-1 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                       {lead.email as string}
                     </p>
                   </div>
@@ -191,12 +191,12 @@ export default async function AdminOverviewPage() {
         </div>
 
         {/* Most Active Practices */}
-        <div className="card-metal rounded-xl p-6">
-          <h2 className="mono-label-sm text-white/20 mb-4">
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-6">
+          <h2 className="mb-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
             MOST ACTIVE BUSINESSES (AI QUERIES)
           </h2>
           {topPractices.length === 0 ? (
-            <p className="font-mono text-sm text-white/20">
+            <p className="text-sm text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace" }}>
               No AI queries this month.
             </p>
           ) : (
@@ -204,15 +204,15 @@ export default async function AdminOverviewPage() {
               {topPractices.map((p, i) => (
                 <div
                   key={p.slug || i}
-                  className="glass-panel rounded-lg p-4 flex items-center justify-between"
+                  className="bg-white border border-[var(--border-light)] rounded-[2px] p-4 flex items-center justify-between"
                 >
                   <div>
-                    <p className="font-mono text-sm text-white/80">{p.name}</p>
-                    <p className="mono-label-sm text-white/20 mt-1">
+                    <p className="text-sm text-[var(--foreground)]" style={{ fontFamily: "'Space Mono', monospace" }}>{p.name}</p>
+                    <p className="mt-1 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                       /{p.slug}
                     </p>
                   </div>
-                  <span className="font-display font-extrabold text-xl tracking-tightest text-accent">
+                  <span className="text-xl text-[var(--primary-accent)]" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
                     {p.count}
                   </span>
                 </div>
@@ -224,19 +224,19 @@ export default async function AdminOverviewPage() {
 
       {/* Integration Requests */}
       {integrationRequests.length > 0 && (
-        <div className="card-metal rounded-xl p-6">
-          <h2 className="mono-label-sm text-white/20 mb-4">INTEGRATION REQUESTS</h2>
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-6">
+          <h2 className="mb-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>INTEGRATION REQUESTS</h2>
           <div className="space-y-3">
             {integrationRequests.map((req: Record<string, unknown>) => (
               <div
                 key={req.id as string}
-                className="glass-panel rounded-lg p-4 flex items-center justify-between"
+                className="bg-white border border-[var(--border-light)] rounded-[2px] p-4 flex items-center justify-between"
               >
                 <div>
-                  <p className="font-mono text-sm text-white/80">
+                  <p className="text-sm text-[var(--foreground)]" style={{ fontFamily: "'Space Mono', monospace" }}>
                     {req.booking_system_name as string}
                   </p>
-                  <p className="mono-label-sm text-white/20 mt-1">
+                  <p className="mt-1 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                     {(req.practices as { name: string } | null)?.name || 'Unknown business'}
                   </p>
                 </div>

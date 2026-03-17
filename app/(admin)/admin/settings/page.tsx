@@ -65,12 +65,12 @@ export default function AdminSettingsPage() {
     <div className="space-y-8 max-w-4xl w-full">
       {/* Page Header */}
       <div>
-        <span className="mono-label-sm opacity-40 block mb-3">ADMIN CONFIG</span>
-        <h1 className="font-display font-black uppercase text-3xl tracking-tightest flex items-center gap-3">
-          <SettingsIcon className="w-8 h-8 text-accent" />
-          SETTINGS
+        <span className="block mb-3 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>ADMIN CONFIG</span>
+        <h1 className="text-3xl flex items-center gap-3 text-[var(--foreground)]" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
+          <SettingsIcon className="w-8 h-8 text-[var(--primary-accent)]" />
+          Settings
         </h1>
-        <p className="font-sans text-sm font-light opacity-50 mt-2">
+        <p className="text-sm mt-2 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace" }}>
           Manage your admin account credentials
         </p>
       </div>
@@ -79,7 +79,7 @@ export default function AdminSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Mail className="w-5 h-5 text-accent" />
+            <Mail className="w-5 h-5 text-[var(--primary-accent)]" />
             Email Address
           </CardTitle>
           <CardDescription>
@@ -123,7 +123,7 @@ export default function AdminSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Lock className="w-5 h-5 text-accent" />
+            <Lock className="w-5 h-5 text-[var(--primary-accent)]" />
             Password
           </CardTitle>
           <CardDescription>

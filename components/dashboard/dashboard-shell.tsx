@@ -32,20 +32,21 @@ export function DashboardShell({ children, sidebar, logoHref, title }: Dashboard
   }, [sidebarOpen])
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen" style={{ background: 'var(--cream)' }}>
       {/* Mobile Header */}
-      <div className="fixed top-0 left-0 right-0 h-14 bg-[#080808] flex items-center justify-between px-4 z-50 lg:hidden"
-        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}
+      <div className="fixed top-0 left-0 right-0 h-14 flex items-center justify-between px-4 z-50 lg:hidden"
+        style={{ background: 'var(--white)', borderBottom: '1px solid var(--border-light)' }}
       >
         <Link href={logoHref} className="flex items-center gap-2">
-          <img src="/logo.png" alt="SpadeChat" className="w-6 h-6 object-contain" />
-          <span className="font-display font-extrabold uppercase tracking-tightest text-sm text-chrome">
-            {title || 'SPADECHAT'}
+          <img src="/logo.png" alt="Practizio" className="w-6 h-6 object-contain" />
+          <span className="font-display uppercase" style={{ letterSpacing: '-0.02em', fontSize: '0.875rem', color: 'var(--navy)' }}>
+            {title || 'PRACTIZIO'}
           </span>
         </Link>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="w-9 h-9 flex items-center justify-center rounded-lg text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-all"
+          className="w-9 h-9 flex items-center justify-center transition-all"
+          style={{ color: 'var(--muted-text)', borderRadius: '2px' }}
           aria-label="Toggle menu"
         >
           {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

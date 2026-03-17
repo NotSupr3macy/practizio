@@ -56,8 +56,8 @@ export function ConnectionGateWrapper({ practice, userEmail, children }: Connect
   // Loading state (brief, prevents hydration mismatch)
   if (viewState === 'loading') {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--cream)' }}>
+        <div className="w-6 h-6 rounded-full animate-spin" style={{ border: '2px solid var(--border-light)', borderTopColor: 'var(--primary-accent)' }} />
       </div>
     )
   }

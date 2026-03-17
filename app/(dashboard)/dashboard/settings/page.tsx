@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -32,7 +31,7 @@ const TIMEZONES = [
 ]
 
 const BOOKING_SYSTEM_LABELS: Record<string, string> = {
-  internal: 'Internal (SpadeChat)',
+  internal: 'Internal (Practizio)',
   calendly: 'Calendly',
   acuity: 'Acuity / Squarespace Scheduling',
   cal_com: 'Cal.com',
@@ -235,7 +234,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="mono-label-sm opacity-40">LOADING SETTINGS</div>
+        <div className="font-['Space_Mono'] text-[10px] uppercase tracking-[0.2em] text-[var(--muted-text)]">LOADING SETTINGS</div>
       </div>
     )
   }
@@ -244,25 +243,25 @@ export default function SettingsPage() {
     <div className="space-y-8 max-w-4xl w-full">
       {/* Page Header */}
       <div>
-        <span className="mono-label-sm opacity-40 block mb-3">ACCOUNT CONFIG</span>
-        <h1 className="font-display font-black uppercase text-3xl tracking-tightest">SETTINGS</h1>
-        <p className="font-sans text-sm font-light opacity-50 mt-2">
+        <span className="font-['Space_Mono'] text-[10px] uppercase tracking-[0.2em] text-[var(--muted-text)] block mb-3">ACCOUNT CONFIG</span>
+        <h1 className="font-['Playfair_Display'] font-light text-3xl text-[var(--foreground)]">SETTINGS</h1>
+        <p className="font-['Space_Mono'] text-sm text-[var(--muted-text)] mt-2">
           Manage your account and business preferences
         </p>
       </div>
 
       {/* Change Email */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Mail className="w-5 h-5 text-accent" />
+      <div className="bg-white border border-[var(--border-light)] rounded-[2px]">
+        <div className="p-6 border-b border-[var(--border-light)]">
+          <h3 className="font-['Playfair_Display'] font-light text-lg text-[var(--foreground)] flex items-center gap-2">
+            <Mail className="w-5 h-5 text-[var(--primary-accent)]" />
             Email Address
-          </CardTitle>
-          <CardDescription>
+          </h3>
+          <p className="font-['Space_Mono'] text-sm text-[var(--muted-text)] mt-1">
             Update your account email. A confirmation will be sent to the new address.
-          </CardDescription>
-        </CardHeader>
-        <div className="px-6 pb-6">
+          </p>
+        </div>
+        <div className="px-6 pb-6 pt-4">
           <div className="flex gap-3">
             <div className="flex-1">
               <Input
@@ -289,20 +288,20 @@ export default function SettingsPage() {
             </Button>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Change Password */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Lock className="w-5 h-5 text-accent" />
+      <div className="bg-white border border-[var(--border-light)] rounded-[2px]">
+        <div className="p-6 border-b border-[var(--border-light)]">
+          <h3 className="font-['Playfair_Display'] font-light text-lg text-[var(--foreground)] flex items-center gap-2">
+            <Lock className="w-5 h-5 text-[var(--primary-accent)]" />
             Password
-          </CardTitle>
-          <CardDescription>
+          </h3>
+          <p className="font-['Space_Mono'] text-sm text-[var(--muted-text)] mt-1">
             Set a new password for your account
-          </CardDescription>
-        </CardHeader>
-        <div className="px-6 pb-6 space-y-4">
+          </p>
+        </div>
+        <div className="px-6 pb-6 pt-4 space-y-4">
           <Input
             id="new-password"
             type="password"
@@ -343,20 +342,20 @@ export default function SettingsPage() {
             </Button>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Timezone */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Globe className="w-5 h-5 text-accent" />
+      <div className="bg-white border border-[var(--border-light)] rounded-[2px]">
+        <div className="p-6 border-b border-[var(--border-light)]">
+          <h3 className="font-['Playfair_Display'] font-light text-lg text-[var(--foreground)] flex items-center gap-2">
+            <Globe className="w-5 h-5 text-[var(--primary-accent)]" />
             Timezone
-          </CardTitle>
-          <CardDescription>
+          </h3>
+          <p className="font-['Space_Mono'] text-sm text-[var(--muted-text)] mt-1">
             Set your business timezone for accurate availability and booking
-          </CardDescription>
-        </CardHeader>
-        <div className="px-6 pb-6">
+          </p>
+        </div>
+        <div className="px-6 pb-6 pt-4">
           <div className="flex gap-3">
             <div className="flex-1 relative">
               <select
@@ -365,15 +364,10 @@ export default function SettingsPage() {
                   setTimezone(e.target.value)
                   setTimezoneSaved(false)
                 }}
-                className="w-full appearance-none px-4 py-2.5 text-foreground font-mono text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all duration-200 cursor-pointer rounded-lg"
-                style={{
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  backgroundColor: '#0a0a0f',
-                  colorScheme: 'dark',
-                }}
+                className="w-full appearance-none px-4 py-2.5 text-[var(--foreground)] font-['Space_Mono'] text-sm focus:outline-none focus:ring-1 focus:ring-[var(--primary-accent)]/50 transition-all duration-200 cursor-pointer rounded-[2px] bg-white border border-[var(--border-light)]"
               >
                 {TIMEZONES.map((tz) => (
-                  <option key={tz.value} value={tz.value} style={{ backgroundColor: '#0a0a0f', color: '#ffffff' }}>
+                  <option key={tz.value} value={tz.value}>
                     {tz.label}
                   </option>
                 ))}
@@ -395,25 +389,25 @@ export default function SettingsPage() {
             </Button>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Booking System */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Link2 className="w-5 h-5 text-accent" />
+      <div className="bg-white border border-[var(--border-light)] rounded-[2px]">
+        <div className="p-6 border-b border-[var(--border-light)]">
+          <h3 className="font-['Playfair_Display'] font-light text-lg text-[var(--foreground)] flex items-center gap-2">
+            <Link2 className="w-5 h-5 text-[var(--primary-accent)]" />
             Booking System
-          </CardTitle>
-          <CardDescription>
+          </h3>
+          <p className="font-['Space_Mono'] text-sm text-[var(--muted-text)] mt-1">
             Manage your connected booking system for scheduling and appointments
-          </CardDescription>
-        </CardHeader>
-        <div className="px-6 pb-6">
-          <div className="p-4 bg-white/[0.02] rounded-lg" style={{ border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+          </p>
+        </div>
+        <div className="px-6 pb-6 pt-4">
+          <div className="p-4 bg-[var(--cream)] rounded-[2px] border border-[var(--border-light)]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div>
-                  <p className="text-sm font-mono text-foreground font-medium">
+                  <p className="text-sm font-['Space_Mono'] text-[var(--foreground)] font-medium">
                     {bookingLabel}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
@@ -441,20 +435,20 @@ export default function SettingsPage() {
                 </Button>
               )}
             </div>
-            <p className="text-xs font-mono text-white/30 mt-3">
+            <p className="text-xs font-['Space_Mono'] text-[var(--muted-text)] mt-3">
               To change your booking system, re-run the setup flow from your onboarding settings.
             </p>
           </div>
 
           {/* Google Calendar Direct Integration */}
           {bookingSystemType === 'google_calendar' && (
-            <div className="mt-4 p-4 bg-white/[0.02] rounded-lg" style={{ border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+            <div className="mt-4 p-4 bg-[var(--cream)] rounded-[2px] border border-[var(--border-light)]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-mono text-foreground font-medium">
+                  <p className="text-sm font-['Space_Mono'] text-[var(--foreground)] font-medium">
                     Google Calendar API
                   </p>
-                  <p className="text-xs font-mono text-white/30 mt-1">
+                  <p className="text-xs font-['Space_Mono'] text-[var(--muted-text)] mt-1">
                     {googleCalendarConnected
                       ? 'AI assistants can create appointments directly on your Google Calendar'
                       : 'Connect to let AI assistants book appointments directly on your calendar'}
@@ -493,20 +487,20 @@ export default function SettingsPage() {
             </div>
           )}
         </div>
-      </Card>
+      </div>
 
       {/* Payment Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-accent" />
+      <div className="bg-white border border-[var(--border-light)] rounded-[2px]">
+        <div className="p-6 border-b border-[var(--border-light)]">
+          <h3 className="font-['Playfair_Display'] font-light text-lg text-[var(--foreground)] flex items-center gap-2">
+            <CreditCard className="w-5 h-5 text-[var(--primary-accent)]" />
             Payment Settings
-          </CardTitle>
-          <CardDescription>
+          </h3>
+          <p className="font-['Space_Mono'] text-sm text-[var(--muted-text)] mt-1">
             Configure payment links and hold times for deposit-required services
-          </CardDescription>
-        </CardHeader>
-        <div className="px-6 pb-6 space-y-4">
+          </p>
+        </div>
+        <div className="px-6 pb-6 pt-4 space-y-4">
           <Input
             id="payment-url"
             label="Payment URL"
@@ -529,11 +523,11 @@ export default function SettingsPage() {
               setPaymentSaved(false)
             }}
           />
-          <div className="p-4 bg-white/[0.02] rounded-lg" style={{ border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+          <div className="p-4 bg-[var(--cream)] rounded-[2px] border border-[var(--border-light)]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-mono text-foreground font-medium">Stripe Connect</p>
-                <p className="text-xs font-mono text-white/30 mt-1">
+                <p className="text-sm font-['Space_Mono'] text-[var(--foreground)] font-medium">Stripe Connect</p>
+                <p className="text-xs font-['Space_Mono'] text-[var(--muted-text)] mt-1">
                   Coming soon — connect your Stripe account to auto-generate payment links for AI bookings
                 </p>
               </div>
@@ -559,26 +553,26 @@ export default function SettingsPage() {
             </Button>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Danger Zone */}
-      <Card className="!border-destructive/30">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-destructive">
+      <div className="bg-white border border-[#c0392b]/30 rounded-[2px]">
+        <div className="p-6 border-b border-[var(--border-light)]">
+          <h3 className="font-['Playfair_Display'] font-light text-lg text-[#c0392b] flex items-center gap-2">
             <AlertTriangle className="w-5 h-5" />
             Danger Zone
-          </CardTitle>
-          <CardDescription>
+          </h3>
+          <p className="font-['Space_Mono'] text-sm text-[var(--muted-text)] mt-1">
             Irreversible actions. Please proceed with caution.
-          </CardDescription>
-        </CardHeader>
-        <div className="px-6 pb-6">
-          <div className="flex items-center justify-between p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
+          </p>
+        </div>
+        <div className="px-6 pb-6 pt-4">
+          <div className="flex items-center justify-between p-4 bg-[#c0392b]/5 border border-[#c0392b]/20 rounded-[2px]">
             <div>
-              <p className="text-sm font-mono text-foreground font-medium">
+              <p className="text-sm font-['Space_Mono'] text-[var(--foreground)] font-medium">
                 Delete Account
               </p>
-              <p className="text-xs font-mono text-muted-foreground">
+              <p className="text-xs font-['Space_Mono'] text-[var(--muted-text)]">
                 Permanently delete your business, data, and subscription
               </p>
             </div>
@@ -606,12 +600,12 @@ export default function SettingsPage() {
             )}
           </div>
           {showDeleteConfirm && (
-            <p className="text-xs font-mono text-muted-foreground mt-3">
-              Account deletion requires contacting support. Please email support@spadechat.com to initiate the process.
+            <p className="text-xs font-['Space_Mono'] text-[var(--muted-text)] mt-3">
+              Account deletion requires contacting support. Please email support@practizio.com to initiate the process.
             </p>
           )}
         </div>
-      </Card>
+      </div>
     </div>
   )
 }

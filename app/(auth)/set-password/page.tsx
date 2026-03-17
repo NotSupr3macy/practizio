@@ -43,22 +43,22 @@ export default function SetPasswordPage() {
 
   return (
     <div>
-      <h2 className="font-display font-extrabold uppercase tracking-tightest text-2xl text-chrome mb-2">
+      <h2 className="font-serif uppercase" style={{ fontWeight: 300, fontSize: '1.5rem', color: 'var(--foreground)', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
         SET YOUR PASSWORD
       </h2>
-      <p className="text-white/30 text-sm mb-8">
+      <p style={{ color: 'var(--muted-text)', fontSize: '0.875rem', marginBottom: '2rem' }}>
         Choose a password to access your dashboard
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-            <p className="text-red-400 text-sm">{error}</p>
+          <div style={{ background: 'var(--white)', border: '1px solid rgba(220, 38, 38, 0.3)', borderRadius: '2px', padding: '0.75rem 1rem' }}>
+            <p className="font-mono" style={{ fontSize: '13px', color: '#dc2626' }}>{error}</p>
           </div>
         )}
 
         <div>
-          <label className="mono-label-sm text-white/30 mb-2 block">
+          <label className="font-mono block" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted-text)', marginBottom: '0.5rem' }}>
             NEW PASSWORD
           </label>
           <input
@@ -67,13 +67,14 @@ export default function SetPasswordPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={6}
-            className="w-full bg-white/[0.03] border-b border-white/10 px-0 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-accent transition-colors"
+            className="w-full font-mono bg-transparent focus:outline-none transition-colors"
+            style={{ borderBottom: '1px solid var(--border-light)', fontSize: '13px', color: 'var(--foreground)', padding: '0.75rem 0' }}
             placeholder="Min. 6 characters"
           />
         </div>
 
         <div>
-          <label className="mono-label-sm text-white/30 mb-2 block">
+          <label className="font-mono block" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted-text)', marginBottom: '0.5rem' }}>
             CONFIRM PASSWORD
           </label>
           <input
@@ -81,7 +82,8 @@ export default function SetPasswordPage() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="w-full bg-white/[0.03] border-b border-white/10 px-0 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-accent transition-colors"
+            className="w-full font-mono bg-transparent focus:outline-none transition-colors"
+            style={{ borderBottom: '1px solid var(--border-light)', fontSize: '13px', color: 'var(--foreground)', padding: '0.75rem 0' }}
             placeholder="Re-enter password"
           />
         </div>
@@ -89,7 +91,7 @@ export default function SetPasswordPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full btn-solid py-4 font-mono text-sm font-semibold uppercase tracking-widest disabled:opacity-50"
+          className="btn-primary w-full disabled:opacity-50"
         >
           {loading ? 'SETTING PASSWORD...' : 'SET PASSWORD & CONTINUE'}
         </button>

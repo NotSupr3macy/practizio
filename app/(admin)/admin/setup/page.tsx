@@ -84,27 +84,27 @@ export default function AdminSetupPage() {
     <div className="space-y-8 max-w-2xl">
       {/* Header */}
       <div>
-        <h1 className="font-display font-extrabold text-4xl tracking-tightest text-chrome-3d">
-          CONCIERGE SETUP
+        <h1 className="text-4xl text-[var(--foreground)]" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
+          Concierge Setup
         </h1>
-        <p className="mono-label-sm text-white/20 mt-2">
+        <p className="mt-2 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
           CREATE A BUSINESS ON BEHALF OF A CLIENT
         </p>
       </div>
 
       {/* Success */}
       {success && (
-        <div className="glass-panel rounded-xl p-6 flex items-start gap-4">
-          <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-            <Check className="w-4 h-4 text-accent" />
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-6 flex items-start gap-4">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(61, 112, 104, 0.1)' }}>
+            <Check className="w-4 h-4 text-[var(--primary-accent)]" />
           </div>
           <div>
-            <p className="font-mono text-sm text-accent font-medium">
+            <p className="text-sm text-[var(--primary-accent)] font-medium" style={{ fontFamily: "'Space Mono', monospace" }}>
               Business created successfully!
             </p>
-            <p className="font-mono text-sm text-white/40 mt-1">
+            <p className="text-sm text-[var(--muted-text)] mt-1" style={{ fontFamily: "'Space Mono', monospace" }}>
               Invite email sent to{' '}
-              <span className="text-white/60">{success}</span>
+              <span className="text-[var(--foreground)]">{success}</span>
             </p>
           </div>
         </div>
@@ -112,12 +112,12 @@ export default function AdminSetupPage() {
 
       {/* Error */}
       {error && (
-        <div className="glass-panel rounded-xl p-6 flex items-start gap-4">
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-6 flex items-start gap-4">
           <div className="w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
             <AlertCircle className="w-4 h-4 text-destructive" />
           </div>
           <div>
-            <p className="font-mono text-sm text-destructive font-medium">
+            <p className="text-sm text-destructive font-medium" style={{ fontFamily: "'Space Mono', monospace" }}>
               {error}
             </p>
           </div>
@@ -125,9 +125,9 @@ export default function AdminSetupPage() {
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="card-metal rounded-xl p-8 space-y-8">
+      <form onSubmit={handleSubmit} className="bg-white border border-[var(--border-light)] rounded-[2px] p-8 space-y-8">
         <div className="space-y-6">
-          <h2 className="mono-label-sm text-white/20">BUSINESS INFO</h2>
+          <h2 className="text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>BUSINESS INFO</h2>
 
           <Input
             label="Business Name"
@@ -183,7 +183,7 @@ export default function AdminSetupPage() {
         </div>
 
         <div className="space-y-6">
-          <h2 className="mono-label-sm text-white/20">ADDRESS</h2>
+          <h2 className="text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>ADDRESS</h2>
 
           <Input
             label="Street"

@@ -12,22 +12,22 @@ interface StatCardProps {
 
 export function StatCard({ title, value, change, trend, icon: Icon, className }: StatCardProps) {
   return (
-    <div className={cn('card-metal rounded-xl p-4 sm:p-6 card-interactive', className)}>
+    <div className={cn('bg-white border border-[var(--border-light)] rounded-[2px] p-4 sm:p-6 transition-all duration-300 hover:border-[var(--primary-accent)]', className)}>
       <div className="flex items-center justify-between mb-3 sm:mb-6">
-        <span className="mono-label-sm text-white/20">{title.toUpperCase()}</span>
-        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg glass-panel flex items-center justify-center">
-          <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/20" />
+        <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-[var(--muted-text)]">{title.toUpperCase()}</span>
+        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-[2px] border border-[var(--border-light)] flex items-center justify-center">
+          <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--primary-accent)]" />
         </div>
       </div>
-      <div className="font-display font-extrabold text-2xl sm:text-4xl tracking-tightest text-chrome truncate">{value}</div>
+      <div className="font-[Playfair_Display] font-light text-2xl sm:text-4xl text-[var(--foreground)] truncate">{value}</div>
       {change && (
         <div className="flex items-center gap-1.5 mt-3">
           {trend === 'up' ? (
-            <TrendingUp className="w-3 h-3 text-accent" />
+            <TrendingUp className="w-3 h-3 text-[var(--primary-accent)]" />
           ) : trend === 'down' ? (
-            <TrendingDown className="w-3 h-3 text-destructive" />
+            <TrendingDown className="w-3 h-3 text-red-600" />
           ) : null}
-          <span className={cn('mono-label-sm', trend === 'up' ? 'text-accent' : trend === 'down' ? 'text-destructive' : 'text-white/20')}>
+          <span className={cn('font-mono text-[9px] uppercase tracking-[0.25em]', trend === 'up' ? 'text-[var(--primary-accent)]' : trend === 'down' ? 'text-red-600' : 'text-[var(--muted-text)]')}>
             {change.toUpperCase()}
           </span>
         </div>

@@ -16,14 +16,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          'inline-flex items-center justify-center font-mono font-medium uppercase tracking-[0.2em] transition-all duration-400 rounded-lg focus:outline-none',
+          'inline-flex items-center justify-center font-mono font-medium uppercase tracking-[0.25em] transition-all duration-300 rounded-[2px] focus:outline-none text-[10px]',
           (loading || disabled) && 'opacity-40 cursor-not-allowed',
           {
-            'bg-accent text-black hover:shadow-[0_0_30px_rgba(40,105,169,0.4)] hover:translate-y-[-1px]': variant === 'solid',
-            'bg-gradient-to-r from-accent to-neon-cyan text-black hover:shadow-[0_0_30px_rgba(40,105,169,0.3)]': variant === 'accent',
-            'text-white/60 hover:text-white hover:bg-white/5': variant === 'outline',
-            'bg-transparent text-white/40 hover:text-white hover:bg-white/[0.03]': variant === 'ghost',
-            'bg-destructive text-white hover:bg-destructive/80 hover:shadow-[0_0_20px_rgba(255,51,102,0.3)]': variant === 'destructive',
+            'bg-[var(--primary-accent)] text-white hover:opacity-90': variant === 'solid' || variant === 'accent',
+            'border border-[var(--border-light)] text-[var(--foreground)] bg-transparent hover:bg-[var(--cream)]': variant === 'outline',
+            'bg-transparent text-[var(--muted-text)] hover:text-[var(--foreground)] hover:bg-[var(--cream)]': variant === 'ghost',
+            'bg-red-600 text-white hover:bg-red-700': variant === 'destructive',
           },
           {
             'px-4 py-2 text-[10px]': size === 'sm',
@@ -32,7 +31,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           },
           className
         )}
-        style={variant === 'outline' ? { border: '1px solid rgba(255, 255, 255, 0.08)' } : undefined}
         {...props}
       >
         {children}

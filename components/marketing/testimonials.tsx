@@ -1,3 +1,7 @@
+'use client'
+
+import { useState } from 'react'
+
 const testimonials = [
   {
     quote:
@@ -20,43 +24,76 @@ const testimonials = [
 ]
 
 export function Testimonials() {
-  return (
-    <section className="py-24 px-6 md:px-10 relative overflow-hidden">
-      <div className="glow-orb glow-orb-pink w-[400px] h-[400px] top-[5%] right-[5%] opacity-10" />
+  const [active, setActive] = useState(0)
+  const t = testimonials[active]
 
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="mb-16">
-          <span className="mono-label-sm text-white/20 mb-4 block">CLIENT FEEDBACK</span>
-          <h2 className="font-display font-extrabold uppercase text-5xl md:text-7xl tracking-tightest text-chrome-3d">
-            WHAT THEY
-            <br />
-            SAY
-          </h2>
+  return (
+    <section
+      className="py-24 px-6 md:px-10 relative overflow-hidden"
+      style={{ background: 'var(--charcoal)' }}
+    >
+      {/* Decorative quote mark */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none"
+        style={{
+          fontFamily: 'Anton, sans-serif',
+          fontSize: 'clamp(20rem, 40vw, 30rem)',
+          lineHeight: 1,
+          color: 'var(--navy)',
+          opacity: 0.3,
+        }}
+      >
+        &ldquo;
+      </div>
+
+      <div className="max-w-4xl mx-auto relative z-10 text-center">
+        {/* Label */}
+        <span
+          className="font-mono text-[10px] uppercase block mb-10"
+          style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.3)' }}
+        >
+          CLIENT FEEDBACK
+        </span>
+
+        {/* Quote */}
+        <p
+          className="font-display uppercase text-3xl md:text-5xl leading-tight"
+          style={{ color: 'var(--white)' }}
+        >
+          {t.quote}
+        </p>
+
+        {/* Attribution */}
+        <div className="mt-10">
+          <span
+            className="font-mono text-sm uppercase font-bold block"
+            style={{ letterSpacing: '0.2em', color: 'var(--white)' }}
+          >
+            {t.name}
+          </span>
+          <span
+            className="font-mono text-sm uppercase block mt-1"
+            style={{ letterSpacing: '0.2em', fontWeight: 400, color: 'var(--taupe)' }}
+          >
+            {t.role}
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((t) => (
-            <div
-              key={t.name}
-              className="card-metal rounded-2xl p-8 md:p-10 flex flex-col card-interactive relative overflow-hidden"
-            >
-              {/* Quote mark */}
-              <span className="font-display text-7xl text-white/[0.04] leading-none select-none">
-                &ldquo;
-              </span>
-
-              <p className="font-sans text-base font-light leading-relaxed text-white/50 mt-2 flex-1">
-                {t.quote}
-              </p>
-
-              <div className="mt-8 pt-6 relative">
-                <div className="divider-chrome absolute top-0 left-0 right-0" />
-                <span className="font-mono text-sm font-medium uppercase tracking-wide block text-chrome">
-                  {t.name}
-                </span>
-                <span className="mono-label-sm text-white/20 mt-1 block">{t.role}</span>
-              </div>
-            </div>
+        {/* Navigation dots */}
+        <div className="flex items-center justify-center gap-3 mt-10">
+          {testimonials.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActive(idx)}
+              className="transition-all duration-300"
+              style={{
+                width: idx === active ? 24 : 8,
+                height: 8,
+                borderRadius: '9999px',
+                background: idx === active ? 'var(--primary-accent)' : 'rgba(255,255,255,0.15)',
+              }}
+              aria-label={`Show testimonial ${idx + 1}`}
+            />
           ))}
         </div>
       </div>

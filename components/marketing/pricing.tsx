@@ -13,8 +13,6 @@ const plans = [
     ],
     cta: 'GET SET UP FREE',
     href: '/get-setup',
-    style: 'btn-solid',
-    highlight: true,
     recommended: true,
   },
   {
@@ -28,8 +26,7 @@ const plans = [
     ],
     cta: 'COMING SOON',
     href: '#',
-    style: 'btn-pill opacity-50 pointer-events-none',
-    highlight: false,
+    disabled: true,
   },
   {
     name: 'GROWTH',
@@ -43,26 +40,41 @@ const plans = [
     ],
     cta: 'COMING SOON',
     href: '#',
-    style: 'btn-pill opacity-50 pointer-events-none',
-    highlight: false,
+    disabled: true,
   },
 ]
 
 export function Pricing() {
   return (
-    <section id="pricing" className="py-24 px-6 md:px-10 relative overflow-hidden">
-      <div className="glow-orb glow-orb-cyan w-[500px] h-[500px] top-[10%] left-[-15%] opacity-15" />
-      <div className="glow-orb glow-orb-green w-[400px] h-[400px] bottom-[-10%] right-[-10%] opacity-15" />
-
+    <section
+      id="pricing"
+      className="section-light bg-editorial-grid py-24 px-6 md:px-10"
+    >
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="mb-16">
-          <span className="mono-label-sm text-accent/40 mb-4 block">SIMPLE PRICING</span>
-          <h2 className="font-display font-extrabold uppercase text-5xl md:text-7xl tracking-tightest text-chrome-3d">
-            FREE TO
-            <br />
-            START
+          <span
+            className="font-mono text-[10px] uppercase block mb-4"
+            style={{ letterSpacing: '0.3em', color: 'var(--taupe)' }}
+          >
+            SIMPLE PRICING
+          </span>
+          <h2
+            className="editorial-heading text-4xl md:text-6xl"
+            style={{ color: 'var(--foreground)' }}
+          >
+            Free to{' '}
+            <span style={{ fontStyle: 'italic', color: 'var(--taupe)' }}>start.</span>
           </h2>
-          <p className="font-sans text-base font-light text-white/30 mt-6 max-w-lg">
+          <p
+            className="mt-6 max-w-lg"
+            style={{
+              fontFamily: '"Playfair Display", serif',
+              fontWeight: 300,
+              fontSize: '16px',
+              color: 'var(--muted-text)',
+              lineHeight: 1.6,
+            }}
+          >
             Get your first 10 AI bookings every month for free. No credit card, no trial period, no feature gates. Upgrade only when you&apos;re getting real value.
           </p>
         </div>
@@ -71,41 +83,74 @@ export function Pricing() {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative flex flex-col h-full rounded-2xl p-8 md:p-10 card-interactive overflow-hidden ${
-                plan.highlight
-                  ? 'card-chrome'
-                  : 'card-metal'
-              }`}
+              className="relative flex flex-col h-full p-8 md:p-10"
+              style={{
+                background: 'var(--white)',
+                border: '1px solid var(--border-light)',
+                borderRadius: '2px',
+                borderTop: plan.recommended
+                  ? '2px solid var(--primary-accent)'
+                  : '1px solid var(--border-light)',
+              }}
             >
               {plan.recommended && (
-                <div className="absolute top-0 left-0 right-0">
-                  <div className="h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #2869A9, transparent)' }} />
-                </div>
-              )}
-
-              {plan.recommended && (
-                <span className="glass-panel inline-block px-3 py-1 rounded-full mono-label-sm text-accent mb-6 self-start">
+                <span
+                  className="font-mono text-[8px] uppercase inline-block px-3 py-1.5 mb-6 self-start"
+                  style={{
+                    letterSpacing: '0.3em',
+                    color: 'var(--primary-accent)',
+                    border: '1px solid var(--border-light)',
+                    borderRadius: '2px',
+                  }}
+                >
                   RECOMMENDED
                 </span>
               )}
 
               <div className="flex-1">
-                <span className="mono-label text-white/30 block mb-6">{plan.name}</span>
+                <span
+                  className="mono-label block mb-6"
+                  style={{ color: 'var(--muted-text)' }}
+                >
+                  {plan.name}
+                </span>
 
                 <div className="mb-8">
-                  <span className="text-chrome-3d font-display font-extrabold text-6xl tracking-tightest">
+                  <span
+                    className="text-4xl"
+                    style={{
+                      fontFamily: '"Playfair Display", serif',
+                      fontWeight: 300,
+                      color: 'var(--foreground)',
+                    }}
+                  >
                     ${plan.price}
                   </span>
-                  <span className="mono-label-sm text-white/20 ml-2">/MO</span>
+                  <span
+                    className="font-mono text-[8px] uppercase ml-2"
+                    style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
+                  >
+                    /MO
+                  </span>
                 </div>
 
-                <div className="divider-chrome mb-6" />
+                <div style={{ height: 1, background: 'var(--border-light)' }} className="mb-6" />
 
                 <ul className="space-y-4 mb-10">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
-                      <span className="w-1 h-1 rounded-full bg-accent/50 mt-2 shrink-0" />
-                      <span className="font-sans text-sm font-light leading-relaxed text-white/40">
+                      <span
+                        className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
+                        style={{ background: 'var(--primary-accent)' }}
+                      />
+                      <span
+                        className="text-sm leading-relaxed"
+                        style={{
+                          fontFamily: '"Playfair Display", serif',
+                          fontWeight: 300,
+                          color: 'var(--muted-text)',
+                        }}
+                      >
                         {feature}
                       </span>
                     </li>
@@ -115,20 +160,28 @@ export function Pricing() {
 
               {plan.name === 'FREE' ? (
                 <div className="flex flex-col gap-3">
-                  <Link href="/signup" className="btn-solid text-center">
+                  <Link href="/signup" className="btn-primary text-center">
                     SET UP MYSELF — FREE
                   </Link>
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 h-px bg-white/10" />
-                    <span className="mono-label-sm text-white/20">or</span>
-                    <div className="flex-1 h-px bg-white/10" />
+                    <div className="flex-1" style={{ height: 1, background: 'var(--border-light)' }} />
+                    <span
+                      className="font-mono text-[8px] uppercase"
+                      style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
+                    >
+                      or
+                    </span>
+                    <div className="flex-1" style={{ height: 1, background: 'var(--border-light)' }} />
                   </div>
-                  <Link href="/get-setup" className="btn-pill text-center">
+                  <Link href="/get-setup" className="btn-ghost text-center">
                     HAVE US DO IT — FREE
                   </Link>
                 </div>
               ) : (
-                <Link href={plan.href} className={plan.style}>
+                <Link
+                  href={plan.href}
+                  className={`btn-ghost text-center ${plan.disabled ? 'opacity-50 pointer-events-none' : ''}`}
+                >
                   {plan.cta}
                 </Link>
               )}

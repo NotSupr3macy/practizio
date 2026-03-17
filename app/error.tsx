@@ -14,20 +14,20 @@ export default function Error({
   }, [error])
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 bg-background">
+    <div className="min-h-screen flex items-center justify-center px-6 bg-[var(--cream)]">
       <div className="text-center">
-        <span className="font-display font-black text-[200px] leading-none tracking-tightest opacity-[0.04] block">
+        <span className="text-[200px] leading-none tracking-tight text-[var(--border-light)] block" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
           ERR
         </span>
         <div className="-mt-24 relative">
-          <span className="mono-label-sm opacity-40 block mb-4">SYSTEM ERROR</span>
-          <h1 className="font-display font-black uppercase text-3xl tracking-tightest">
-            SOMETHING WENT WRONG
+          <span className="mono-label-sm text-[var(--muted-text)] block mb-4">SYSTEM ERROR</span>
+          <h1 className="text-3xl tracking-tight text-[var(--foreground)]" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
+            Something Went Wrong
           </h1>
-          <p className="font-sans text-sm font-light opacity-40 mt-3">
+          <p className="font-mono text-sm text-[var(--muted-text)] mt-3">
             An unexpected error occurred. Please try again.
           </p>
-          <button onClick={() => reset()} className="mt-8 btn-solid">
+          <button onClick={() => reset()} className="mt-8 btn-primary">
             RETRY OPERATION
           </button>
         </div>

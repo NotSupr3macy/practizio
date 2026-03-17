@@ -31,46 +31,46 @@ export default async function AdminLeadsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="font-display font-extrabold text-4xl tracking-tightest text-chrome-3d">
-          LEADS
+        <h1 className="text-4xl text-[var(--foreground)]" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
+          Leads
         </h1>
-        <p className="mono-label-sm text-white/20 mt-2">
+        <p className="mt-2 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
           {leads?.length ?? 0} TOTAL LEADS
         </p>
       </div>
 
       {/* Table */}
-      <div className="card-metal rounded-xl overflow-hidden">
+      <div className="bg-white border border-[var(--border-light)] rounded-[2px] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr
                 style={{
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                  borderBottom: '1px solid var(--border-light)',
                 }}
               >
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   BUSINESS
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   OWNER
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   EMAIL
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   PHONE
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   BOOKING SYSTEM
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   STATUS
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   REFERRED BY
                 </th>
-                <th className="text-left px-6 py-4 mono-label-sm text-white/20">
+                <th className="text-left px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                   CREATED
                 </th>
               </tr>
@@ -79,24 +79,24 @@ export default async function AdminLeadsPage() {
               {leads?.map((lead) => (
                 <tr
                   key={lead.id}
-                  className="hover:bg-white/[0.02] transition-colors duration-200"
+                  className="hover:bg-[var(--cream)] transition-colors duration-200"
                   style={{
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.02)',
+                    borderBottom: '1px solid var(--border-light)',
                   }}
                 >
-                  <td className="px-6 py-4 font-mono text-sm text-white/80">
+                  <td className="px-6 py-4 text-sm text-[var(--foreground)]" style={{ fontFamily: "'Space Mono', monospace" }}>
                     {lead.business_name}
                   </td>
-                  <td className="px-6 py-4 font-mono text-sm text-white/60">
+                  <td className="px-6 py-4 text-sm text-[var(--foreground)]" style={{ fontFamily: "'Space Mono', monospace", opacity: 0.7 }}>
                     {lead.owner_name}
                   </td>
-                  <td className="px-6 py-4 mono-label-sm text-white/40">
+                  <td className="px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                     {lead.email}
                   </td>
-                  <td className="px-6 py-4 mono-label-sm text-white/40">
+                  <td className="px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                     {lead.phone || '—'}
                   </td>
-                  <td className="px-6 py-4 mono-label-sm text-white/40">
+                  <td className="px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                     {lead.booking_system || '—'}
                   </td>
                   <td className="px-6 py-4">
@@ -105,10 +105,10 @@ export default async function AdminLeadsPage() {
                       currentStatus={lead.status}
                     />
                   </td>
-                  <td className="px-6 py-4 mono-label-sm text-white/30">
+                  <td className="px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                     {lead.referred_by_slug || lead.referral_source || '—'}
                   </td>
-                  <td className="px-6 py-4 mono-label-sm text-white/20">
+                  <td className="px-6 py-4 text-[var(--muted-text)]" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                     {new Date(lead.created_at).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -121,7 +121,8 @@ export default async function AdminLeadsPage() {
                 <tr>
                   <td
                     colSpan={8}
-                    className="px-6 py-12 text-center font-mono text-sm text-white/20"
+                    className="px-6 py-12 text-center text-sm text-[var(--muted-text)]"
+                    style={{ fontFamily: "'Space Mono', monospace" }}
                   >
                     No leads yet.
                   </td>

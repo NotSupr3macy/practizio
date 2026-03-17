@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { cn, formatCurrency } from '@/lib/utils'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -116,7 +115,7 @@ export default function ServicesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="mono-label-sm opacity-40">LOADING SERVICES</div>
+        <div className="font-['Space_Mono'] text-[10px] uppercase tracking-[0.2em] text-[var(--muted-text)]">LOADING SERVICES</div>
       </div>
     )
   }
@@ -126,9 +125,9 @@ export default function ServicesPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <span className="mono-label-sm opacity-40 block mb-3">SERVICE MANAGEMENT</span>
-          <h1 className="font-display font-black uppercase text-3xl tracking-tightest">SERVICES</h1>
-          <p className="font-sans text-sm font-light opacity-50 mt-2">
+          <span className="font-['Space_Mono'] text-[10px] uppercase tracking-[0.2em] text-[var(--muted-text)] block mb-3">SERVICE MANAGEMENT</span>
+          <h1 className="font-['Playfair_Display'] font-light text-3xl text-[var(--foreground)]">SERVICES</h1>
+          <p className="font-['Space_Mono'] text-sm text-[var(--muted-text)] mt-2">
             Manage the services AI agents can see and book
           </p>
         </div>
@@ -142,19 +141,19 @@ export default function ServicesPage() {
 
       {/* Add/Edit Form */}
       {showForm && (
-        <Card className="border-accent/20">
-          <CardHeader>
+        <div className="bg-white border border-[var(--primary-accent)]/20 rounded-[2px]">
+          <div className="p-6 border-b border-[var(--border-light)]">
             <div className="flex items-center justify-between">
-              <CardTitle>{editingId ? 'Edit Service' : 'New Service'}</CardTitle>
+              <h3 className="font-['Playfair_Display'] font-light text-lg text-[var(--foreground)]">{editingId ? 'Edit Service' : 'New Service'}</h3>
               <button
                 onClick={handleCancel}
-                className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1 text-[var(--muted-text)] hover:text-[var(--foreground)] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-          </CardHeader>
-          <div className="space-y-4">
+          </div>
+          <div className="p-6 space-y-4">
             <Input
               id="service-name"
               label="Service Name"
@@ -193,7 +192,7 @@ export default function ServicesPage() {
             <div className="space-y-1.5">
               <label
                 htmlFor="service-description"
-                className="block text-sm text-muted-foreground"
+                className="block text-sm text-[var(--muted-text)]"
               >
                 Description
               </label>
@@ -201,7 +200,7 @@ export default function ServicesPage() {
                 id="service-description"
                 rows={3}
                 placeholder="Describe this service for AI agents..."
-                className="w-full px-4 py-2.5 bg-card hairline text-foreground font-mono text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all duration-200 resize-none"
+                className="w-full px-4 py-2.5 bg-white border border-[var(--border-light)] rounded-[2px] text-[var(--foreground)] font-['Space_Mono'] text-sm placeholder:text-[var(--muted-text)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)]/50 focus:border-[var(--primary-accent)]/50 transition-all duration-200 resize-none"
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
               />
@@ -215,29 +214,29 @@ export default function ServicesPage() {
               </Button>
             </div>
           </div>
-        </Card>
+        </div>
       )}
 
       {/* Services Table */}
       {services.length > 0 ? (
-        <Card>
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px]">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="hairline-b">
-                  <th className="text-left text-xs font-mono text-muted-foreground py-3 px-4">
+                <tr className="border-b border-[var(--border-light)]">
+                  <th className="text-left text-xs font-['Space_Mono'] text-[var(--muted-text)] py-3 px-4">
                     Service
                   </th>
-                  <th className="text-left text-xs font-mono text-muted-foreground py-3 px-4">
+                  <th className="text-left text-xs font-['Space_Mono'] text-[var(--muted-text)] py-3 px-4">
                     Price Range
                   </th>
-                  <th className="text-left text-xs font-mono text-muted-foreground py-3 px-4">
+                  <th className="text-left text-xs font-['Space_Mono'] text-[var(--muted-text)] py-3 px-4">
                     Duration
                   </th>
-                  <th className="text-left text-xs font-mono text-muted-foreground py-3 px-4">
+                  <th className="text-left text-xs font-['Space_Mono'] text-[var(--muted-text)] py-3 px-4">
                     Description
                   </th>
-                  <th className="text-right text-xs font-mono text-muted-foreground py-3 px-4">
+                  <th className="text-right text-xs font-['Space_Mono'] text-[var(--muted-text)] py-3 px-4">
                     Actions
                   </th>
                 </tr>
@@ -246,17 +245,17 @@ export default function ServicesPage() {
                 {services.map((service) => (
                   <tr
                     key={service.id}
-                    className="hairline-b hover:bg-white/[0.02] transition-colors"
+                    className="border-b border-[var(--border-light)] hover:bg-[var(--cream)] transition-colors"
                   >
                     <td className="py-3 px-4">
-                      <span className="text-sm font-mono text-foreground font-medium">
+                      <span className="text-sm font-['Space_Mono'] text-[var(--foreground)] font-medium">
                         {service.name}
                       </span>
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-1.5">
-                        <DollarSign className="w-3 h-3 text-success" />
-                        <span className="text-sm font-mono text-foreground">
+                        <DollarSign className="w-3 h-3 text-green-600" />
+                        <span className="text-sm font-['Space_Mono'] text-[var(--foreground)]">
                           {service.price_min && service.price_max
                             ? `${formatCurrency(service.price_min)} - ${formatCurrency(service.price_max)}`
                             : service.price_min
@@ -267,8 +266,8 @@ export default function ServicesPage() {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-3 h-3 text-accent" />
-                        <span className="text-sm font-mono text-foreground">
+                        <Clock className="w-3 h-3 text-[var(--primary-accent)]" />
+                        <span className="text-sm font-['Space_Mono'] text-[var(--foreground)]">
                           {service.duration_minutes
                             ? `${service.duration_minutes} min`
                             : 'Not set'}
@@ -276,7 +275,7 @@ export default function ServicesPage() {
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <span className="text-sm font-mono text-muted-foreground line-clamp-1 max-w-[200px]">
+                      <span className="text-sm font-['Space_Mono'] text-[var(--muted-text)] line-clamp-1 max-w-[200px]">
                         {service.description || '--'}
                       </span>
                     </td>
@@ -284,14 +283,14 @@ export default function ServicesPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleEdit(service)}
-                          className="p-1.5 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all"
+                          className="p-1.5 text-[var(--muted-text)] hover:text-[var(--primary-accent)] hover:bg-[rgba(61,112,104,0.1)] transition-all rounded-[2px]"
                           title="Edit"
                         >
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDelete(service.id)}
-                          className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                          className="p-1.5 text-[var(--muted-text)] hover:text-[#c0392b] hover:bg-[#c0392b]/10 transition-all rounded-[2px]"
                           title="Delete"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -303,11 +302,11 @@ export default function ServicesPage() {
               </tbody>
             </table>
           </div>
-        </Card>
+        </div>
       ) : (
-        <Card className="text-center py-12">
-          <DollarSign className="w-10 h-10 text-muted-foreground/50 mx-auto mb-3" />
-          <p className="text-sm font-mono text-muted-foreground mb-4">
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px] text-center py-12">
+          <DollarSign className="w-10 h-10 text-[var(--muted-text)] mx-auto mb-3" />
+          <p className="text-sm font-['Space_Mono'] text-[var(--muted-text)] mb-4">
             No services added yet. Add your first service so AI agents can show it to patients.
           </p>
           {!showForm && (
@@ -316,7 +315,7 @@ export default function ServicesPage() {
               Add Service
             </Button>
           )}
-        </Card>
+        </div>
       )}
     </div>
   )

@@ -48,10 +48,10 @@ export default function ResetPage() {
 
   return (
     <div className="text-center">
-      <h2 className="font-display font-extrabold uppercase tracking-tightest text-2xl text-chrome mb-4">
+      <h2 className="font-serif uppercase" style={{ fontWeight: 300, fontSize: '1.5rem', color: 'var(--foreground)', letterSpacing: '0.05em', marginBottom: '1rem' }}>
         SETTING UP
       </h2>
-      <p className="text-white/40 text-sm">{status}</p>
+      <p style={{ color: 'var(--muted-text)', fontSize: '0.875rem' }}>{status}</p>
     </div>
   )
 }

@@ -2,42 +2,87 @@ import Link from 'next/link'
 
 export function CommandBar() {
   return (
-    <section className="py-20 px-6 md:px-10 relative overflow-hidden">
-      <div className="glow-orb glow-orb-green w-[500px] h-[500px] top-[-20%] left-[30%] opacity-10" />
-
+    <section
+      className="section-light bg-editorial-grid py-20 px-6 md:px-10"
+    >
       <div className="max-w-4xl mx-auto relative z-10">
         {/* CTA Card */}
-        <div className="card-chrome rounded-3xl p-10 md:p-14 text-center relative overflow-hidden">
-          {/* Top metallic accent */}
-          <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #2869A9, #00F0FF, transparent)' }} />
+        <div
+          className="p-10 md:p-14 text-center"
+          style={{
+            background: 'var(--white)',
+            border: '1px solid var(--border-light)',
+            borderRadius: '2px',
+          }}
+        >
+          <span
+            className="font-mono text-[10px] uppercase block mb-6"
+            style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
+          >
+            LAUNCH YOUR AI PRESENCE
+          </span>
 
-          <span className="mono-label-sm text-white/20 block mb-6">LAUNCH YOUR AI PRESENCE</span>
-
-          <h2 className="font-display font-extrabold uppercase text-3xl md:text-5xl tracking-tightest text-chrome-3d mb-4">
-            START FREE TODAY
+          <h2
+            className="editorial-heading text-3xl md:text-5xl mb-4"
+            style={{ color: 'var(--foreground)' }}
+          >
+            Start free{' '}
+            <span style={{ fontStyle: 'italic', color: 'var(--taupe)' }}>
+              today.
+            </span>
           </h2>
 
-          <p className="font-sans text-base font-light text-white/30 max-w-md mx-auto mb-10">
-            We'll set up your AI booking page for free — no technical skills needed. Just tell us about your business.
+          <p
+            className="max-w-md mx-auto mb-10"
+            style={{
+              fontFamily: '"Playfair Display", serif',
+              fontWeight: 300,
+              fontSize: '16px',
+              color: 'var(--muted-text)',
+              lineHeight: 1.6,
+            }}
+          >
+            We&apos;ll set up your AI booking page for free — no technical skills needed. Just tell us about your business.
           </p>
 
           {/* Action */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/get-setup" className="btn-solid">
-              GET SET UP FREE — WE'LL DO IT FOR YOU
+            <Link href="/get-setup" className="btn-primary">
+              GET SET UP FREE — WE&apos;LL DO IT FOR YOU
             </Link>
-            <Link href="/signup" className="btn-pill">
+            <Link href="/signup" className="btn-ghost">
               SET IT UP YOURSELF
             </Link>
           </div>
 
           {/* Bottom labels */}
           <div className="flex items-center justify-center gap-6 mt-8">
-            <span className="mono-label-sm text-white/15">FREE TIER</span>
-            <span className="w-1 h-1 rounded-full bg-white/10" />
-            <span className="mono-label-sm text-white/15">ANY BUSINESS</span>
-            <span className="w-1 h-1 rounded-full bg-white/10" />
-            <span className="mono-label-sm text-white/15">NO CARD REQ</span>
+            <span
+              className="font-mono text-[8px] uppercase"
+              style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
+            >
+              FREE TIER
+            </span>
+            <span
+              className="w-1 h-1 rounded-full"
+              style={{ background: 'var(--border-light)' }}
+            />
+            <span
+              className="font-mono text-[8px] uppercase"
+              style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
+            >
+              ANY BUSINESS
+            </span>
+            <span
+              className="w-1 h-1 rounded-full"
+              style={{ background: 'var(--border-light)' }}
+            />
+            <span
+              className="font-mono text-[8px] uppercase"
+              style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
+            >
+              NO CARD REQ
+            </span>
           </div>
         </div>
       </div>

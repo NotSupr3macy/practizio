@@ -60,13 +60,13 @@ function LoginForm() {
 
   return (
     <div>
-      <h2 className="font-display font-extrabold uppercase text-2xl tracking-tightest text-chrome mb-2">
+      <h2 className="font-serif uppercase" style={{ fontWeight: 300, fontSize: '1.5rem', color: 'var(--foreground)', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
         SIGN IN
       </h2>
 
       {isExisting && (
-        <div className="glass-panel rounded-lg px-4 py-3 mb-6">
-          <p className="font-mono text-sm text-accent">
+        <div style={{ background: 'var(--white)', border: '1px solid var(--border-light)', borderRadius: '2px', padding: '0.75rem 1rem', marginBottom: '1.5rem' }}>
+          <p className="font-mono" style={{ fontSize: '13px', color: 'var(--primary-accent)' }}>
             An account with that email already exists. Sign in below.
           </p>
         </div>
@@ -74,39 +74,39 @@ function LoginForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6 mt-6">
         <div>
-          <label htmlFor="email" className="mono-label text-white/30 mb-2 block">EMAIL</label>
+          <label htmlFor="email" className="font-mono block" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted-text)', marginBottom: '0.5rem' }}>EMAIL</label>
           <input
             id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
             required autoComplete="email" placeholder="you@business.com"
-            className="w-full bg-transparent pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none transition-colors duration-300"
-            style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}
+            className="w-full font-mono bg-transparent pb-3 focus:outline-none transition-colors duration-300"
+            style={{ borderBottom: '1px solid var(--border-light)', fontSize: '13px', color: 'var(--foreground)' }}
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="mono-label text-white/30 mb-2 block">PASSWORD</label>
+          <label htmlFor="password" className="font-mono block" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted-text)', marginBottom: '0.5rem' }}>PASSWORD</label>
           <input
             id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
             required autoComplete="current-password" placeholder="••••••••"
-            className="w-full bg-transparent pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none transition-colors duration-300"
-            style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}
+            className="w-full font-mono bg-transparent pb-3 focus:outline-none transition-colors duration-300"
+            style={{ borderBottom: '1px solid var(--border-light)', fontSize: '13px', color: 'var(--foreground)' }}
           />
         </div>
 
         {error && (
-          <div className="glass-panel rounded-lg px-4 py-3" style={{ borderColor: 'rgba(255, 51, 102, 0.2)' }}>
-            <p className="text-destructive font-mono text-sm">{error}</p>
+          <div style={{ background: 'var(--white)', border: '1px solid rgba(220, 38, 38, 0.3)', borderRadius: '2px', padding: '0.75rem 1rem' }}>
+            <p className="font-mono" style={{ fontSize: '13px', color: '#dc2626' }}>{error}</p>
           </div>
         )}
 
-        <button type="submit" disabled={loading} className="w-full btn-solid disabled:opacity-30 disabled:cursor-not-allowed">
+        <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-30 disabled:cursor-not-allowed">
           {loading ? 'AUTHENTICATING...' : 'AUTHENTICATE'}
         </button>
       </form>
 
       <p className="mt-8 text-center">
-        <span className="mono-label-sm text-white/20">NO ACCOUNT?</span>{' '}
-        <Link href="/signup" className="text-accent hover:text-accent-hover mono-label-sm transition-colors duration-300">CREATE ONE</Link>
+        <span className="font-mono" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted-text)' }}>NO ACCOUNT?</span>{' '}
+        <Link href="/signup" className="font-mono hover:opacity-70 transition-opacity duration-300" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--primary-accent)' }}>CREATE ONE</Link>
       </p>
     </div>
   )

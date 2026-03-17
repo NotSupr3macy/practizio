@@ -56,53 +56,51 @@ export default function SignupPage() {
   if (checkEmail) {
     return (
       <div className="text-center space-y-6">
-        <div className="w-16 h-16 rounded-full mx-auto glass-panel flex items-center justify-center">
-          <span className="text-accent font-display font-extrabold text-2xl">+</span>
+        <div className="w-16 h-16 mx-auto flex items-center justify-center" style={{ border: '1px solid var(--border-light)', borderRadius: '2px' }}>
+          <span className="font-serif" style={{ fontWeight: 300, fontSize: '1.5rem', color: 'var(--primary-accent)' }}>+</span>
         </div>
-        <h2 className="font-display font-extrabold uppercase text-2xl tracking-tightest text-chrome">CHECK YOUR EMAIL</h2>
-        <p className="font-sans text-sm text-white/40">Confirmation link sent to <span className="text-accent">{email}</span></p>
-        <button onClick={() => setCheckEmail(false)} className="mono-label-sm text-accent hover:text-accent-hover transition-colors duration-300">try again</button>
+        <h2 className="font-serif uppercase" style={{ fontWeight: 300, fontSize: '1.5rem', color: 'var(--foreground)', letterSpacing: '0.05em' }}>CHECK YOUR EMAIL</h2>
+        <p style={{ fontSize: '0.875rem', color: 'var(--muted-text)' }}>Confirmation link sent to <span style={{ color: 'var(--primary-accent)' }}>{email}</span></p>
+        <button onClick={() => setCheckEmail(false)} className="font-mono hover:opacity-70 transition-opacity duration-300" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--primary-accent)' }}>try again</button>
       </div>
     )
   }
 
-  const inputStyle = { borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }
-
   return (
     <div>
-      <h2 className="font-display font-extrabold uppercase text-xl tracking-tightest text-chrome mb-2">CREATE ACCOUNT</h2>
-      <p className="font-sans text-sm text-white/25 mb-8">Any appointment-based business. Hair salons, dentists, yoga studios, mechanics, and more.</p>
+      <h2 className="font-serif uppercase" style={{ fontWeight: 300, fontSize: '1.25rem', color: 'var(--foreground)', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>CREATE ACCOUNT</h2>
+      <p style={{ fontSize: '0.875rem', color: 'var(--muted-text)', marginBottom: '2rem' }}>Any appointment-based business. Hair salons, dentists, yoga studios, mechanics, and more.</p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="business-name" className="mono-label text-white/30 mb-2 block">BUSINESS NAME</label>
-          <input id="business-name" type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} required placeholder="e.g. Joe's Barbershop, Zen Yoga Studio" className="w-full bg-transparent pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none transition-colors duration-300" style={inputStyle} />
+          <label htmlFor="business-name" className="font-mono block" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted-text)', marginBottom: '0.5rem' }}>BUSINESS NAME</label>
+          <input id="business-name" type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} required placeholder="e.g. Joe's Barbershop, Zen Yoga Studio" className="w-full font-mono bg-transparent pb-3 focus:outline-none transition-colors duration-300" style={{ borderBottom: '1px solid var(--border-light)', fontSize: '13px', color: 'var(--foreground)' }} />
         </div>
 
         <div>
-          <label htmlFor="email" className="mono-label text-white/30 mb-2 block">EMAIL</label>
-          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" placeholder="you@business.com" className="w-full bg-transparent pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none transition-colors duration-300" style={inputStyle} />
+          <label htmlFor="email" className="font-mono block" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted-text)', marginBottom: '0.5rem' }}>EMAIL</label>
+          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" placeholder="you@business.com" className="w-full font-mono bg-transparent pb-3 focus:outline-none transition-colors duration-300" style={{ borderBottom: '1px solid var(--border-light)', fontSize: '13px', color: 'var(--foreground)' }} />
         </div>
 
         <div>
-          <label htmlFor="password" className="mono-label text-white/30 mb-2 block">PASSWORD</label>
-          <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="new-password" minLength={6} placeholder="••••••••" className="w-full bg-transparent pb-3 font-mono text-sm text-white placeholder:text-white/15 focus:outline-none transition-colors duration-300" style={inputStyle} />
+          <label htmlFor="password" className="font-mono block" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted-text)', marginBottom: '0.5rem' }}>PASSWORD</label>
+          <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="new-password" minLength={6} placeholder="••••••••" className="w-full font-mono bg-transparent pb-3 focus:outline-none transition-colors duration-300" style={{ borderBottom: '1px solid var(--border-light)', fontSize: '13px', color: 'var(--foreground)' }} />
         </div>
 
         {error && (
-          <div className="glass-panel rounded-lg px-4 py-3" style={{ borderColor: 'rgba(255, 51, 102, 0.2)' }}>
-            <p className="text-destructive font-mono text-sm">{error}</p>
+          <div style={{ background: 'var(--white)', border: '1px solid rgba(220, 38, 38, 0.3)', borderRadius: '2px', padding: '0.75rem 1rem' }}>
+            <p className="font-mono" style={{ fontSize: '13px', color: '#dc2626' }}>{error}</p>
           </div>
         )}
 
-        <button type="submit" disabled={loading} className="w-full btn-solid disabled:opacity-30 disabled:cursor-not-allowed">
+        <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-30 disabled:cursor-not-allowed">
           {loading ? 'INITIALIZING...' : 'GET STARTED'}
         </button>
       </form>
 
       <p className="mt-8 text-center">
-        <span className="mono-label-sm text-white/20">EXISTING ACCOUNT?</span>{' '}
-        <Link href="/login" className="text-accent hover:text-accent-hover mono-label-sm transition-colors duration-300">SIGN IN</Link>
+        <span className="font-mono" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted-text)' }}>EXISTING ACCOUNT?</span>{' '}
+        <Link href="/login" className="font-mono hover:opacity-70 transition-opacity duration-300" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--primary-accent)' }}>SIGN IN</Link>
       </p>
     </div>
   )

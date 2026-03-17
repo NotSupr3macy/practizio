@@ -15,30 +15,28 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div>
         {label && (
-          <label htmlFor={id} className="mono-label text-white/30 mb-2 block">{label}</label>
+          <label htmlFor={id} className="font-mono text-[10px] uppercase tracking-[0.25em] text-[var(--muted-text)] mb-2 block">{label}</label>
         )}
         <div className="relative">
           <select
             ref={ref}
             id={id}
             className={cn(
-              'w-full appearance-none bg-transparent pb-3 font-mono text-sm text-white focus:outline-none transition-colors duration-300 cursor-pointer rounded-none',
+              'w-full appearance-none bg-transparent border-0 border-b pb-3 font-mono text-sm text-[var(--foreground)] focus:outline-none transition-colors duration-300 cursor-pointer rounded-none',
+              error ? 'border-b-red-600' : 'border-b-[var(--border-light)] focus:border-b-[var(--primary-accent)]',
               className
             )}
-            style={{
-              borderBottom: error ? '1px solid rgb(255, 51, 102)' : '1px solid rgba(255, 255, 255, 0.08)',
-            }}
             {...props}
           >
             {options.map((option) => (
-              <option key={option.value} value={option.value} className="bg-[#0c0c0c] text-white">
+              <option key={option.value} value={option.value} className="bg-white text-[var(--foreground)]">
                 {option.label}
               </option>
             ))}
           </select>
-          <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none" />
+          <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-text)] pointer-events-none" />
         </div>
-        {error && <p className="text-destructive font-mono text-xs mt-2">{error}</p>}
+        {error && <p className="text-red-600 font-mono text-xs mt-2 uppercase tracking-[0.2em]">{error}</p>}
       </div>
     )
   }

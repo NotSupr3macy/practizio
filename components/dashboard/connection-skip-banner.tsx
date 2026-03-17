@@ -30,17 +30,18 @@ export function ConnectionSkipBanner({ onConnectNow }: ConnectionSkipBannerProps
   if (dismissed) return null
 
   return (
-    <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-3 flex items-center gap-3 mx-4 mt-4 lg:mx-0 lg:mt-0 lg:mb-6">
-      <CalendarCheck className="w-4 h-4 text-amber-400 shrink-0" />
-      <p className="font-mono text-xs text-amber-200/80 flex-1">
+    <div className="flex items-center gap-3 mx-4 mt-4 lg:mx-0 lg:mt-0 lg:mb-6 px-4 py-3" style={{ background: 'var(--beige)', border: '1px solid var(--border-light)', borderRadius: '2px' }}>
+      <CalendarCheck className="w-4 h-4 shrink-0" style={{ color: 'var(--charcoal)' }} />
+      <p className="font-mono flex-1" style={{ fontSize: '12px', color: 'var(--charcoal)' }}>
         Connect your booking system to start receiving AI appointments
       </p>
-      <Button variant="solid" size="sm" onClick={handleConnect} className="shrink-0">
+      <Button variant="solid" size="sm" onClick={handleConnect} className="btn-primary shrink-0">
         CONNECT NOW
       </Button>
       <button
         onClick={handleDismiss}
-        className="text-amber-200/40 hover:text-amber-200/80 transition-colors shrink-0"
+        className="shrink-0 transition-opacity hover:opacity-70"
+        style={{ color: 'var(--charcoal)' }}
       >
         <X className="w-4 h-4" />
       </button>

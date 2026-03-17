@@ -189,20 +189,20 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
   // ─── Success Screen ──────────────────────────────────
   if (phase === 'success') {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--cream)] flex items-center justify-center p-4">
         <div className="max-w-lg w-full text-center space-y-8">
           {/* Animated checkmark */}
           <div className="flex justify-center">
-            <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex items-center justify-center animate-scale-in">
-              <CheckCircle className="w-10 h-10 text-emerald-400" />
+            <div className="w-20 h-20 rounded-[2px] bg-[var(--primary-accent)]/20 flex items-center justify-center animate-scale-in">
+              <CheckCircle className="w-10 h-10 text-[var(--primary-accent)]" />
             </div>
           </div>
 
           <div>
-            <h1 className="font-display font-black uppercase text-3xl md:text-4xl tracking-tightest">
-              YOU&apos;RE ALL SET!
+            <h1 className="font-serif text-3xl md:text-4xl tracking-tightest" style={{ fontWeight: 300 }}>
+              You&apos;re All Set!
             </h1>
-            <p className="font-sans text-sm font-light text-white/40 mt-3 max-w-md mx-auto">
+            <p className="font-sans text-sm font-light text-[var(--muted-text)] mt-3 max-w-md mx-auto">
               Your business is now fully AI-bookable. When someone uses an AI assistant to search for
               a {practice.industry || 'business'} in{' '}
               {practice.address?.city || 'your area'}, they&apos;ll find you and can book directly.
@@ -210,27 +210,27 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
           </div>
 
           {/* Mock AI chat */}
-          <div className="card-metal rounded-2xl p-6 text-left space-y-4">
-            <span className="mono-label-sm opacity-40">WHAT IT LOOKS LIKE</span>
+          <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-6 text-left space-y-4">
+            <span className="mono-label-sm text-[var(--muted-text)] opacity-60">WHAT IT LOOKS LIKE</span>
             <div className="space-y-3">
               <div className="flex gap-3">
-                <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-7 h-7 rounded-[2px] bg-[var(--cream)] flex items-center justify-center shrink-0 mt-0.5">
                   <span className="text-xs">👤</span>
                 </div>
-                <div className="bg-white/[0.04] rounded-xl rounded-tl-none px-4 py-3">
-                  <p className="font-mono text-sm text-white/70">
+                <div className="bg-[var(--cream)] rounded-[2px] px-4 py-3">
+                  <p className="font-mono text-sm text-[var(--foreground)] opacity-70">
                     Find a {practice.industry || 'business'} near{' '}
                     {practice.address?.city || 'me'} and book an appointment
                   </p>
                 </div>
               </div>
               <div className="flex gap-3">
-                <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Sparkles className="w-3.5 h-3.5 text-accent" />
+                <div className="w-7 h-7 rounded-[2px] bg-[var(--primary-accent)]/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[var(--primary-accent)]" />
                 </div>
-                <div className="bg-accent/[0.08] rounded-xl rounded-tl-none px-4 py-3">
-                  <p className="font-mono text-sm text-white/70">
-                    I found <span className="text-accent font-medium">{practice.name}</span>! They
+                <div className="bg-[var(--primary-accent)]/10 rounded-[2px] px-4 py-3">
+                  <p className="font-mono text-sm text-[var(--foreground)] opacity-70">
+                    I found <span className="text-[var(--primary-accent)] font-medium">{practice.name}</span>! They
                     have availability this week. Want me to book it for you?
                   </p>
                 </div>
@@ -243,7 +243,7 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
 
-          <p className="font-mono text-[10px] text-white/20 uppercase" style={{ letterSpacing: '0.15em' }}>
+          <p className="font-mono text-[10px] text-[var(--muted-text)] opacity-40 uppercase" style={{ letterSpacing: '0.15em' }}>
             Try it — ask ChatGPT or Claude to find a {practice.industry || 'business'} in{' '}
             {practice.address?.city || 'your area'}
           </p>
@@ -254,32 +254,32 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
 
   // ─── Main Gate Screen ────────────────────────────────
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
+    <div className="min-h-screen bg-[var(--cream)] flex items-center justify-center p-4 sm:p-6">
       <div className="max-w-xl w-full space-y-8">
         {/* Logo */}
         <div className="text-center">
-          <span className="font-mono font-extrabold text-xl tracking-[-0.03em] text-white">
-            SPADECHAT
+          <span className="font-mono font-extrabold text-xl tracking-[-0.03em] text-[var(--foreground)]">
+            PRACTIZIO
           </span>
         </div>
 
         {/* Profile live banner */}
-        <div className="card-chrome rounded-2xl p-6 md:p-8 relative overflow-hidden">
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-6 md:p-8 relative overflow-hidden">
           <div
             className="absolute top-0 left-0 right-0 h-[2px]"
             style={{
-              background: 'linear-gradient(90deg, transparent, #2869A9, #00F0FF, transparent)',
+              background: 'linear-gradient(90deg, transparent, var(--primary-accent), var(--sage), transparent)',
             }}
           />
           <div className="flex items-center gap-4 mb-3">
-            <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
-              <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <div className="w-10 h-10 rounded-[2px] bg-[var(--primary-accent)]/20 flex items-center justify-center shrink-0">
+              <CheckCircle className="w-5 h-5 text-[var(--primary-accent)]" />
             </div>
             <div>
-              <h1 className="font-display font-black uppercase text-xl md:text-2xl tracking-tightest">
-                YOUR PROFILE IS LIVE!
+              <h1 className="font-serif text-xl md:text-2xl tracking-tightest" style={{ fontWeight: 300 }}>
+                Your Profile Is Live!
               </h1>
-              <p className="font-sans text-sm font-light text-white/40 mt-1">
+              <p className="font-sans text-sm font-light text-[var(--muted-text)] mt-1">
                 Your business is already showing up in AI searches.
               </p>
             </div>
@@ -288,7 +288,7 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
             href={profileUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase text-accent hover:text-white transition-colors mt-2"
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase text-[var(--primary-accent)] hover:text-[var(--foreground)] transition-colors mt-2"
             style={{ letterSpacing: '0.15em' }}
           >
             PREVIEW YOUR PROFILE PAGE
@@ -300,10 +300,10 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
         {phase === 'select' && (
           <div className="space-y-6">
             <div className="text-center">
-              <h2 className="font-display font-black uppercase text-lg tracking-tightest">
-                CONNECT YOUR BOOKING SYSTEM
+              <h2 className="font-serif text-lg tracking-tightest" style={{ fontWeight: 300 }}>
+                Connect Your Booking System
               </h2>
-              <p className="font-sans text-sm font-light text-white/40 mt-2">
+              <p className="font-sans text-sm font-light text-[var(--muted-text)] mt-2">
                 So AI assistants can book appointments for your customers.
               </p>
             </div>
@@ -314,25 +314,25 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
                 <button
                   key={platform.id}
                   onClick={() => handlePlatformClick(platform)}
-                  className="w-full text-left hairline rounded-xl p-4 sm:p-5 hover:bg-white/[0.03] transition-all duration-300 group"
+                  className="w-full text-left border border-[var(--border-light)] rounded-[2px] p-4 sm:p-5 hover:bg-white transition-all duration-300 group"
                 >
                   <div className="flex items-center gap-4">
                     <span className="text-2xl">{platform.emoji}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="font-mono text-sm font-medium group-hover:text-accent transition-colors">
+                      <p className="font-mono text-sm font-medium text-[var(--foreground)] group-hover:text-[var(--primary-accent)] transition-colors">
                         {platform.name}
                       </p>
-                      <p className="font-sans text-xs text-white/30 mt-0.5">
+                      <p className="font-sans text-xs text-[var(--muted-text)] opacity-60 mt-0.5">
                         {platform.description}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-accent transition-colors shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-[var(--muted-text)] opacity-40 group-hover:text-[var(--primary-accent)] transition-colors shrink-0" />
                   </div>
                 </button>
               ))}
             </div>
 
-            <p className="text-center font-mono text-[10px] text-white/20" style={{ letterSpacing: '0.1em' }}>
+            <p className="text-center font-mono text-[10px] text-[var(--muted-text)] opacity-40" style={{ letterSpacing: '0.1em' }}>
               WE ONLY READ AVAILABILITY AND CREATE BOOKINGS. YOU CAN DISCONNECT ANYTIME.
             </p>
 
@@ -340,7 +340,7 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
             <div className="space-y-2">
               <button
                 onClick={() => setPhase('full-picker')}
-                className="w-full text-left font-mono text-xs text-white/40 hover:text-accent transition-colors flex items-center gap-2 py-2"
+                className="w-full text-left font-mono text-xs text-[var(--muted-text)] hover:text-[var(--primary-accent)] transition-colors flex items-center gap-2 py-2"
               >
                 <ChevronDown className="w-3.5 h-3.5" />
                 I use a different booking system
@@ -348,7 +348,7 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
 
               <button
                 onClick={() => setPhase('no-system')}
-                className="w-full text-left font-mono text-xs text-white/40 hover:text-accent transition-colors flex items-center gap-2 py-2"
+                className="w-full text-left font-mono text-xs text-[var(--muted-text)] hover:text-[var(--primary-accent)] transition-colors flex items-center gap-2 py-2"
               >
                 <ChevronDown className="w-3.5 h-3.5" />
                 I don&apos;t have a booking system
@@ -360,7 +360,7 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
               <button
                 onClick={handleSkip}
                 disabled={skipping}
-                className="font-mono text-[10px] text-white/15 hover:text-white/40 transition-colors uppercase"
+                className="font-mono text-[10px] text-[var(--muted-text)] opacity-30 hover:opacity-60 transition-colors uppercase"
                 style={{ letterSpacing: '0.15em' }}
               >
                 {skipping ? 'Loading...' : 'Skip for now and explore your dashboard →'}
@@ -374,26 +374,26 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
           <div className="space-y-6">
             <button
               onClick={() => { setPhase('select'); setSelectedPlatform(null) }}
-              className="font-mono text-[10px] text-white/30 hover:text-white/60 transition-colors uppercase"
+              className="font-mono text-[10px] text-[var(--muted-text)] opacity-60 hover:opacity-100 transition-colors uppercase"
               style={{ letterSpacing: '0.15em' }}
             >
               ← BACK
             </button>
 
             <div>
-              <h2 className="font-display font-black uppercase text-lg tracking-tightest flex items-center gap-3">
+              <h2 className="font-serif text-lg tracking-tightest flex items-center gap-3" style={{ fontWeight: 300 }}>
                 <span className="text-2xl">{selectedPlatform.emoji}</span>
-                CONNECT {selectedPlatform.name.toUpperCase()}
+                Connect {selectedPlatform.name}
               </h2>
             </div>
 
             {/* Instructions */}
-            <div className="card-metal rounded-xl p-5 space-y-3">
-              <span className="mono-label-sm opacity-40">HOW TO FIND YOUR LINK</span>
+            <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-5 space-y-3">
+              <span className="mono-label-sm text-[var(--muted-text)] opacity-60">HOW TO FIND YOUR LINK</span>
               <ol className="space-y-2">
                 {selectedPlatform.instructions.map((step, i) => (
-                  <li key={i} className="flex gap-3 font-mono text-xs text-white/60">
-                    <span className="text-accent font-bold shrink-0">{i + 1}.</span>
+                  <li key={i} className="flex gap-3 font-mono text-xs text-[var(--muted-text)]">
+                    <span className="text-[var(--primary-accent)] font-bold shrink-0">{i + 1}.</span>
                     {step}
                   </li>
                 ))}
@@ -431,7 +431,7 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
           <div className="space-y-6">
             <button
               onClick={() => setPhase('select')}
-              className="font-mono text-[10px] text-white/30 hover:text-white/60 transition-colors uppercase"
+              className="font-mono text-[10px] text-[var(--muted-text)] opacity-60 hover:opacity-100 transition-colors uppercase"
               style={{ letterSpacing: '0.15em' }}
             >
               ← BACK
@@ -451,21 +451,21 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
           <div className="space-y-6">
             <button
               onClick={() => setPhase('select')}
-              className="font-mono text-[10px] text-white/30 hover:text-white/60 transition-colors uppercase"
+              className="font-mono text-[10px] text-[var(--muted-text)] opacity-60 hover:opacity-100 transition-colors uppercase"
               style={{ letterSpacing: '0.15em' }}
             >
               ← BACK
             </button>
 
-            <div className="card-metal rounded-2xl p-6 md:p-8 space-y-4">
+            <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-6 md:p-8 space-y-4">
               <div className="flex items-center gap-3 mb-2">
-                <Calendar className="w-5 h-5 text-accent" />
-                <h2 className="font-display font-black uppercase text-lg tracking-tightest">
-                  NO PROBLEM!
+                <Calendar className="w-5 h-5 text-[var(--primary-accent)]" />
+                <h2 className="font-serif text-lg tracking-tightest" style={{ fontWeight: 300 }}>
+                  No Problem!
                 </h2>
               </div>
-              <p className="font-sans text-sm text-white/50 leading-relaxed">
-                We recommend <span className="text-white font-medium">Calendly</span> — it&apos;s
+              <p className="font-sans text-sm text-[var(--muted-text)] leading-relaxed">
+                We recommend <span className="text-[var(--foreground)] font-medium">Calendly</span> — it&apos;s
                 free and takes about 5 minutes to set up. Once you have it, come back here and
                 connect it.
               </p>
@@ -481,19 +481,19 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
               </a>
               <button
                 onClick={() => setPhase('select')}
-                className="w-full text-center font-mono text-xs text-accent hover:text-white transition-colors mt-4"
+                className="w-full text-center font-mono text-xs text-[var(--primary-accent)] hover:text-[var(--foreground)] transition-colors mt-4"
               >
                 Already set it up? Connect it now →
               </button>
             </div>
 
             {/* Request different system */}
-            <div className="hairline rounded-xl p-5 space-y-3">
-              <span className="mono-label-sm opacity-40">USE SOMETHING ELSE?</span>
+            <div className="border border-[var(--border-light)] rounded-[2px] p-5 space-y-3">
+              <span className="mono-label-sm text-[var(--muted-text)] opacity-60">USE SOMETHING ELSE?</span>
               {requestSent ? (
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                  <p className="font-mono text-xs text-white/50">
+                  <CheckCircle className="w-4 h-4 text-[var(--primary-accent)] mt-0.5 shrink-0" />
+                  <p className="font-mono text-xs text-[var(--muted-text)]">
                     Thanks! We&apos;re adding new systems regularly. We&apos;ll email you when yours
                     is supported. In the meantime, you can set up a free Calendly account to start
                     receiving AI bookings right away.
@@ -525,7 +525,7 @@ export function BookingConnectionGate({ practice, onSkip, onConnected }: Booking
               <button
                 onClick={handleSkip}
                 disabled={skipping}
-                className="font-mono text-[10px] text-white/15 hover:text-white/40 transition-colors uppercase"
+                className="font-mono text-[10px] text-[var(--muted-text)] opacity-30 hover:opacity-60 transition-colors uppercase"
                 style={{ letterSpacing: '0.15em' }}
               >
                 {skipping ? 'Loading...' : 'Skip for now and explore your dashboard →'}

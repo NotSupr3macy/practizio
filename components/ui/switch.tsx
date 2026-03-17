@@ -19,18 +19,18 @@ export function Switch({ checked, onCheckedChange, label, className }: SwitchPro
         onClick={() => onCheckedChange(!checked)}
         className={cn(
           'relative inline-flex h-5 w-10 items-center rounded-full transition-colors duration-300',
-          checked ? 'bg-accent' : 'bg-white/10'
+          checked ? 'bg-[var(--primary-accent)]' : 'bg-[var(--border-light)]'
         )}
       >
         <span
           className={cn(
             'inline-block h-3.5 w-3.5 rounded-full transition-transform duration-300',
-            checked ? 'translate-x-[22px] bg-black' : 'translate-x-1 bg-white/60'
+            checked ? 'translate-x-[22px] bg-white' : 'translate-x-1 bg-[var(--muted-text)]'
           )}
         />
       </button>
       {label && (
-        <span className="font-mono text-[11px] text-white/40 uppercase" style={{ letterSpacing: '0.15em' }}>{label}</span>
+        <span className="font-mono text-[11px] text-[var(--muted-text)] uppercase tracking-[0.2em]">{label}</span>
       )}
     </label>
   )

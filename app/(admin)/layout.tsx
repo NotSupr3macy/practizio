@@ -5,7 +5,7 @@ import { LayoutDashboard, Building2, Users, Wrench, Settings, LogOut } from 'luc
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 
 export const metadata = {
-  title: 'Admin — SpadeChat',
+  title: 'Admin — Practizio',
 }
 
 const navItems = [
@@ -27,21 +27,21 @@ function isAdmin(email: string | undefined): boolean {
 function AdminSidebar({ email }: { email: string }) {
   return (
     <aside
-      className="h-screen w-[260px] bg-[#080808] flex flex-col"
-      style={{ borderRight: '1px solid rgba(255, 255, 255, 0.04)' }}
+      className="h-screen w-[260px] flex flex-col"
+      style={{ backgroundColor: 'var(--navy)', borderRight: '1px solid var(--border-light)' }}
     >
       {/* Logo */}
       <div
         className="px-6 py-6"
-        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}
+        style={{ borderBottom: '1px solid var(--border-light)' }}
       >
         <Link href="/admin" className="flex items-center gap-2.5">
-          <img src="/logo.png" alt="SpadeChat Admin" className="w-7 h-7 object-contain" />
-          <span className="font-display font-extrabold uppercase tracking-tightest text-base text-chrome">
-            SPADECHAT ADMIN
+          <img src="/logo.png" alt="Practizio Admin" className="w-7 h-7 object-contain" />
+          <span style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, letterSpacing: '0.05em', fontSize: '16px', color: 'white' }}>
+            PRACTIZIO ADMIN
           </span>
         </Link>
-        <p className="mt-2.5 mono-label-sm text-white/15 truncate">
+        <p className="mt-2.5 truncate" style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)' }}>
           {email}
         </p>
       </div>
@@ -52,10 +52,20 @@ function AdminSidebar({ email }: { email: string }) {
           <Link
             key={item.href}
             href={item.href}
-            className="flex items-center gap-3 px-6 py-2.5 font-mono text-[11px] font-medium uppercase transition-all duration-300 mx-2 rounded-lg text-white/25 hover:text-white/50 hover:bg-white/[0.02]"
-            style={{ letterSpacing: '0.15em' }}
+            className="flex items-center gap-3 px-6 py-2.5 mx-2 transition-all duration-300"
+            style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '11px',
+              fontWeight: 500,
+              textTransform: 'uppercase',
+              letterSpacing: '0.2em',
+              color: 'rgba(255,255,255,0.4)',
+              borderLeft: '2px solid transparent',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.4)' }}
           >
-            <item.icon className="w-4 h-4 opacity-30" />
+            <item.icon className="w-4 h-4 opacity-40" />
             {item.label}
           </Link>
         ))}
@@ -64,16 +74,23 @@ function AdminSidebar({ email }: { email: string }) {
       {/* Footer */}
       <div
         className="px-6 py-4"
-        style={{ borderTop: '1px solid rgba(255, 255, 255, 0.04)' }}
+        style={{ borderTop: '1px solid var(--border-light)' }}
       >
         <div className="flex items-center gap-2 mb-3">
-          <span className="w-1.5 h-1.5 rounded-full bg-neon-pink animate-glow-pulse" />
-          <span className="mono-label-sm text-white/20">ADMIN MODE</span>
+          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'var(--primary-accent)' }} />
+          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)' }}>ADMIN MODE</span>
         </div>
         <Link
           href="/"
-          className="flex items-center gap-2 w-full py-2 font-mono text-[10px] font-medium uppercase text-white/15 hover:text-accent transition-all duration-300"
-          style={{ letterSpacing: '0.3em' }}
+          className="flex items-center gap-2 w-full py-2 transition-all duration-300"
+          style={{
+            fontFamily: "'Space Mono', monospace",
+            fontSize: '10px',
+            fontWeight: 500,
+            textTransform: 'uppercase',
+            letterSpacing: '0.3em',
+            color: 'rgba(255,255,255,0.3)',
+          }}
         >
           <LogOut className="w-3.5 h-3.5" />
           BACK TO SITE
@@ -105,7 +122,7 @@ export default async function AdminLayout({
   return (
     <DashboardShell
       logoHref="/admin"
-      title="SPADECHAT ADMIN"
+      title="PRACTIZIO ADMIN"
       sidebar={<AdminSidebar email={user.email || ''} />}
     >
       {children}
