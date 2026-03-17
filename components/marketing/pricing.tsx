@@ -48,23 +48,24 @@ export function Pricing() {
   return (
     <section
       id="pricing"
-      className="section-light py-24 px-6 md:px-10"
-      style={{ borderTop: '1px solid var(--border-light)' }}
+      className="py-32 px-6 md:px-10"
+      style={{ background: 'var(--navy)' }}
     >
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="mb-16">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="mb-20">
           <span
-            className="font-mono text-[10px] uppercase block mb-4"
-            style={{ letterSpacing: '0.3em', color: 'var(--taupe)' }}
+            className="font-mono text-[10px] uppercase block mb-6"
+            style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}
           >
             SIMPLE PRICING
           </span>
           <h2
-            className="editorial-heading text-4xl md:text-6xl"
-            style={{ color: 'var(--foreground)' }}
+            className="editorial-heading"
+            style={{ fontSize: 'clamp(36px, 5vw, 64px)', color: 'var(--white)', lineHeight: 1.05 }}
           >
             Free to{' '}
-            <span style={{ fontStyle: 'italic', color: 'var(--taupe)' }}>start.</span>
+            <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.35)' }}>start.</span>
           </h2>
           <p
             className="mt-6 max-w-lg"
@@ -72,77 +73,83 @@ export function Pricing() {
               fontFamily: '"Playfair Display", serif',
               fontWeight: 300,
               fontSize: '16px',
-              color: 'var(--muted-text)',
-              lineHeight: 1.6,
+              color: 'rgba(255,255,255,0.35)',
+              lineHeight: 1.7,
             }}
           >
             Get your first 10 AI bookings every month for free. No credit card, no trial period, no feature gates. Upgrade only when you&apos;re getting real value.
           </p>
         </div>
 
-        {/* Pricing columns — separated by vertical dividers, no card boxes */}
+        {/* Pricing columns */}
         <div className="grid grid-cols-1 md:grid-cols-3">
           {plans.map((plan, idx) => (
             <div
               key={plan.name}
               className="relative flex flex-col py-10 md:px-10 first:md:pl-0 last:md:pr-0"
               style={{
-                borderLeft: idx > 0 ? '1px solid var(--border-light)' : 'none',
+                borderLeft: idx > 0 ? '1px solid rgba(255,255,255,0.06)' : 'none',
               }}
             >
+              {/* Recommended badge */}
               {plan.recommended && (
                 <span
                   className="font-mono text-[8px] uppercase mb-6"
                   style={{
                     letterSpacing: '0.3em',
-                    color: 'var(--primary-accent)',
+                    color: 'var(--white)',
                   }}
                 >
                   RECOMMENDED
                 </span>
               )}
 
+              {/* Plan name */}
               <span
-                className="mono-label block mb-6"
-                style={{ color: 'var(--muted-text)' }}
+                className="font-mono text-[10px] uppercase block mb-6"
+                style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.3)' }}
               >
                 {plan.name}
               </span>
 
+              {/* Price */}
               <div className="mb-8">
                 <span
-                  className="text-4xl"
+                  className="font-display"
                   style={{
-                    fontFamily: '"Playfair Display", serif',
-                    fontWeight: 300,
-                    color: 'var(--foreground)',
+                    fontSize: 'clamp(40px, 4vw, 56px)',
+                    lineHeight: 1,
+                    color: 'var(--white)',
                   }}
                 >
                   ${plan.price}
                 </span>
                 <span
                   className="font-mono text-[8px] uppercase ml-2"
-                  style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
+                  style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}
                 >
                   /MO
                 </span>
               </div>
 
-              <div style={{ height: 1, background: 'var(--border-light)' }} className="mb-6" />
+              {/* Divider */}
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} className="mb-8" />
 
-              <ul className="space-y-4 mb-10 flex-1">
+              {/* Features */}
+              <ul className="space-y-5 mb-12 flex-1">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
                     <span
-                      className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
-                      style={{ background: 'var(--primary-accent)' }}
+                      className="w-1 h-1 rounded-full mt-2 shrink-0"
+                      style={{ background: 'rgba(255,255,255,0.25)' }}
                     />
                     <span
-                      className="text-sm leading-relaxed"
+                      className="leading-relaxed"
                       style={{
                         fontFamily: '"Playfair Display", serif',
                         fontWeight: 300,
-                        color: 'var(--muted-text)',
+                        fontSize: '15px',
+                        color: 'rgba(255,255,255,0.4)',
                       }}
                     >
                       {feature}
@@ -151,26 +158,55 @@ export function Pricing() {
                 ))}
               </ul>
 
+              {/* CTA buttons */}
               {plan.name === 'FREE' ? (
                 <div className="flex flex-col gap-3">
-                  <Link href="/signup" className="btn-primary text-center">
+                  <Link
+                    href="/signup"
+                    className="font-mono text-[10px] uppercase text-center transition-all duration-300"
+                    style={{
+                      letterSpacing: '0.25em',
+                      padding: '14px 24px',
+                      borderRadius: '2px',
+                      background: 'var(--white)',
+                      color: 'var(--navy)',
+                      fontWeight: 700,
+                    }}
+                  >
                     SET UP MYSELF — FREE
                   </Link>
                   <div className="flex items-center gap-3">
-                    <div className="flex-1" style={{ height: 1, background: 'var(--border-light)' }} />
-                    <span className="font-mono text-[8px] uppercase" style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}>
+                    <div className="flex-1" style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
+                    <span className="font-mono text-[8px] uppercase" style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.2)' }}>
                       or
                     </span>
-                    <div className="flex-1" style={{ height: 1, background: 'var(--border-light)' }} />
+                    <div className="flex-1" style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
                   </div>
-                  <Link href="/get-setup" className="btn-ghost text-center">
+                  <Link
+                    href="/get-setup"
+                    className="font-mono text-[10px] uppercase text-center transition-all duration-300"
+                    style={{
+                      letterSpacing: '0.25em',
+                      padding: '14px 24px',
+                      borderRadius: '2px',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      color: 'var(--white)',
+                    }}
+                  >
                     HAVE US DO IT — FREE
                   </Link>
                 </div>
               ) : (
                 <Link
                   href={plan.href}
-                  className={`btn-ghost text-center ${plan.disabled ? 'opacity-50 pointer-events-none' : ''}`}
+                  className={`font-mono text-[10px] uppercase text-center transition-all duration-300 ${plan.disabled ? 'pointer-events-none' : ''}`}
+                  style={{
+                    letterSpacing: '0.25em',
+                    padding: '14px 24px',
+                    borderRadius: '2px',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: 'rgba(255,255,255,0.3)',
+                  }}
                 >
                   {plan.cta}
                 </Link>
