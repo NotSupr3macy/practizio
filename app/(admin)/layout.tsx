@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { LayoutDashboard, Building2, Users, Wrench, LogOut } from 'lucide-react'
+import { LayoutDashboard, Building2, Users, Wrench, Settings, LogOut } from 'lucide-react'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 
 export const metadata = {
@@ -13,6 +13,7 @@ const navItems = [
   { href: '/admin/businesses', label: 'BUSINESSES', icon: Building2 },
   { href: '/admin/leads', label: 'LEADS', icon: Users },
   { href: '/admin/setup', label: 'SETUP', icon: Wrench },
+  { href: '/admin/settings', label: 'SETTINGS', icon: Settings },
 ]
 
 function isAdmin(email: string | undefined): boolean {
