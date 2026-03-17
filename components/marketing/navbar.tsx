@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 const NAV_LEFT = [
   { label: 'DIRECTORY', href: '/directory' },
@@ -15,11 +16,23 @@ const NAV_RIGHT = [
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session)
+    })
+    return () => subscription.unsubscribe()
   }, [])
 
   return (
@@ -88,19 +101,47 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/get-setup"
-            className="font-mono text-[10px] uppercase transition-all duration-300"
-            style={{
-              letterSpacing: '0.25em',
-              padding: '10px 24px',
-              borderRadius: '2px',
-              background: 'var(--primary-accent)',
-              color: 'var(--white)',
-            }}
-          >
-            GET ACCESS
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/dashboard"
+              className="font-mono text-[10px] uppercase transition-all duration-300"
+              style={{
+                letterSpacing: '0.25em',
+                padding: '10px 24px',
+                borderRadius: '2px',
+                background: 'var(--primary-accent)',
+                color: 'var(--white)',
+              }}
+            >
+              DASHBOARD
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="font-mono text-[10px] uppercase transition-all duration-300 hover:text-[var(--foreground)]"
+                style={{
+                  letterSpacing: '0.3em',
+                  color: 'var(--muted-text)',
+                }}
+              >
+                SIGN IN
+              </Link>
+              <Link
+                href="/get-setup"
+                className="font-mono text-[10px] uppercase transition-all duration-300"
+                style={{
+                  letterSpacing: '0.25em',
+                  padding: '10px 24px',
+                  borderRadius: '2px',
+                  background: 'var(--primary-accent)',
+                  color: 'var(--white)',
+                }}
+              >
+                GET ACCESS
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Hamburger (mobile) */}
@@ -143,20 +184,47 @@ export function Navbar() {
             </Link>
           ))}
           <div style={{ height: '1px', background: 'var(--border-light)' }} />
-          <Link
-            href="/get-setup"
-            className="font-mono text-[10px] uppercase text-center transition-all duration-300"
-            style={{
-              letterSpacing: '0.25em',
-              padding: '12px 24px',
-              borderRadius: '2px',
-              background: 'var(--primary-accent)',
-              color: 'var(--white)',
-            }}
-            onClick={() => setMobileOpen(false)}
-          >
-            GET ACCESS
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/dashboard"
+              className="font-mono text-[10px] uppercase text-center transition-all duration-300"
+              style={{
+                letterSpacing: '0.25em',
+                padding: '12px 24px',
+                borderRadius: '2px',
+                background: 'var(--primary-accent)',
+                color: 'var(--white)',
+              }}
+              onClick={() => setMobileOpen(false)}
+            >
+              DASHBOARD
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="font-mono text-[10px] uppercase transition-all duration-300"
+                style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
+                onClick={() => setMobileOpen(false)}
+              >
+                SIGN IN
+              </Link>
+              <Link
+                href="/get-setup"
+                className="font-mono text-[10px] uppercase text-center transition-all duration-300"
+                style={{
+                  letterSpacing: '0.25em',
+                  padding: '12px 24px',
+                  borderRadius: '2px',
+                  background: 'var(--primary-accent)',
+                  color: 'var(--white)',
+                }}
+                onClick={() => setMobileOpen(false)}
+              >
+                GET ACCESS
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
