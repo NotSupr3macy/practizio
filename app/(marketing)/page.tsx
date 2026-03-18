@@ -10,10 +10,10 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <HowItWorks />
       <CommandBar />
       <ProblemSolution />
       <BentoGrid />
-      <HowItWorks />
       <Pricing />
       <Testimonials />
     </>
