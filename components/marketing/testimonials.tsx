@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 const testimonials = [
   {
@@ -26,6 +26,15 @@ const testimonials = [
 export function Testimonials() {
   const [active, setActive] = useState(0)
   const t = testimonials[active]
+
+  const next = useCallback(() => {
+    setActive((prev) => (prev + 1) % testimonials.length)
+  }, [])
+
+  useEffect(() => {
+    const interval = setInterval(next, 7000)
+    return () => clearInterval(interval)
+  }, [next, active])
 
   return (
     <section
