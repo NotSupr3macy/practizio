@@ -70,9 +70,10 @@ export function Navbar() {
             <Image
               src="/logo.png"
               alt="SpadeChat logo"
-              width={32}
-              height={32}
+              width={36}
+              height={36}
               className="object-contain"
+              style={{ margin: '-4px' }}
             />
             <span
               className="font-mono uppercase tracking-[0.35em] text-[14px] font-bold"
