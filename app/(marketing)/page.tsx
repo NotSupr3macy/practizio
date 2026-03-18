@@ -1,4 +1,5 @@
 import { Hero } from '@/components/marketing/hero'
+import { StatsMarquee } from '@/components/marketing/stats-marquee'
 import { CommandBar } from '@/components/marketing/command-bar'
 import { ProblemSolution } from '@/components/marketing/problem-solution'
 import { BentoGrid } from '@/components/marketing/bento-grid'
@@ -10,6 +11,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <StatsMarquee />
       <HowItWorks />
       <CommandBar />
       <ProblemSolution />

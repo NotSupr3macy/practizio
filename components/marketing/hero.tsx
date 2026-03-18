@@ -99,16 +99,28 @@ export function Hero() {
 
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-4 mt-12">
-          <Link href="/get-setup" className="btn-primary">
+          <Link
+            href="/get-setup"
+            className="inline-flex items-center justify-center font-mono text-[10px] uppercase font-bold transition-all duration-300 hover:tracking-[0.4em]"
+            style={{
+              letterSpacing: '0.25em',
+              padding: '16px 32px',
+              borderRadius: '2px',
+              background: 'var(--navy)',
+              color: 'var(--white)',
+            }}
+          >
             GET STARTED FREE
           </Link>
           <Link
             href="/directory"
-            className="inline-flex items-center gap-2 font-mono text-[10px] uppercase transition-all duration-300"
+            className="inline-flex items-center gap-2 font-mono text-[10px] uppercase transition-all duration-300 hover:tracking-[0.4em]"
             style={{
               letterSpacing: '0.25em',
               padding: '16px 32px',
-              color: 'var(--foreground)',
+              borderRadius: '2px',
+              border: '1px solid var(--navy)',
+              color: 'var(--navy)',
             }}
           >
             VIEW DIRECTORY
