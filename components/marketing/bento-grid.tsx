@@ -1,8 +1,11 @@
+import Image from 'next/image'
+
 const cards = [
   {
     tag: 'SYSTEM 01',
     title: 'AI BOOKING\nLINK',
     sub: 'Every business gets a live AI connection accessible by any AI assistant in real-time. One link powers every AI platform on Earth.',
+    image: '/team.jpg',
   },
   {
     tag: 'SYSTEM 02',
@@ -39,7 +42,6 @@ export function BentoGrid() {
                 borderLeft: idx % 2 === 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
               }}
             >
-              {/* Decorative offset rectangle + accent block */}
               <div className="relative w-full aspect-[4/3] max-w-[400px] mx-auto">
                 {/* Background offset shape */}
                 <div
@@ -54,17 +56,26 @@ export function BentoGrid() {
                     border: '1px solid rgba(255,255,255,0.06)',
                   }}
                 >
-                  {/* Large number watermark */}
-                  <span
-                    className="font-display uppercase select-none"
-                    style={{
-                      fontSize: 'clamp(120px, 15vw, 200px)',
-                      lineHeight: 1,
-                      color: 'rgba(255,255,255,0.03)',
-                    }}
-                  >
-                    {card.tag.slice(-2)}
-                  </span>
+                  {'image' in card && card.image ? (
+                    <Image
+                      src={card.image}
+                      alt="SpadeChat team"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 400px"
+                    />
+                  ) : (
+                    <span
+                      className="font-display uppercase select-none"
+                      style={{
+                        fontSize: 'clamp(120px, 15vw, 200px)',
+                        lineHeight: 1,
+                        color: 'rgba(255,255,255,0.03)',
+                      }}
+                    >
+                      {card.tag.slice(-2)}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

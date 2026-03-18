@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -65,18 +66,14 @@ export function Navbar() {
 
         {/* Center: Brand */}
         <div className="flex items-center justify-center">
-          <Link href="/" className="flex items-center gap-3">
-            <div
-              className="flex items-center gap-1"
-              style={{ color: 'var(--primary-accent)' }}
-            >
-              {/* Minimal logo mark */}
-              <svg width="28" height="16" viewBox="0 0 28 16" fill="none">
-                <line x1="0" y1="8" x2="12" y2="8" stroke="currentColor" strokeWidth="2" />
-                <line x1="16" y1="4" x2="28" y2="4" stroke="currentColor" strokeWidth="2" />
-                <line x1="16" y1="12" x2="28" y2="12" stroke="currentColor" strokeWidth="2" />
-              </svg>
-            </div>
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/logo.png"
+              alt="SpadeChat logo"
+              width={32}
+              height={32}
+              className="object-contain"
+            />
             <span
               className="font-mono uppercase tracking-[0.35em] text-[14px] font-bold"
               style={{ color: 'var(--foreground)' }}
