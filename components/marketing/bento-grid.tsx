@@ -84,9 +84,9 @@ export function BentoGrid() {
                 maxWidth: 420,
               }}
             >
-              SpadeChat started with a simple question in a dorm room at the
-              University of Oregon: why can&apos;t AI assistants just book an
-              appointment for you?
+              SpadeChat started with a simple idea at the basketball court at
+              the University of Oregon: and it&apos;s taken many twists and turns
+              to get where it&apos;s at today.
             </p>
             <p
               className="leading-relaxed mb-5"
@@ -116,7 +116,7 @@ export function BentoGrid() {
             >
               This isn&apos;t backed by a big team or a venture fund. It&apos;s
               two guys who care deeply about helping small businesses thrive in
-              the age of AI — one booking link at a time.
+              the age of AI... one booking link at a time.
             </p>
 
             <div className="mt-8 flex items-center gap-6">
@@ -125,7 +125,7 @@ export function BentoGrid() {
                 className="font-mono text-[10px] uppercase"
                 style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.3)' }}
               >
-                UNIVERSITY OF OREGON &middot; CLASS OF 2028
+                JACKSON AND WILL &middot; UNIVERSITY OF OREGON &middot; CLASS OF 2028
               </span>
             </div>
           </div>
