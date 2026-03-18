@@ -94,7 +94,7 @@ export function HowItWorks() {
                 style={{
                   fontFamily: '"Playfair Display", serif',
                   fontWeight: 300,
-                  fontSize: '16px',
+                  fontSize: '18px',
                   color: 'var(--muted-text)',
                   lineHeight: 1.7,
                 }}
@@ -102,7 +102,7 @@ export function HowItWorks() {
                 {step.description}
               </p>
               <span
-                className="font-mono text-[9px] uppercase"
+                className="font-mono text-[11px] uppercase"
                 style={{
                   letterSpacing: '0.25em',
                   color: 'var(--primary-accent)',

@@ -29,7 +29,7 @@ export function CommandBar() {
           style={{
             fontFamily: '"Playfair Display", serif',
             fontWeight: 300,
-            fontSize: '16px',
+            fontSize: '18px',
             color: 'rgba(255,255,255,0.4)',
             lineHeight: 1.6,
           }}
@@ -68,15 +68,15 @@ export function CommandBar() {
         </div>
 
         <div className="flex items-center justify-center gap-6 mt-10">
-          <span className="font-mono text-[8px] uppercase" style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}>
+          <span className="font-mono text-[10px] uppercase" style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}>
             FREE TIER
           </span>
           <span className="w-1 h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.15)' }} />
-          <span className="font-mono text-[8px] uppercase" style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}>
+          <span className="font-mono text-[10px] uppercase" style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}>
             ANY BUSINESS
           </span>
           <span className="w-1 h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.15)' }} />
-          <span className="font-mono text-[8px] uppercase" style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}>
+          <span className="font-mono text-[10px] uppercase" style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}>
             NO CARD REQ
           </span>
         </div>

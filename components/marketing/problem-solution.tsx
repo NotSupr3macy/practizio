@@ -53,7 +53,7 @@ export function ProblemSolution() {
             style={{
               fontFamily: '"Playfair Display", serif',
               fontWeight: 300,
-              fontSize: '16px',
+              fontSize: '18px',
               color: 'var(--muted-text)',
               lineHeight: 1.6,
             }}
@@ -101,7 +101,7 @@ export function ProblemSolution() {
                   style={{ background: 'var(--primary-accent)' }}
                 />
                 <span
-                  className="font-mono text-[8px] uppercase"
+                  className="font-mono text-[10px] uppercase"
                   style={{ letterSpacing: '0.3em', color: 'var(--primary-accent)' }}
                 >
                   AI READY

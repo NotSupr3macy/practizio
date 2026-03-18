@@ -72,7 +72,7 @@ export function Pricing() {
             style={{
               fontFamily: '"Playfair Display", serif',
               fontWeight: 300,
-              fontSize: '16px',
+              fontSize: '18px',
               color: 'rgba(255,255,255,0.35)',
               lineHeight: 1.7,
             }}
@@ -150,7 +150,7 @@ export function Pricing() {
                       style={{
                         fontFamily: '"Playfair Display", serif',
                         fontWeight: 300,
-                        fontSize: '15px',
+                        fontSize: '16px',
                         color: 'var(--muted-text)',
                       }}
                     >
@@ -179,7 +179,7 @@ export function Pricing() {
                   </Link>
                   <div className="flex items-center gap-3">
                     <div className="flex-1" style={{ height: 1, background: 'var(--border-light)' }} />
-                    <span className="font-mono text-[8px] uppercase" style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}>
+                    <span className="font-mono text-[10px] uppercase" style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}>
                       or
                     </span>
                     <div className="flex-1" style={{ height: 1, background: 'var(--border-light)' }} />
