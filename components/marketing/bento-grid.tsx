@@ -119,10 +119,10 @@ export function BentoGrid() {
               the age of AI... one booking link at a time.
             </p>
 
-            <div className="mt-8 flex items-center gap-6">
+            <div className="mt-8 flex flex-col items-center gap-3" style={{ maxWidth: 420 }}>
               <div style={{ width: 40, height: 1, background: 'rgba(255,255,255,0.1)' }} />
               <span
-                className="font-mono text-[10px] uppercase"
+                className="font-mono text-[10px] uppercase text-center"
                 style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.3)' }}
               >
                 JACKSON AND WILL &middot; UNIVERSITY OF OREGON &middot; CLASS OF 2028
