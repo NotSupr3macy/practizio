@@ -14,8 +14,9 @@ export async function POST(request: Request) {
     }
 
     // Send notification to SpadeChat team
+    const contactEmail = process.env.CONTACT_EMAIL || process.env.ADMIN_EMAILS?.split(',')[0] || ''
     const result = await sendEmail({
-      to: 'spadechat@gmail.com',
+      to: contactEmail,
       subject: `New Inquiry from ${name}${business ? ` — ${business}` : ''}`,
       html: `
         <!DOCTYPE html>

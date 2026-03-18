@@ -146,7 +146,7 @@ export default function ContactPage() {
 
             {status === 'error' && (
               <p style={{ color: '#e55', fontSize: '14px', fontFamily: '"Playfair Display", serif' }}>
-                Something went wrong. Please try again or email us directly at spadechat@gmail.com
+                Something went wrong. Please try again or email us directly.
               </p>
             )}
 
