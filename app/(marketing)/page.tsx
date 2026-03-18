@@ -5,6 +5,7 @@ import { BentoGrid } from '@/components/marketing/bento-grid'
 import { HowItWorks } from '@/components/marketing/how-it-works'
 import { Pricing } from '@/components/marketing/pricing'
 import { Testimonials } from '@/components/marketing/testimonials'
+import { Founders } from '@/components/marketing/founders'
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <HowItWorks />
       <Pricing />
       <Testimonials />
+      <Founders />
     </>
   )
 }
