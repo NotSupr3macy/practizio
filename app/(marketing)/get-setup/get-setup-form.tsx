@@ -21,6 +21,7 @@ export default function GetSetupForm() {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [bookingSystem, setBookingSystem] = useState(BOOKING_SYSTEMS[0])
+  const [otherSystem, setOtherSystem] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -39,7 +40,7 @@ export default function GetSetupForm() {
           owner_name: ownerName,
           email,
           phone: phone || null,
-          booking_system: bookingSystem,
+          booking_system: bookingSystem === 'Other' ? `Other: ${otherSystem}` : bookingSystem,
           referral_source: 'get_setup_page',
         }),
       })
@@ -177,6 +178,16 @@ export default function GetSetupForm() {
                   </option>
                 ))}
               </select>
+              {bookingSystem === 'Other' && (
+                <input
+                  type="text"
+                  value={otherSystem}
+                  onChange={(e) => setOtherSystem(e.target.value)}
+                  placeholder="Type your booking system..."
+                  className="w-full bg-transparent pb-3 mt-4 font-mono text-sm text-[var(--foreground)] placeholder:text-[var(--muted-text)] focus:outline-none transition-colors duration-300"
+                  style={inputStyle}
+                />
+              )}
             </div>
 
             {error && (
