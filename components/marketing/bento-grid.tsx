@@ -346,22 +346,6 @@ export function BentoGrid() {
                 maxWidth: 440,
               }}
             >
-              MCP stands for Model Context Protocol. In plain English, it&apos;s
-              a way for AI tools to talk directly to your business &mdash; to see
-              your services, check your availability, and book appointments
-              &mdash; all without you lifting a finger.
-            </p>
-            <p
-              className="leading-relaxed mb-5"
-              style={{
-                fontFamily: '"Playfair Display", serif',
-                fontWeight: 300,
-                fontSize: '16px',
-                color: 'rgba(255,255,255,0.4)',
-                lineHeight: 1.8,
-                maxWidth: 440,
-              }}
-            >
               SpadeChat gives your business an MCP connection. That means every
               AI assistant in the world &mdash; ChatGPT, Claude, Gemini, Siri,
               and whatever comes next &mdash; can find you, recommend you, and
