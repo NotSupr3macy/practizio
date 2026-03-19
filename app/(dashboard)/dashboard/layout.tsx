@@ -61,7 +61,7 @@ export default async function DashboardLayout({
 
   return (
     <DashboardShell
-      logoHref="/dashboard"
+      logoHref="/"
       sidebar={<Sidebar practice={practice} userEmail={user.email || ''} needsAttention={needsAttention} />}
     >
       {children}
