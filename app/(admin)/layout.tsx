@@ -105,11 +105,22 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
+  let supabase
+  try {
+    supabase = await createClient()
+  } catch (e) {
+    console.error('Admin layout: failed to create supabase client:', e)
+    redirect('/login')
+  }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (e) {
+    console.error('Admin layout: failed to get user:', e)
+    redirect('/login')
+  }
 
   if (!user) {
     redirect('/login')
