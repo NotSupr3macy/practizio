@@ -61,6 +61,8 @@ export function StatsMarquee() {
       >
         <StatItems />
         <StatItems />
+        <StatItems />
+        <StatItems />
       </div>
     </section>
   )

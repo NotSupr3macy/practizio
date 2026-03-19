@@ -437,7 +437,7 @@
   50% { opacity: 0.8; }
 }
 
-.animate-marquee { animation: marquee 20s linear infinite; }
+.animate-marquee { animation: marquee 30s linear infinite; }
 .animate-scale-in { animation: scale-in-check 0.5s ease-out forwards; }
 .animate-float { animation: float 6s ease-in-out infinite; }
 .animate-float-delayed { animation: float 6s ease-in-out 3s infinite; }
