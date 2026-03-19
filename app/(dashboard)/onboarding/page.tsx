@@ -925,12 +925,12 @@ export default function OnboardingPage() {
     : 'your-business'
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--cream)' }}>
       {/* Step progress bar */}
-      <div className="hairline-b">
+      <div style={{ borderBottom: '1px solid var(--border-light)', background: 'var(--white)' }}>
         <div className="max-w-5xl mx-auto px-6 py-8">
-          <span className="mono-label-sm opacity-40 block mb-3">BUSINESS SETUP</span>
-          <h1 className="font-display font-black uppercase text-2xl tracking-tightest mb-8">
+          <span className="font-mono text-[10px] uppercase block mb-3" style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}>BUSINESS SETUP</span>
+          <h1 className="font-display font-black uppercase text-2xl mb-8" style={{ letterSpacing: '-0.02em', color: 'var(--foreground)' }}>
             GET YOUR BUSINESS AI-READY
           </h1>
 
@@ -974,7 +974,8 @@ export default function OnboardingPage() {
         </div>
       </div>
 
-      <div className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
+      <div className="flex-1 max-w-3xl mx-auto px-6 py-10 w-full">
+        <div className="bg-white border border-[var(--border-light)] rounded-[2px] p-8 md:p-10">
         {/* ============================================================ */}
         {/* Step: Business Profile */}
         {/* ============================================================ */}
@@ -1580,8 +1581,10 @@ export default function OnboardingPage() {
           </div>
         )}
 
+        </div>
+
         {/* Navigation */}
-        <div className="flex items-center justify-between mt-10 pt-6 hairline-t">
+        <div className="flex items-center justify-between mt-8">
           {currentStep > 0 ? (
             <Button variant="ghost" onClick={prevStep}><ArrowLeft className="w-4 h-4 mr-2" />BACK</Button>
           ) : (
