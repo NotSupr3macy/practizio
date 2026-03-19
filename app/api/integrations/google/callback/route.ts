@@ -75,7 +75,9 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (!practice) {
-      return NextResponse.redirect(`${errorBaseUrl}?google_error=no_practice`)
+      console.error(`[Google OAuth] No practice found for user ${user.id} (email: ${user.email})`)
+      // Redirect to onboarding so user can create their business first
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/onboarding?google_error=no_practice`)
     }
 
     // Upsert credentials
