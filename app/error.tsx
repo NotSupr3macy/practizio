@@ -27,6 +27,16 @@ export default function Error({
           <p className="font-mono text-sm text-[var(--muted-text)] mt-3">
             An unexpected error occurred. Please try again.
           </p>
+          {error?.digest && (
+            <p className="font-mono text-[10px] text-[var(--muted-text)] mt-2">
+              Digest: {error.digest}
+            </p>
+          )}
+          {error?.message && (
+            <p className="font-mono text-[10px] text-[var(--muted-text)] mt-1 max-w-md mx-auto break-all">
+              {error.message}
+            </p>
+          )}
           <button onClick={() => reset()} className="mt-8 btn-primary">
             RETRY OPERATION
           </button>
