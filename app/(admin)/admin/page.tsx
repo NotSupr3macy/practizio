@@ -12,49 +12,72 @@ import {
 } from 'lucide-react'
 
 export default async function AdminOverviewPage() {
-  const supabase = createAdminClient()
+  let supabase
+  try {
+    supabase = createAdminClient()
+  } catch (e) {
+    console.error('Failed to create admin client:', e)
+    return (
+      <div className="p-10">
+        <h1 className="text-2xl text-red-600">Admin client error</h1>
+        <p className="mt-2 text-[var(--muted-text)]">Could not connect to database. Check SUPABASE_SERVICE_ROLE_KEY env var.</p>
+      </div>
+    )
+  }
 
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
 
   // Run all queries in parallel
-  const [
-    practicesRes,
-    aiQueriesRes,
-    appointmentsRes,
-    ordersRes,
-    leadsRes,
-    recentLeadsRes,
-    activePracticesRes,
-    unconnectedRes,
-    integrationRequestsRes,
-  ] = await Promise.all([
-    supabase.from('practices').select('id', { count: 'exact', head: true }),
-    supabase
-      .from('ai_queries')
-      .select('id', { count: 'exact', head: true })
-      .gte('created_at', startOfMonth),
-    supabase
-      .from('appointments')
-      .select('id', { count: 'exact', head: true })
-      .gte('created_at', startOfMonth),
-    supabase
-      .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .gte('created_at', startOfMonth),
-    supabase.from('leads').select('id', { count: 'exact', head: true }),
-    supabase
-      .from('leads')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(5),
-    supabase
-      .from('ai_queries')
-      .select('practice_id, practices(name, slug)')
-      .gte('created_at', startOfMonth),
-    supabase.from('practices').select('id', { count: 'exact', head: true }).eq('booking_system_connected', false),
-    supabase.from('integration_requests').select('*, practices(name)').order('created_at', { ascending: false }).limit(10),
-  ])
+  let practicesRes, aiQueriesRes, appointmentsRes, ordersRes, leadsRes, recentLeadsRes, activePracticesRes, unconnectedRes, integrationRequestsRes
+  try {
+    ;[
+      practicesRes,
+      aiQueriesRes,
+      appointmentsRes,
+      ordersRes,
+      leadsRes,
+      recentLeadsRes,
+      activePracticesRes,
+      unconnectedRes,
+      integrationRequestsRes,
+    ] = await Promise.all([
+      supabase.from('practices').select('id', { count: 'exact', head: true }),
+      supabase
+        .from('ai_queries')
+        .select('id', { count: 'exact', head: true })
+        .gte('created_at', startOfMonth),
+      supabase
+        .from('appointments')
+        .select('id', { count: 'exact', head: true })
+        .gte('created_at', startOfMonth),
+      supabase
+        .from('orders')
+        .select('id', { count: 'exact', head: true })
+        .gte('created_at', startOfMonth),
+      supabase.from('leads').select('id', { count: 'exact', head: true }),
+      supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5),
+      supabase
+        .from('ai_queries')
+        .select('practice_id, practices(name, slug)')
+        .gte('created_at', startOfMonth),
+      supabase.from('practices').select('id', { count: 'exact', head: true }).eq('booking_system_connected', false),
+      supabase.from('integration_requests').select('*, practices(name)').order('created_at', { ascending: false }).limit(10),
+    ])
+  } catch (e) {
+    console.error('Admin queries failed:', e)
+    return (
+      <div className="p-10">
+        <h1 className="text-2xl text-red-600">Database query error</h1>
+        <p className="mt-2 text-[var(--muted-text)]">Failed to fetch admin data. Check database tables and permissions.</p>
+        <pre className="mt-4 text-xs text-red-400">{String(e)}</pre>
+      </div>
+    )
+  }
 
   // Aggregate most active practices
   const practiceQueryCounts: Record<string, { name: string; slug: string; count: number }> = {}
