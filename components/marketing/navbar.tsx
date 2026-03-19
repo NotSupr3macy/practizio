@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 const NAV_LEFT = [
   { label: 'DIRECTORY', href: '/directory' },
   { label: 'FOR BUSINESSES', href: '/#features' },
+  { label: 'CONNECT', href: '/connect', highlight: true },
 ] as const
 
 const NAV_RIGHT: { label: string; href: string }[] = []
@@ -63,17 +64,35 @@ export function Navbar() {
         {/* Left: Nav links (desktop) */}
         <div className="hidden md:flex items-center gap-8 flex-1">
           {NAV_LEFT.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="font-mono text-[10px] uppercase transition-all duration-300 hover:text-[var(--foreground)]"
-              style={{
-                letterSpacing: '0.3em',
-                color: 'var(--muted-text)',
-              }}
-            >
-              {link.label}
-            </Link>
+            'highlight' in link && link.highlight ? (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="font-mono text-[10px] uppercase transition-all duration-300"
+                style={{
+                  letterSpacing: '0.25em',
+                  padding: '8px 18px',
+                  borderRadius: '2px',
+                  background: 'var(--primary-accent)',
+                  color: 'var(--white)',
+                  fontWeight: 700,
+                }}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="font-mono text-[10px] uppercase transition-all duration-300 hover:text-[var(--foreground)]"
+                style={{
+                  letterSpacing: '0.3em',
+                  color: 'var(--muted-text)',
+                }}
+              >
+                {link.label}
+              </Link>
+            )
           ))}
         </div>
 
