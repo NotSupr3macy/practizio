@@ -10,9 +10,7 @@ const NAV_LEFT = [
   { label: 'FOR BUSINESSES', href: '/#features' },
 ] as const
 
-const NAV_RIGHT = [
-  { label: 'ABOUT', href: '/about' },
-] as const
+const NAV_RIGHT: { label: string; href: string }[] = []
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
