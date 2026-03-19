@@ -271,6 +271,120 @@ export function BentoGrid() {
           </div>
         </div>
 
+        {/* Row 3: What is MCP? */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 gap-0"
+        >
+          {/* Left: MCP Diagram */}
+          <div
+            className="relative px-6 md:px-10 py-16 md:py-24 flex items-center"
+            style={{ borderRight: '1px solid rgba(255,255,255,0.06)' }}
+          >
+            <div className="relative w-full max-w-[480px] mx-auto">
+              <div
+                className="rounded-lg overflow-hidden p-6"
+                style={{ background: 'var(--white)' }}
+              >
+                <Image
+                  src="/mcp-diagram.png"
+                  alt="How MCP connects businesses to AI assistants"
+                  width={480}
+                  height={360}
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right: MCP Explanation */}
+          <div className="px-6 md:px-10 py-16 md:py-24 flex flex-col justify-center">
+            <span
+              className="font-mono text-[10px] uppercase block mb-6"
+              style={{ letterSpacing: '0.3em', color: 'rgba(255,255,255,0.25)' }}
+            >
+              THE TECHNOLOGY
+            </span>
+
+            <h3
+              className="editorial-heading mb-8"
+              style={{
+                fontSize: 'clamp(28px, 3.5vw, 40px)',
+                color: 'var(--white)',
+                lineHeight: 1.1,
+              }}
+            >
+              What is{' '}
+              <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.35)' }}>
+                MCP?
+              </span>
+            </h3>
+
+            <p
+              className="leading-relaxed mb-5"
+              style={{
+                fontFamily: '"Playfair Display", serif',
+                fontWeight: 300,
+                fontSize: '16px',
+                color: 'rgba(255,255,255,0.4)',
+                lineHeight: 1.8,
+                maxWidth: 440,
+              }}
+            >
+              Think of MCP like a universal translator between your business
+              and AI assistants. Right now, when someone asks ChatGPT or Claude
+              to book a haircut, the AI has no way to actually do it. MCP
+              changes that.
+            </p>
+            <p
+              className="leading-relaxed mb-5"
+              style={{
+                fontFamily: '"Playfair Display", serif',
+                fontWeight: 300,
+                fontSize: '16px',
+                color: 'rgba(255,255,255,0.4)',
+                lineHeight: 1.8,
+                maxWidth: 440,
+              }}
+            >
+              MCP stands for Model Context Protocol. In plain English, it&apos;s
+              a way for AI tools to talk directly to your business &mdash; to see
+              your services, check your availability, and book appointments
+              &mdash; all without you lifting a finger.
+            </p>
+            <p
+              className="leading-relaxed mb-5"
+              style={{
+                fontFamily: '"Playfair Display", serif',
+                fontWeight: 300,
+                fontSize: '16px',
+                color: 'rgba(255,255,255,0.4)',
+                lineHeight: 1.8,
+                maxWidth: 440,
+              }}
+            >
+              SpadeChat gives your business an MCP connection. That means every
+              AI assistant in the world &mdash; ChatGPT, Claude, Gemini, Siri,
+              and whatever comes next &mdash; can find you, recommend you, and
+              send you real customers. Automatically. 24/7.
+            </p>
+            <p
+              className="leading-relaxed"
+              style={{
+                fontFamily: '"Playfair Display", serif',
+                fontWeight: 300,
+                fontSize: '16px',
+                color: 'rgba(255,255,255,0.45)',
+                lineHeight: 1.8,
+                maxWidth: 440,
+                fontStyle: 'italic',
+              }}
+            >
+              No app to download. No code to write. Just your business,
+              now speaking the language every AI understands.
+            </p>
+          </div>
+        </div>
+
       </div>
     </section>
   )
