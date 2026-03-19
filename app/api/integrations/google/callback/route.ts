@@ -64,8 +64,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${errorBaseUrl}?google_error=not_authenticated`)
     }
 
-    // Get their practice
-    const { data: practice } = await supabase
+    // Store credentials using admin client (bypasses RLS)
+    const adminSupabase = createAdminClient()
+
+    // Get their practice using admin client to avoid RLS issues after OAuth redirect
+    const { data: practice } = await adminSupabase
       .from('practices')
       .select('id')
       .eq('user_id', user.id)
@@ -74,9 +77,6 @@ export async function GET(request: NextRequest) {
     if (!practice) {
       return NextResponse.redirect(`${errorBaseUrl}?google_error=no_practice`)
     }
-
-    // Store credentials using admin client (bypasses RLS for insert)
-    const adminSupabase = createAdminClient()
 
     // Upsert credentials
     const { error: upsertError } = await adminSupabase
