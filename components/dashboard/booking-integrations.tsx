@@ -602,9 +602,9 @@ export function BookingIntegrations({ currentPlatform, currentBookingUrl, practi
   }
 
   return (
-    <div className="border border-[var(--border-light)] rounded-[2px] overflow-hidden">
+    <div className="border border-[var(--border-light)] rounded-[2px] overflow-hidden bg-white">
       {/* Header */}
-      <div className="px-6 py-5 hairline-b flex items-center justify-between gap-4 flex-wrap">
+      <div className="px-6 py-5 flex items-center justify-between gap-4 flex-wrap" style={{ borderBottom: '1px solid var(--border-light)' }}>
         <div>
           <span className="mono-label-sm text-[var(--muted-text)] opacity-60 block mb-1">BOOKING SYSTEM</span>
           <h3 className="font-serif text-lg tracking-tightest" style={{ fontWeight: 300 }}>Connect Your Booking System</h3>
