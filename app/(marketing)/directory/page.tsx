@@ -131,6 +131,11 @@ export default async function DirectoryPage({
                       ))}
                     </div>
                   )}
+                  {practice.website && (
+                    <p className="font-mono text-[10px] text-[var(--muted-text)] mt-3 truncate" style={{ letterSpacing: '0.05em' }}>
+                      {(practice.website as string).replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between mt-6">
