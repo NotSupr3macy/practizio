@@ -21,26 +21,8 @@ export function Hero() {
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center px-6 py-20 max-w-5xl mx-auto">
-        {/* Status pill */}
-        <div
-          className="flex items-center gap-2.5 mb-14 px-5 py-2.5"
-          style={{
-            border: '1px solid var(--border-light)',
-            borderRadius: '2px',
-            background: 'rgba(255,255,255,0.6)',
-          }}
-        >
-          <span
-            className="w-2 h-2 rounded-full animate-pulse-dot"
-            style={{ background: 'var(--primary-accent)' }}
-          />
-          <span
-            className="font-mono text-[10px] uppercase"
-            style={{ letterSpacing: '0.3em', color: 'var(--muted-text)' }}
-          >
-            NOW AI-BOOKABLE
-          </span>
-        </div>
+        {/* Spacer where status pill used to be */}
+        <div className="mb-14" />
 
         {/* Giant heading */}
         <h1 className="text-center">
