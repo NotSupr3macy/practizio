@@ -16,6 +16,7 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [dashboardHref, setDashboardHref] = useState('/dashboard')
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -25,11 +26,25 @@ export function Navbar() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkAuth = async (session: { user: { email?: string } } | null) => {
       setIsLoggedIn(!!session)
+      if (session?.user?.email) {
+        try {
+          const res = await fetch('/api/admin/check')
+          if (res.ok) {
+            const data = await res.json()
+            setDashboardHref(data.isAdmin ? '/admin' : '/dashboard')
+          }
+        } catch {
+          // fallback to /dashboard
+        }
+      }
+    }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      checkAuth(session)
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session)
+      checkAuth(session)
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -99,7 +114,7 @@ export function Navbar() {
           ))}
           {isLoggedIn ? (
             <Link
-              href="/dashboard"
+              href={dashboardHref}
               className="font-mono text-[10px] uppercase transition-all duration-300"
               style={{
                 letterSpacing: '0.25em',
@@ -182,7 +197,7 @@ export function Navbar() {
           <div style={{ height: '1px', background: 'var(--border-light)' }} />
           {isLoggedIn ? (
             <Link
-              href="/dashboard"
+              href={dashboardHref}
               className="font-mono text-[10px] uppercase text-center transition-all duration-300"
               style={{
                 letterSpacing: '0.25em',
