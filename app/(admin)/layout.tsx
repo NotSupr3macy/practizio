@@ -52,7 +52,7 @@ function AdminSidebar({ email }: { email: string }) {
           <Link
             key={item.href}
             href={item.href}
-            className="flex items-center gap-3 px-6 py-2.5 mx-2 transition-all duration-300"
+            className="flex items-center gap-3 px-6 py-2.5 mx-2 transition-all duration-300 hover:!text-white/70"
             style={{
               fontFamily: "'Space Mono', monospace",
               fontSize: '11px',
@@ -62,8 +62,6 @@ function AdminSidebar({ email }: { email: string }) {
               color: 'rgba(255,255,255,0.4)',
               borderLeft: '2px solid transparent',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.4)' }}
           >
             <item.icon className="w-4 h-4 opacity-40" />
             {item.label}
