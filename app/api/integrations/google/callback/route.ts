@@ -67,12 +67,15 @@ export async function GET(request: NextRequest) {
     // Store credentials using admin client (bypasses RLS)
     const adminSupabase = createAdminClient()
 
-    // Get their practice using admin client to avoid RLS issues after OAuth redirect
-    const { data: practice } = await adminSupabase
+    // Get their most recent practice (use limit(1) instead of single() to handle multiple practices)
+    const { data: practices } = await adminSupabase
       .from('practices')
       .select('id')
       .eq('user_id', user.id)
-      .single()
+      .order('created_at', { ascending: false })
+      .limit(1)
+
+    const practice = practices?.[0] ?? null
 
     if (!practice) {
       console.error(`[Google OAuth] No practice found for user ${user.id} (email: ${user.email})`)
