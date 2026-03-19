@@ -56,7 +56,7 @@ export function Sidebar({ practice, userEmail, needsAttention = {} }: SidebarPro
     <aside className="h-screen w-[260px] flex flex-col" style={{ background: 'var(--navy)', borderRight: '1px solid rgba(255, 255, 255, 0.06)' }}>
       {/* Logo */}
       <div className="px-6 py-6" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
-        <Link href="/dashboard" className="flex items-center gap-2.5">
+        <Link href="/" className="flex items-center gap-2.5">
           <img src="/logo.png" alt="SpadeChat" className="w-7 h-7 object-contain" />
           <span className="font-display uppercase" style={{ letterSpacing: '-0.02em', fontSize: '1rem', color: 'var(--white)' }}>
             SPADECHAT
