@@ -5,10 +5,6 @@ import Image from 'next/image'
 
 const MCP_URL = 'https://spadechat.com/api/mcp'
 
-const MAC_SCRIPT = `#!/bin/bash
-# Downloads and runs the SpadeChat installer for Claude Desktop (macOS)
-curl -fsSL https://spadechat.com/install/mac.sh | bash`
-
 function CopyButton({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false)
   return (
@@ -33,24 +29,6 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
   )
 }
 
-function ExpandableSection({ title, children }: { title: string; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <div className="mt-6">
-      <button
-        onClick={() => setOpen(!open)}
-        className="font-mono text-[12px] uppercase flex items-center gap-2 transition-all duration-300"
-        style={{ letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)' }}
-      >
-        <span style={{ transform: open ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>
-          &#9654;
-        </span>
-        {title}
-      </button>
-      {open && <div className="mt-4">{children}</div>}
-    </div>
-  )
-}
 
 export default function ConnectClient() {
   return (
@@ -127,74 +105,15 @@ export default function ConnectClient() {
                 fontSize: '17px',
                 color: 'rgba(255,255,255,0.45)',
                 lineHeight: 1.7,
-                marginBottom: '2rem',
+                marginBottom: '1.5rem',
               }}
             >
-              One-click install — we&apos;ll configure everything automatically.
+              Manual setup — takes about 60 seconds.
             </p>
 
-            {/* Download buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-8">
-              <a
-                href="/install/mac.sh"
-                download="install-spadechat-mac.sh"
-                className="font-mono text-[11px] uppercase text-center transition-all duration-300 flex-1"
-                style={{
-                  letterSpacing: '0.2em',
-                  padding: '16px 20px',
-                  borderRadius: '2px',
-                  background: 'var(--white)',
-                  color: 'var(--navy)',
-                  fontWeight: 700,
-                }}
-              >
-                DOWNLOAD FOR MAC
-              </a>
-              <a
-                href="/install/windows.bat"
-                download="install-spadechat-windows.bat"
-                className="font-mono text-[11px] uppercase text-center transition-all duration-300 flex-1"
-                style={{
-                  letterSpacing: '0.2em',
-                  padding: '16px 20px',
-                  borderRadius: '2px',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  color: 'var(--white)',
-                }}
-              >
-                DOWNLOAD FOR WINDOWS
-              </a>
-            </div>
-
-            {/* Terminal one-liner for Mac */}
-            <div className="mb-8">
-              <span
-                className="font-mono text-[11px] uppercase block mb-3"
-                style={{ letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)' }}
-              >
-                OR PASTE THIS INTO TERMINAL (MAC):
-              </span>
-              <div
-                className="flex items-center justify-between gap-3 p-4"
-                style={{
-                  background: 'rgba(0,0,0,0.3)',
-                  borderRadius: '2px',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                }}
-              >
-                <code
-                  className="font-mono text-[13px] break-all"
-                  style={{ color: 'rgba(255,255,255,0.55)' }}
-                >
-                  curl -fsSL https://spadechat.com/install/mac.sh | bash
-                </code>
-                <CopyButton text={MAC_SCRIPT} />
-              </div>
-            </div>
-
-            {/* Platform notes */}
+            {/* Requirement note */}
             <div
-              className="p-5 mb-6"
+              className="p-4 mb-8"
               style={{
                 background: 'rgba(255,255,255,0.03)',
                 borderRadius: '2px',
@@ -202,58 +121,147 @@ export default function ConnectClient() {
               }}
             >
               <p
-                className="font-mono text-[11px] uppercase mb-2"
-                style={{ letterSpacing: '0.2em', color: 'rgba(255,255,255,0.35)' }}
+                className="font-mono text-[11px] uppercase"
+                style={{ letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', lineHeight: 1.7 }}
               >
-                AFTER INSTALLING:
-              </p>
-              <p
-                style={{
-                  fontFamily: '"Playfair Display", serif',
-                  fontWeight: 300,
-                  fontSize: '16px',
-                  color: 'rgba(255,255,255,0.4)',
-                  lineHeight: 1.7,
-                }}
-              >
-                Restart Claude Desktop. Then try asking: &quot;Find me a haircut near Eugene, Oregon&quot;
+                REQUIRES CLAUDE DESKTOP APP (FREE DOWNLOAD). CUSTOM CONNECTORS AVAILABLE ON FREE, PRO, MAX, TEAM, AND ENTERPRISE PLANS.
               </p>
             </div>
 
-            {/* Windows note */}
-            <p
-              className="font-mono text-[11px] mb-4"
-              style={{ letterSpacing: '0.15em', color: 'rgba(255,255,255,0.25)', lineHeight: 1.7 }}
-            >
-              WINDOWS: After downloading, double-click the file to run it. If SmartScreen appears, click &apos;More info&apos; then &apos;Run anyway&apos;.
-            </p>
-
-            {/* What does this do? */}
-            <ExpandableSection title="What does this do?">
-              <div
-                style={{
-                  fontFamily: '"Playfair Display", serif',
-                  fontWeight: 300,
-                  fontSize: '16px',
-                  color: 'rgba(255,255,255,0.4)',
-                  lineHeight: 1.7,
-                }}
-              >
-                <p className="mb-3">
-                  This script adds SpadeChat to your Claude Desktop configuration file. It does not modify any other settings. Specifically, it:
-                </p>
-                <ol className="space-y-2 ml-4" style={{ listStyleType: 'decimal' }}>
-                  <li>Finds your Claude Desktop config file</li>
-                  <li>Adds the SpadeChat directory server to your MCP connections</li>
-                  <li>That&apos;s it — restart Claude Desktop and you&apos;re connected</li>
-                </ol>
-                <p className="mt-4" style={{ fontSize: '14px', color: 'rgba(255,255,255,0.25)' }}>
-                  Config file location:<br />
-                  Mac: ~/Library/Application Support/Claude/claude_desktop_config.json<br />
-                  Windows: %APPDATA%\Claude\claude_desktop_config.json
+            {/* Steps */}
+            <div className="space-y-10 flex-1">
+              {/* Step 1 */}
+              <div>
+                <div className="flex items-baseline gap-4 mb-3">
+                  <span className="font-display text-2xl" style={{ color: 'rgba(255,255,255,0.15)' }}>01</span>
+                  <h3
+                    className="font-mono text-[13px] uppercase"
+                    style={{ letterSpacing: '0.2em', color: 'var(--white)' }}
+                  >
+                    OPEN CLAUDE DESKTOP
+                  </h3>
+                </div>
+                <p
+                  className="ml-12"
+                  style={{
+                    fontFamily: '"Playfair Display", serif',
+                    fontWeight: 300,
+                    fontSize: '16px',
+                    color: 'rgba(255,255,255,0.4)',
+                    lineHeight: 1.7,
+                  }}
+                >
+                  Download Claude Desktop from <span style={{ color: 'rgba(255,255,255,0.6)' }}>claude.ai/download</span> if you don&apos;t have it. Open the app and sign in.
                 </p>
               </div>
-            </ExpandableSection>
+
+              {/* Step 2 */}
+              <div>
+                <div className="flex items-baseline gap-4 mb-3">
+                  <span className="font-display text-2xl" style={{ color: 'rgba(255,255,255,0.15)' }}>02</span>
+                  <h3
+                    className="font-mono text-[13px] uppercase"
+                    style={{ letterSpacing: '0.2em', color: 'var(--white)' }}
+                  >
+                    ENABLE DEVELOPER MODE
+                  </h3>
+                </div>
+                <p
+                  className="ml-12"
+                  style={{
+                    fontFamily: '"Playfair Display", serif',
+                    fontWeight: 300,
+                    fontSize: '16px',
+                    color: 'rgba(255,255,255,0.4)',
+                    lineHeight: 1.7,
+                  }}
+                >
+                  Go to Settings (gear icon, bottom-left), find &quot;Developer&quot; in the menu, and toggle Developer mode ON.
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div>
+                <div className="flex items-baseline gap-4 mb-3">
+                  <span className="font-display text-2xl" style={{ color: 'rgba(255,255,255,0.15)' }}>03</span>
+                  <h3
+                    className="font-mono text-[13px] uppercase"
+                    style={{ letterSpacing: '0.2em', color: 'var(--white)' }}
+                  >
+                    ADD SPADECHAT AS A CONNECTOR
+                  </h3>
+                </div>
+                <div
+                  className="ml-12"
+                  style={{
+                    fontFamily: '"Playfair Display", serif',
+                    fontWeight: 300,
+                    fontSize: '16px',
+                    color: 'rgba(255,255,255,0.4)',
+                    lineHeight: 1.7,
+                  }}
+                >
+                  <p className="mb-3">In Settings, go to &quot;Connectors&quot;, click &quot;Create&quot; or &quot;Add&quot;, and enter:</p>
+                  <div
+                    className="p-4 space-y-3"
+                    style={{
+                      background: 'rgba(0,0,0,0.3)',
+                      borderRadius: '2px',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: '14px',
+                    }}
+                  >
+                    <p><span style={{ color: 'rgba(255,255,255,0.35)' }}>Name:</span> <span style={{ color: 'rgba(255,255,255,0.65)' }}>SpadeChat</span></p>
+                    <p><span style={{ color: 'rgba(255,255,255,0.35)' }}>URL:</span> <span style={{ color: 'rgba(255,255,255,0.65)' }}>{MCP_URL}</span></p>
+                  </div>
+                  <p className="mt-3">Click &quot;Create&quot; or &quot;Save&quot;.</p>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div>
+                <div className="flex items-baseline gap-4 mb-3">
+                  <span className="font-display text-2xl" style={{ color: 'rgba(255,255,255,0.15)' }}>04</span>
+                  <h3
+                    className="font-mono text-[13px] uppercase"
+                    style={{ letterSpacing: '0.2em', color: 'var(--white)' }}
+                  >
+                    USE IT IN A CONVERSATION
+                  </h3>
+                </div>
+                <div
+                  className="ml-12"
+                  style={{
+                    fontFamily: '"Playfair Display", serif',
+                    fontWeight: 300,
+                    fontSize: '16px',
+                    color: 'rgba(255,255,255,0.4)',
+                    lineHeight: 1.7,
+                  }}
+                >
+                  <p className="mb-2">Start a new conversation, click the &quot;+&quot; button at the bottom, select &quot;Connectors&quot;, and make sure SpadeChat is enabled.</p>
+                  <p>Ask: &quot;Find me a haircut near Eugene, Oregon&quot;</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div
+              className="mt-8 p-5 space-y-3"
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                borderRadius: '2px',
+                border: '1px solid rgba(255,255,255,0.06)',
+              }}
+            >
+              <p
+                className="font-mono text-[11px] uppercase"
+                style={{ letterSpacing: '0.15em', color: 'rgba(255,255,255,0.3)', lineHeight: 1.7 }}
+              >
+                You may need to enable SpadeChat for each new conversation depending on your settings.
+              </p>
+            </div>
           </div>
 
           {/* ChatGPT */}
